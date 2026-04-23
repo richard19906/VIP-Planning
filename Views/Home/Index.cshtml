@@ -1,39 +1,38 @@
+@model List<VIP_Planning.Models.UrenModel>
 @{ Layout = "_Layout"; }
-<div class="animate__animated animate__fadeIn">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h4 style="color: #D4AF37; letter-spacing: 5px; font-weight: 200; margin: 0;">CONTROLE PANEEL</h4>
-            <h1 style="font-size: 2.5rem; font-weight: 900; letter-spacing: 2px;">OVERZICHT <span style="color: #D4AF37;">VANDAAG</span></h1>
-        </div>
-        <div id="klok" style="font-size: 2rem; color: #D4AF37; border: 1px solid #D4AF37; padding: 10px 30px; border-radius: 50px; background: rgba(0,0,0,0.5); font-family: monospace;">00:00:00</div>
-    </div>
 
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div style="background: rgba(10,10,10,0.8); border: 1px solid #D4AF37; border-radius: 20px; padding: 30px; text-align: center;">
-                <p style="color: #888; font-size: 0.8rem; letter-spacing: 2px;">ACTIEF PERSONEEL</p>
-                <h2 style="color: #D4AF37; font-size: 3rem; font-weight: 900;">12</h2>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div style="background: rgba(10,10,10,0.8); border: 1px solid #D4AF37; border-radius: 20px; padding: 30px; text-align: center;">
-                <p style="color: #888; font-size: 0.8rem; letter-spacing: 2px;">OPENSTAANDE DIENSTEN</p>
-                <h2 style="color: #D4AF37; font-size: 3rem; font-weight: 900;">04</h2>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div style="background: rgba(10,10,10,0.8); border: 1px solid #D4AF37; border-radius: 20px; padding: 30px; text-align: center;">
-                <p style="color: #888; font-size: 0.8rem; letter-spacing: 2px;">SYSTEEM STATUS</p>
-                <h2 style="color: #00ff00; font-size: 3rem; font-weight: 900;">LIVE</h2>
-            </div>
-        </div>
-    </div>
+<div class="d-flex justify-content-between align-items-center">
+    <h1 style="font-weight:900;">GEWERKTE <span style="color:#D4AF37;">UREN</span></h1>
+    <span class="badge" style="border: 1px solid #D4AF37; color: #D4AF37;">@Model.Count REGISTRATIES</span>
 </div>
 
-<script>
-    function updateTijd() {
-        document.getElementById('klok').innerText = new Date().toLocaleTimeString('nl-NL');
-    }
-    setInterval(updateTijd, 1000);
-    updateTijd();
-</script>
+<div class="table-responsive mt-4">
+    <table class="table table-dark table-hover" style="border: 1px solid #333; background: #0a0a0a;">
+        <thead>
+            <tr style="color: #D4AF37; border-bottom: 2px solid #D4AF37;">
+                <th>DATUM</th>
+                <th>LOCATIE</th>
+                <th>PERIODE</th>
+                <th>UREN</th>
+                <th>STATUS</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.OrderByDescending(x => x.Datum)) {
+                <tr>
+                    <td>@item.Datum.ToShortDateString()</td>
+                    <td>@item.Locatie</td>
+                    <td style="color: #888;">@item.PeriodeNaam</td>
+                    <td style="font-weight: bold;">@item.AantalUren</td>
+                    <td>
+                        @if(item.IsUitbetaald) {
+                            <span class="badge bg-success" style="font-size: 0.6rem;">UITBETAALD</span>
+                        } else {
+                            <span class="badge bg-warning text-dark" style="font-size: 0.6rem;">OPENSTAAND</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
