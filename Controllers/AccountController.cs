@@ -19,11 +19,15 @@ namespace VIP_Planning.Controllers
             return View();
         }
 
-        // DE ADMIN BYPASS KNOP ACTIE
-        public IActionResult AdminBypass()
+        // DE BEVEILIGDE ADMIN BYPASS
+        public IActionResult AdminBypass(string pin)
         {
-            HttpContext.Session.SetString("IsLoggedIn", "true");
-            return RedirectToAction("Index", "Home");
+            if (pin == "3991")
+            {
+                HttpContext.Session.SetString("IsLoggedIn", "true");
+                return RedirectToAction("Index", "Home");
+            }
+            return Content("Toegang geweigerd: Onjuiste pincode.");
         }
 
         public IActionResult Logout()

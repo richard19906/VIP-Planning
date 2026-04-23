@@ -1,22 +1,15 @@
 @{ Layout = "_LoginLayout"; }
-<div style="height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; z-index: 10;">
-    <div class="vault-box animate__animated animate__zoomIn">
-        <div style="font-size: 3rem; text-align: center; margin-bottom: 20px;">🔒</div>
-        <h1 style="color: #D4AF37; text-align: center; letter-spacing: 3px; font-weight: 900; font-family: 'Cinzel', serif;">VIP-PLANNING</h1>
-        <p style="color: #888; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 30px;">BEVEILIGDE OMGEVING</p>
-        
-        <form action="/Account/Login" method="post" class="mt-4">
-            <input type="text" name="username" class="vip-input" placeholder="GEBRUIKERSNAAM" />
-            <input type="password" name="password" class="vip-input" placeholder="TOEGANGSCODE" />
-            <button type="submit" class="btn-gold mb-3">HANDMATIG INLOGGEN</button>
-        </form>
-
-        <a href="/Account/AdminBypass" style="text-decoration: none;">
-            <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 10px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; transition: 0.3s; cursor: pointer;" 
-                 onmouseover="this.style.background='rgba(212,175,55,0.1)'" 
-                 onmouseout="this.style.background='transparent'">
-                ⚡ SNELLE TOEGANG (ADMIN)
-            </div>
-        </a>
-    </div>
+<div class="vault-box">
+    <h2 style="text-align: center; margin-bottom: 30px;">BEVEILIGDE TOEGANG</h2>
+    <form action="/Account/Login" method="post">
+        <input type="text" name="username" class="vip-input" placeholder="GEBRUIKERSNAAM" />
+        <input type="password" name="password" class="vip-input" placeholder="CODE" />
+        <button type="submit" class="btn-gold">INLOGGEN</button>
+    </form>
+    
+    <a href="/Account/AdminBypass?pin=3991" style="text-decoration: none;">
+        <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 10px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 20px; cursor: pointer;">
+            ⚡ SNELLE TOEGANG (ADMIN)
+        </div>
+    </a>
 </div>
