@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Http;
 using Supabase;
 using VIP_Planning.Models;
 
@@ -7,20 +8,24 @@ namespace VIP_Planning.Controllers {
         private readonly Supabase.Client _supabase;
         public HomeController(Supabase.Client supabase) { _supabase = supabase; }
 
-        public async Task<IActionResult> Index() {
-            var userEmail = HttpContext.Session.GetString("UserEmail");
-            if (string.IsNullOrEmpty(userEmail)) return RedirectToAction("Login", "Account");
+        // Het hoofdscherm (Dashboard) is nu algemeen
+        public IActionResult Index() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) 
+                return RedirectToAction("Login", "Account");
+            return View();
+        }
+
+        // DEZE ACTIE TOONT PAS DE UREN
+        public async Task<IActionResult> GewerkteUren() {
+            var email = HttpContext.Session.GetString("UserEmail");
+            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
 
             try {
-                // We filteren op de kolom 'user_email'
                 var response = await _supabase.From<UrenModel>()
-                    .Filter("user_email", Postgrest.Constants.Operator.Equals, userEmail)
+                    .Filter("user_email", Postgrest.Constants.Operator.Equals, email)
                     .Get();
-                
-                ViewBag.UserName = HttpContext.Session.GetString("UserName");
                 return View(response.Models);
-            } catch (Exception ex) {
-                ViewBag.Error = ex.Message;
+            } catch {
                 return View(new List<UrenModel>());
             }
         }
