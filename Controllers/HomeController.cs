@@ -12,14 +12,15 @@ namespace VIP_Planning.Controllers {
             if (string.IsNullOrEmpty(userEmail)) return RedirectToAction("Login", "Account");
 
             try {
-                // Filtert nu op richard1990_6@msn.com
+                // We filteren op de kolom 'user_email'
                 var response = await _supabase.From<UrenModel>()
-                    .Filter("email", Postgrest.Constants.Operator.Equals, userEmail)
+                    .Filter("user_email", Postgrest.Constants.Operator.Equals, userEmail)
                     .Get();
                 
                 ViewBag.UserName = HttpContext.Session.GetString("UserName");
                 return View(response.Models);
-            } catch {
+            } catch (Exception ex) {
+                ViewBag.Error = ex.Message;
                 return View(new List<UrenModel>());
             }
         }
