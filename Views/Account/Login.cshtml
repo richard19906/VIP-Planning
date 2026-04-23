@@ -11,10 +11,34 @@
             <button type="submit" style="background: #D4AF37; color: #000; font-weight: 900; width: 100%; padding: 15px; border-radius: 10px; border: none; cursor: pointer;">INLOGGEN</button>
         </form>
         
-        <a href="/Account/AdminBypass?pin=3991" style="text-decoration: none;">
-            <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 12px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 25px; cursor: pointer;">
-                ⚡ SNELLE TOEGANG (ADMIN)
+        <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">
+            <p style="color: #D4AF37; font-size: 0.6rem; letter-spacing: 1px; margin-bottom: 10px;">ADMIN SNELKOPPELING</p>
+            <input type="password" id="adminPin" style="background: #000; border: 1px dashed #D4AF37; color: #D4AF37; border-radius: 5px; padding: 5px; width: 80px; text-align: center; margin-bottom: 10px;" placeholder="PIN" maxlength="4" />
+            <div onclick="checkPin()" id="bypassBtn" style="border: 1px solid #D4AF37; color: #000; background: #D4AF37; padding: 8px; border-radius: 8px; text-align: center; font-size: 0.7rem; font-weight: bold; cursor: pointer; opacity: 0.5;">
+                UNLOCKED DASHBOARD
             </div>
-        </a>
+        </div>
     </div>
 </div>
+
+<script>
+    function checkPin() {
+        var pin = document.getElementById('adminPin').value;
+        if (pin === "3991") {
+            window.location.href = "/Account/AdminBypass?pin=3991";
+        } else {
+            alert("Onjuiste pincode!");
+            document.getElementById('adminPin').value = "";
+        }
+    }
+
+    // Activeer knop visueel als er 4 cijfers staan
+    document.getElementById('adminPin').addEventListener('input', function() {
+        var btn = document.getElementById('bypassBtn');
+        if (this.value.length === 4) {
+            btn.style.opacity = "1";
+        } else {
+            btn.style.opacity = "0.5";
+        }
+    });
+</script>
