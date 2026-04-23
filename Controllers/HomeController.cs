@@ -8,14 +8,12 @@ namespace VIP_Planning.Controllers {
         private readonly Supabase.Client _supabase;
         public HomeController(Supabase.Client supabase) { _supabase = supabase; }
 
-        // Het hoofdscherm (Dashboard) is nu algemeen
         public IActionResult Index() {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) 
                 return RedirectToAction("Login", "Account");
             return View();
         }
 
-        // DEZE ACTIE TOONT PAS DE UREN
         public async Task<IActionResult> GewerkteUren() {
             var email = HttpContext.Session.GetString("UserEmail");
             if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
@@ -25,7 +23,7 @@ namespace VIP_Planning.Controllers {
                     .Filter("user_email", Postgrest.Constants.Operator.Equals, email)
                     .Get();
                 return View(response.Models);
-            } catch {
+            } catch (Exception ex) {
                 return View(new List<UrenModel>());
             }
         }
