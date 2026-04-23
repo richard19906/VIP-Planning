@@ -1,14 +1,19 @@
 @{ Layout = "_LoginLayout"; }
 <div class="vault-box">
-    <h2 style="text-align: center; margin-bottom: 30px;">BEVEILIGDE TOEGANG</h2>
+    <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+    <h2 style="letter-spacing: 3px; font-weight: 900; margin-bottom: 5px;">VIP-PLANNING</h2>
+    <p style="color: #888; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 30px;">BEVEILIGDE OMGEVING</p>
+    
     <form action="/Account/Login" method="post">
         <input type="text" name="username" class="vip-input" placeholder="GEBRUIKERSNAAM" />
-        <input type="password" name="password" class="vip-input" placeholder="CODE" />
+        <input type="password" name="password" class="vip-input" placeholder="TOEGANGSCODE" />
         <button type="submit" class="btn-gold">INLOGGEN</button>
     </form>
     
     <a href="/Account/AdminBypass?pin=3991" style="text-decoration: none;">
-        <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 10px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 20px; cursor: pointer;">
+        <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 12px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 25px; cursor: pointer;"
+             onmouseover="this.style.background='rgba(212,175,55,0.1)'" 
+             onmouseout="this.style.background='transparent'">
             ⚡ SNELLE TOEGANG (ADMIN)
         </div>
     </a>
