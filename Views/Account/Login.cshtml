@@ -1,20 +1,20 @@
 @{ Layout = "_LoginLayout"; }
-<div class="vault-box">
-    <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
-    <h2 style="letter-spacing: 3px; font-weight: 900; margin-bottom: 5px;">VIP-PLANNING</h2>
-    <p style="color: #888; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 30px;">BEVEILIGDE OMGEVING</p>
-    
-    <form action="/Account/Login" method="post">
-        <input type="text" name="username" class="vip-input" placeholder="GEBRUIKERSNAAM" />
-        <input type="password" name="password" class="vip-input" placeholder="TOEGANGSCODE" />
-        <button type="submit" class="btn-gold">INLOGGEN</button>
-    </form>
-    
-    <a href="/Account/AdminBypass?pin=3991" style="text-decoration: none;">
-        <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 12px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 25px; cursor: pointer;"
-             onmouseover="this.style.background='rgba(212,175,55,0.1)'" 
-             onmouseout="this.style.background='transparent'">
-            ⚡ SNELLE TOEGANG (ADMIN)
-        </div>
-    </a>
+<div style="position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: flex; align-items: center; justify-content: center; background: #000;">
+    <div style="background: rgba(15, 15, 15, 0.95); border: 2px solid #D4AF37; border-radius: 40px; padding: 50px; width: 420px; box-shadow: 0 0 70px rgba(212, 175, 55, 0.2); text-align: center;">
+        <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
+        <h2 style="letter-spacing: 3px; font-weight: 900; margin-bottom: 5px; color: #D4AF37;">VIP-PLANNING</h2>
+        <p style="color: #888; font-size: 0.7rem; letter-spacing: 2px; margin-bottom: 30px;">BEVEILIGDE OMGEVING</p>
+        
+        <form action="/Account/Login" method="post">
+            <input type="text" name="username" style="background: #111; border: 1px solid #D4AF37; color: #D4AF37; border-radius: 10px; padding: 12px; margin-bottom: 15px; width: 100%; text-align: center;" placeholder="GEBRUIKERSNAAM" />
+            <input type="password" name="password" style="background: #111; border: 1px solid #D4AF37; color: #D4AF37; border-radius: 10px; padding: 12px; margin-bottom: 15px; width: 100%; text-align: center;" placeholder="TOEGANGSCODE" />
+            <button type="submit" style="background: #D4AF37; color: #000; font-weight: 900; width: 100%; padding: 15px; border-radius: 10px; border: none; cursor: pointer;">INLOGGEN</button>
+        </form>
+        
+        <a href="/Account/AdminBypass?pin=3991" style="text-decoration: none;">
+            <div style="border: 1px dashed #D4AF37; color: #D4AF37; padding: 12px; border-radius: 10px; text-align: center; font-size: 0.7rem; letter-spacing: 2px; margin-top: 25px; cursor: pointer;">
+                ⚡ SNELLE TOEGANG (ADMIN)
+            </div>
+        </a>
+    </div>
 </div>
