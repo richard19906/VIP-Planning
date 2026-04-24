@@ -20,17 +20,22 @@ namespace VIP_Planning.Controllers {
             return View();
         }
 
+        public async Task<IActionResult> Planning() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
+            
+            // CRUCIALE FIX: Haal hier de medewerkers op voor de dropdown
+            var medewerkersResponse = await _supabase.From<ProfielModel>().Get();
+            ViewBag.Medewerkers = medewerkersResponse.Models ?? new List<ProfielModel>();
+            
+            var response = await _supabase.From<PlanningModel>().Get();
+            var lijst = (response.Models ?? new List<PlanningModel>()).OrderBy(p => p.Datum).ToList();
+            return View(lijst);
+        }
+
         public async Task<IActionResult> Werknemers() {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
             var response = await _supabase.From<ProfielModel>().Get();
             return View(response.Models ?? new List<ProfielModel>());
-        }
-
-        public async Task<IActionResult> Planning() {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
-            var response = await _supabase.From<PlanningModel>().Get();
-            var lijst = (response.Models ?? new List<PlanningModel>()).OrderBy(p => p.Datum).ToList();
-            return View(lijst);
         }
 
         public IActionResult Instellingen() {
