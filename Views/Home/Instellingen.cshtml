@@ -1,9 +1,13 @@
 @{ Layout = "_Layout"; }
-<div class="container py-5">
-    <h1 style="color:#D4AF37; font-weight:900;">⚙️ INSTELLINGEN</h1>
+<div class="container-fluid">
+    <h1 style="color:#D4AF37; font-weight:900; text-transform:uppercase;">⚙️ Instellingen</h1>
     <div style="background:#0f0f0f; border:1px solid #D4AF37; border-radius:20px; padding:30px; margin-top:20px;">
-        <h3 class="text-white">Account Beheer</h3>
-        <p class="text-secondary">Hier kun je later je instellingen aanpassen.</p>
-        <a href="/Account/Logout" class="btn btn-danger fw-bold">UITLOGGEN</a>
+        <h4 class="text-white">Systeembeheer</h4>
+        <p class="text-secondary">Beheer hier de applicatie-instellingen en je account.</p>
+        <hr style="border-color: #333;">
+        <div class="py-3">
+            <p>Ingelogd als: <strong>Beheerder</strong></p>
+            <a href="/Account/Logout" class="btn btn-outline-danger">Sessie beëindigen</a>
+        </div>
     </div>
 </div>

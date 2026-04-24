@@ -6,32 +6,27 @@
     <title>VIP Planning</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
-        body { background-color: #000; color: #fff; }
-        .navbar { background-color: #000 !important; border-bottom: 2px solid #D4AF37; }
-        .nav-link { color: #D4AF37 !important; font-weight: bold; text-transform: uppercase; }
-        .btn-gold { background-color: #D4AF37; color: #000; font-weight: bold; }
+        body { background-color: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar { background-color: #000; border-right: 2px solid #D4AF37; height: 100vh; position: fixed; width: 250px; padding-top: 20px; }
+        .main-content { margin-left: 250px; padding: 20px; }
+        .nav-link { color: #D4AF37 !important; font-weight: bold; text-transform: uppercase; padding: 15px 25px; border-bottom: 1px solid #1a1a1a; }
+        .nav-link:hover { background-color: #D4AF37; color: #000 !important; }
+        .navbar-brand { color: #D4AF37 !important; font-weight: 900; font-size: 1.5rem; text-align: center; display: block; margin-bottom: 30px; }
     </style>
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-dark mb-3">
-            <div class="container">
-                <a class="navbar-brand" href="/Home/Index" style="color:#D4AF37; font-weight:900;">V.I.P SECURITY</a>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item"><a class="nav-link" href="/Home/Index">🏠 Dashboard</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Home/Planning">📅 Planning</a></li>
-                        <li class="nav-item"><a class="nav-link" href="/Home/Werknemers">👥 Personeel</a></li>
-                    </ul>
-                </div>
-            </div>
+    <div class="sidebar">
+        <a class="navbar-brand" href="/Home/Index">V.I.P SECURITY</a>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="/Home/Index">🏠 Dashboard</a>
+            <a class="nav-link" href="/Home/Planning">📅 Planning</a>
+            <a class="nav-link" href="/Home/Werknemers">👥 Personeel</a>
+            <a class="nav-link" href="/Home/Instellingen">⚙️ Instellingen</a>
+            <a class="nav-link" href="/Account/Logout" style="color: #ff4b2b !important; margin-top: 50px;">🚪 Uitloggen</a>
         </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
     </div>
-    @await RenderSectionAsync("Scripts", required: false)
+    <div class="main-content">
+        @RenderBody()
+    </div>
 </body>
 </html>

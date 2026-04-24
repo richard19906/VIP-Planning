@@ -33,7 +33,6 @@ namespace VIP_Planning.Controllers {
             return View(lijst);
         }
 
-        // DE FIX: Voeg de Instellingen actie toe
         public IActionResult Instellingen() {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
             return View();
