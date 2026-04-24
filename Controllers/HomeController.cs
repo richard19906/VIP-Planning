@@ -11,17 +11,13 @@ namespace VIP_Planning.Controllers {
         private readonly Supabase.Client _supabase;
         public HomeController(Supabase.Client supabase) { _supabase = supabase; }
 
-        // Dit is de hoofdpagina van de app
         public async Task<IActionResult> Index() {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
-            
             var werknemers = await _supabase.From<ProfielModel>().Get();
             var planning = await _supabase.From<PlanningModel>().Get();
-            
             ViewBag.TotaalWerknemers = werknemers.Models?.Count ?? 0;
             ViewBag.OpenstaandeDiensten = planning.Models?.Where(x => !x.IsGepusht).Count() ?? 0;
-            
-            return View(); // Laadt Views/Home/Index.cshtml (het Luxe Dashboard)
+            return View();
         }
 
         public async Task<IActionResult> Werknemers() {
@@ -32,11 +28,15 @@ namespace VIP_Planning.Controllers {
 
         public async Task<IActionResult> Planning() {
             if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
-            var medewerkers = await _supabase.From<ProfielModel>().Get();
-            ViewBag.Medewerkers = medewerkers.Models ?? new List<ProfielModel>();
             var response = await _supabase.From<PlanningModel>().Get();
             var lijst = (response.Models ?? new List<PlanningModel>()).OrderBy(p => p.Datum).ToList();
             return View(lijst);
+        }
+
+        // DE FIX: Voeg de Instellingen actie toe
+        public IActionResult Instellingen() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
+            return View();
         }
     }
 }
