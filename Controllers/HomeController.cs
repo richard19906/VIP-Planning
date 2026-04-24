@@ -2,37 +2,41 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Supabase;
 using VIP_Planning.Models;
-using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace VIP_Planning.Controllers {
     public class HomeController : Controller {
         private readonly Supabase.Client _supabase;
         public HomeController(Supabase.Client supabase) { _supabase = supabase; }
 
-        public IActionResult Index() {
-            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) 
-                return RedirectToAction("Login", "Account");
-            return View();
+        // Dit is de hoofdpagina van de app
+        public async Task<IActionResult> Index() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
+            
+            var werknemers = await _supabase.From<ProfielModel>().Get();
+            var planning = await _supabase.From<PlanningModel>().Get();
+            
+            ViewBag.TotaalWerknemers = werknemers.Models?.Count ?? 0;
+            ViewBag.OpenstaandeDiensten = planning.Models?.Where(x => !x.IsGepusht).Count() ?? 0;
+            
+            return View(); // Laadt Views/Home/Index.cshtml (het Luxe Dashboard)
         }
 
-        public async Task<IActionResult> GewerkteUren() {
-            var email = HttpContext.Session.GetString("UserEmail");
-            if (string.IsNullOrEmpty(email)) return RedirectToAction("Login", "Account");
+        public async Task<IActionResult> Werknemers() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
+            var response = await _supabase.From<ProfielModel>().Get();
+            return View(response.Models ?? new List<ProfielModel>());
+        }
 
-            try {
-                var response = await _supabase.From<UrenModel>()
-                    .Filter("user_email", Postgrest.Constants.Operator.Equals, email)
-                    .Get();
-                
-                var uren = response.Models ?? new List<UrenModel>();
-                return View(uren);
-            } catch (Exception ex) {
-                // Als er iets misgaat, toon een lege lijst i.p.v. een Error 500
-                Console.WriteLine(ex.Message);
-                return View(new List<UrenModel>());
-            }
+        public async Task<IActionResult> Planning() {
+            if (string.IsNullOrEmpty(HttpContext.Session.GetString("IsLoggedIn"))) return RedirectToAction("Login", "Account");
+            var medewerkers = await _supabase.From<ProfielModel>().Get();
+            ViewBag.Medewerkers = medewerkers.Models ?? new List<ProfielModel>();
+            var response = await _supabase.From<PlanningModel>().Get();
+            var lijst = (response.Models ?? new List<PlanningModel>()).OrderBy(p => p.Datum).ToList();
+            return View(lijst);
         }
     }
 }

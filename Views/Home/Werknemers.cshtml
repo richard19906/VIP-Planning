@@ -1,0 +1,27 @@
+@model List<VIP_Planning.Models.ProfielModel>
+@{ Layout = "_Layout"; }
+
+<div class="container py-5">
+    <h1 style="font-weight:900; color:#D4AF37; text-transform:uppercase; margin-bottom:30px;">👥 Medewerkers</h1>
+    
+    <div class="row g-4">
+        @foreach (var item in Model ?? new List<VIP_Planning.Models.ProfielModel>()) {
+            <div class="col-md-4">
+                <div class="card bg-dark text-white p-4" style="border: 1px solid #D4AF37; border-radius:20px; background:linear-gradient(145deg, #1a1a1a, #000);">
+                    <h4 style="color:white; font-weight:800; margin-bottom:5px;">@item.Naam</h4>
+                    <p style="color:#D4AF37; font-size:0.9rem; margin-bottom:20px;">@item.Email</p>
+                    
+                    <a href="/Uren/PersoonlijkeUren?email=@item.Email&naam=@Uri.EscapeDataString(item.Naam)" 
+                       class="btn btn-warning w-100 fw-bold" 
+                       style="background:#D4AF37; color:black; border:none; border-radius:10px;">
+                       BEKIJK UREN
+                    </a>
+                </div>
+            </div>
+        }
+    </div>
+
+    <div class="mt-5">
+        <a href="/Home/Index" class="btn btn-outline-light px-4 fw-bold" style="border-radius:10px;">TERUG NAAR DASHBOARD</a>
+    </div>
+</div>

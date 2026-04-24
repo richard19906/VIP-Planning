@@ -1,13 +1,12 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
-COPY ["VIP-Planning.csproj", "."]
-RUN dotnet restore "VIP-Planning.csproj"
-COPY . .
-RUN dotnet publish "VIP-Planning.csproj" -c Release -o /app/publish
+WORKDIR /app
+COPY *.csproj ./
+RUN dotnet restore
+COPY . ./
+RUN dotnet publish -c Release -o out
 
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY --from=build /app/publish .
-# Zorg dat de app op poort 80 of 10000 luistert voor Render
-ENV ASPNETCORE_URLS=http://+:10000
+COPY --from=build /app/out .
+# Zorg dat de DLL naam exact overeenkomt met je projectnaam
 ENTRYPOINT ["dotnet", "VIP-Planning.dll"]

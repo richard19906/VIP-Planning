@@ -5,22 +5,45 @@
     <div class="table-responsive mt-4">
         <table class="table table-dark table-hover" style="border: 1px solid #333;">
             <thead style="color:#D4AF37;">
-                <tr><th>DATUM</th><th>LOCATIE</th><th>PERIODE</th><th>UREN</th></tr>
+                <tr>
+                    <th>DATUM</th>
+                    <th>LOCATIE</th>
+                    <th>PERIODE</th>
+                    <th>UREN</th>
+                </tr>
             </thead>
             <tbody>
                 @if (Model != null && Model.Count > 0) {
                     foreach (var item in Model) {
-                        <tr>
+                        string urenDisplay = item.AantalUren.ToString();
+                        string rowStyle = "";
+                        
+                        // Check voor Vrij
+                        if (item.Locatie != null && item.Locatie.Contains("Vrij", StringComparison.OrdinalIgnoreCase)) {
+                            urenDisplay = "*";
+                            rowStyle = "color: #5bc0de;"; 
+                        }
+                        // Check voor Ziek
+                        else if (item.Locatie != null && item.Locatie.Contains("Ziek", StringComparison.OrdinalIgnoreCase)) {
+                            urenDisplay = "**";
+                            rowStyle = "color: #d9534f;";
+                        }
+
+                        <tr style="@rowStyle">
                             <td>@item.DatumString</td>
                             <td>@item.Locatie</td>
                             <td>@item.PeriodeNaam</td>
-                            <td style="font-weight:bold; color:#D4AF37;">@item.AantalUren</td>
+                            <td style="font-weight:bold; color:#D4AF37;">@urenDisplay</td>
                         </tr>
                     }
                 } else {
-                    <tr><td colspan="4" class="text-center text-muted">Geen uren gevonden voor dit account.</td></tr>
+                    <tr><td colspan="4" class="text-center text-muted">Geen gegevens gevonden.</td></tr>
                 }
             </tbody>
         </table>
+    </div>
+    
+    <div style="margin-top: 20px; font-size: 0.8rem; color: #888;">
+        <p>* = Vrij | ** = Ziek</p>
     </div>
 </div>
