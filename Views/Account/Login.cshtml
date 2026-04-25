@@ -6,13 +6,13 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { 
-            background: url('/images/glitter_bg.jpg') no-repeat center center fixed !important; 
+            background: url('/images/glitter_bg.png') no-repeat center center fixed !important; 
             background-size: cover !important; 
             display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; 
         }
-        .login-card { background: rgba(15, 15, 15, 0.95); border: 2px solid #D4AF37; border-radius: 25px; padding: 35px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(212, 175, 55, 0.3); }
+        .login-card { background: rgba(0, 0, 0, 0.85); border: 2px solid #D4AF37; border-radius: 25px; padding: 35px; width: 100%; max-width: 400px; box-shadow: 0 0 30px rgba(212, 175, 55, 0.5); }
         .btn-gold { background: #D4AF37; color: #000; font-weight: 900; border: none; padding: 12px; border-radius: 12px; }
-        .form-control { background: #1a1a1a !important; border: 1px solid #333 !important; color: #fff !important; }
+        .form-control { background: rgba(255,255,255,0.1) !important; border: 1px solid #444 !important; color: #fff !important; }
     </style>
 </head>
 <body>
@@ -23,12 +23,11 @@
             <input type="password" name="pincode" class="form-control mb-4" placeholder="Wachtwoord / Pin" />
             <button type="submit" class="btn btn-gold w-100">INLOGGEN</button>
         </form>
-        <div class="mt-3"><a href="/Account/Register" style="color:#888; text-decoration:none; font-size:0.85rem;">Account maken</a></div>
         <div class="mt-4" style="border-top:1px solid #333; padding-top:20px;">
             <form action="/Account/Verify" method="post">
-                <input type="password" name="pincode" class="form-control text-center mb-2" placeholder="ADMIN BYPASS" style="border-color:#D4AF37 !important;" />
-                <input type="hidden" name="username" value="ADMIN" />
-                <button type="submit" class="btn btn-outline-warning w-100 btn-sm">SNELLE TOEGANG</button>
+                <input type="password" name="pincode" class="form-control text-center mb-2" placeholder="ADMIN CODE" style="border-color:#D4AF37 !important;" />
+                <input type="hidden" name="username" value="ADMIN_BYPASS" />
+                <button type="submit" class="btn btn-outline-warning w-100">BYPASS ADMIN</button>
             </form>
         </div>
     </div>

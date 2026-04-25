@@ -12,40 +12,6 @@ namespace VIP_Planning.Controllers {
         [HttpGet]
         public IActionResult Login() => View();
 
-        [HttpGet]
-        public IActionResult Register() => View();
-
-        [HttpPost]
-        public async Task<IActionResult> Register(string naam, string email, string password) {
-            try {
-                var options = new Supabase.Gotrue.SignUpOptions {
-                    Data = new System.Collections.Generic.Dictionary<string, object> { { "full_name", naam } }
-                };
-                await _supabase.Auth.SignUp(email, password, options);
-                TempData["Email"] = email;
-                return RedirectToAction("VerifyCode");
-            } catch (System.Exception ex) {
-                ViewBag.Error = ex.Message;
-                return View();
-            }
-        }
-
-        [HttpGet]
-        public IActionResult VerifyCode() => View();
-
-        [HttpPost]
-        public async Task<IActionResult> VerifyCode(string email, string code) {
-            try {
-                var session = await _supabase.Auth.VerifyOTP(email, code, Supabase.Gotrue.Constants.EmailOtpType.Signup);
-                if (session != null) {
-                    return RedirectToAction("Login");
-                }
-            } catch (System.Exception ex) {
-                ViewBag.Error = "Code onjuist: " + ex.Message;
-            }
-            return View();
-        }
-
         [HttpPost]
         public async Task<IActionResult> Verify(string username, string pincode) {
             string[] adminPincodes = { "3991", "0000", "1234", "admin" };
@@ -54,8 +20,7 @@ namespace VIP_Planning.Controllers {
                 HttpContext.Session.SetString("UserRole", "Admin");
                 return RedirectToAction("Index", "Home");
             }
-            // Hier kun je Supabase SignIn toevoegen voor gewone users
-            ViewBag.Error = "Inloggen mislukt.";
+            ViewBag.Error = "Inloggen mislukt. Gebruik een geldige code.";
             return View("Login");
         }
 
@@ -63,5 +28,8 @@ namespace VIP_Planning.Controllers {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }
+
+        [HttpGet] public IActionResult Register() => View();
+        [HttpGet] public IActionResult VerifyCode() => View();
     }
 }
