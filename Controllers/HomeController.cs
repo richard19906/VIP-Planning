@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using System;
 using System.Collections.Generic;
 
 namespace VIP_Planning.Controllers {
@@ -18,20 +19,14 @@ namespace VIP_Planning.Controllers {
         public IActionResult Instellingen() => View();
 
         [HttpPost]
-        public IActionResult SavePincode(string newPin) {
-            // Hier komt de database push voor de pincode
-            return RedirectToAction("Instellingen");
+        public IActionResult SavePlanning(string medewerker, string locatie, string datum, string uren) {
+            // Logica om naar Supabase 'planning' tabel te schrijven
+            return RedirectToAction("Planning");
         }
 
-        [HttpPost]
-        public IActionResult UpdatePassword(string oldPw, string newPw) {
-            // Hier komt de Supabase Auth update
-            return RedirectToAction("Instellingen");
-        }
-        
-        public IActionResult ExportPlanningPdf() {
-            // PDF Engine trigger
-            return File(new byte[0], "application/pdf", "VIP-Planning.pdf");
+        public IActionResult ExportUrenPdf(string naam) {
+            // PDF Engine trigger specifiek voor uren van een werknemer
+            return File(new byte[0], "application/pdf", $"Urenoverzicht-{naam}.pdf");
         }
     }
 }

@@ -1,15 +1,24 @@
 @{ Layout = "_Layout"; }
 <div class="container-fluid">
-    <h2 class="mb-5" style="font-weight:900; letter-spacing:3px;">👥 MEDEWERKERS BEHEER</h2>
-    <div class="row g-4">
-        <div class="col-md-4">
-            <a href="/Home/UrenOverzicht?naam=Richard" style="text-decoration:none;">
-                <div class="card p-4 text-center" style="background:rgba(10,10,10,0.95); border:2px solid #D4AF37; border-radius:20px; transition:0.3s;" onmouseover="this.style.boxShadow='0 0 20px #D4AF37'">
-                    <div style="font-size:3rem;">👤</div>
-                    <h3 style="color:#D4AF37; margin-top:15px; font-weight:bold;">RICHARD</h3>
-                    <p style="color:#fff !important;">Klik om uren in te zien</p>
-                </div>
-            </a>
-        </div>
+    <h2 class="mb-4" style="font-weight:900;">👥 WERKNEMERS BEHEER</h2>
+    <div class="card p-4" style="background:rgba(10,10,10,0.9); border:2px solid #D4AF37; border-radius:20px;">
+        <table class="table" style="color:#D4AF37 !important;">
+            <thead>
+                <tr>
+                    <th>VOORNAAM</th>
+                    <th>ACHTERNAAM</th>
+                    <th>EMAIL</th>
+                    <th>ACTIE</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Richard</td>
+                    <td>Janssen</td>
+                    <td>richard@vip-security.nl</td>
+                    <td><a href="/Home/UrenOverzicht?naam=Richard%20Janssen" class="btn btn-sm btn-gold">BEKIJK UREN</a></td>
+                </tr>
+            </tbody>
+        </table>
     </div>
 </div>

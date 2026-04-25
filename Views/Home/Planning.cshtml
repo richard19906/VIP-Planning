@@ -1,50 +1,31 @@
 @{ Layout = "_Layout"; }
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-weight:900; letter-spacing:3px;">📅 VIP PLANNING BEHEER</h2>
-        <div class="d-flex gap-2">
-            <button class="btn btn-outline-warning" onclick="location.href='/Home/ExportPlanningPdf'">📄 PDF EXPORT</button>
-            <button class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addModal">➕ NIEUWE DIENST</button>
-        </div>
+        <h2 style="font-weight:900;">📅 PLANNING</h2>
+        <button class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPlan">➕ NIEUWE PLANNING</button>
     </div>
-
     <div class="card p-0" style="background:rgba(10,10,10,0.9); border:2px solid #D4AF37; border-radius:20px; overflow:hidden;">
-        <table class="table table-dark table-hover mb-0" style="color:#D4AF37 !important; border-color: rgba(212,175,55,0.2);">
-            <thead style="background: rgba(212,175,55,0.1);">
-                <tr>
-                    <th class="p-3">DATUM</th>
-                    <th class="p-3">MEDEWERKER</th>
-                    <th class="p-3">LOCATIE</th>
-                    <th class="p-3">UREN</th>
-                    <th class="p-3">STATUS</th>
-                </tr>
+        <table class="table table-dark mb-0">
+            <thead>
+                <tr><th>DATUM</th><th>MEDEWERKER</th><th>LOCATIE</th><th>UREN</th></tr>
             </thead>
             <tbody>
-                <tr>
-                    <td class="p-3">25-04-2026</td>
-                    <td class="p-3">Richard</td>
-                    <td class="p-3">Elite Security Center</td>
-                    <td class="p-3">08:00 - 18:00</td>
-                    <td class="p-3"><span class="badge bg-success">GEPLAND</span></td>
-                </tr>
-            </tbody>
+                </tbody>
         </table>
     </div>
 </div>
 
-<div class="modal fade" id="addModal" tabindex="-1">
+<div class="modal fade" id="addPlan" tabindex="-1">
     <div class="modal-dialog">
-        <div class="modal-content" style="background:#000; border:2px solid #D4AF37; border-radius:20px;">
-            <div class="modal-header" style="border-bottom:1px solid #D4AF37;">
-                <h5 class="modal-title" style="color:#D4AF37;">Nieuwe Dienst Toevoegen</h5>
-            </div>
+        <form action="/Home/SavePlanning" method="post" class="modal-content" style="background:#000; border:2px solid #D4AF37;">
+            <div class="modal-header"><h5 style="color:#D4AF37;">Nieuwe Planning</h5></div>
             <div class="modal-body">
-                <input type="date" class="form-control mb-3" placeholder="Datum">
-                <input type="text" class="form-control mb-3" placeholder="Naam Medewerker">
-                <input type="text" class="form-control mb-3" placeholder="Locatie">
-                <input type="text" class="form-control mb-3" placeholder="Uren (00:00 - 00:00)">
-                <button class="btn btn-gold w-100">OPSLAAN NAAR SUPABASE</button>
+                <input type="date" name="datum" class="form-control mb-3" required>
+                <input type="text" name="medewerker" class="form-control mb-3" placeholder="Voor- en Achternaam" required>
+                <input type="text" name="locatie" class="form-control mb-3" placeholder="Locatie" required>
+                <input type="text" name="uren" class="form-control mb-3" placeholder="00:00 - 00:00" required>
+                <button type="submit" class="btn btn-gold w-100">OPSLAAN</button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
