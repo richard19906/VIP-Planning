@@ -2,63 +2,33 @@
 <html lang="nl">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>VIP Planning</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
-        body { background-color: #000 !important; color: #fff !important; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        
-        .sidebar { 
-            background-color: #000; 
-            border-right: 2px solid #D4AF37; 
-            height: 100vh; 
-            position: fixed; 
-            width: 250px; 
-            z-index: 1000; 
+        body { 
+            background: url('/images/glitter_bg.png') no-repeat center center fixed !important; 
+            background-size: cover !important; color: #fff !important; font-family: 'Segoe UI', sans-serif; margin: 0; 
         }
-
-        .main-content { margin-left: 250px; padding: 20px; }
-
-        .nav-link { 
-            color: #D4AF37 !important; 
-            font-weight: bold; 
-            text-decoration: none; 
-            padding: 15px 25px; 
-            display: block;
-            border-bottom: 1px solid #1a1a1a;
-        }
-        .nav-link:hover { background: #D4AF37; color: #000 !important; }
-
-        /* MOBIEL: Sidebar wordt bovenbalk */
-        @@media (max-width: 991px) {
-            .sidebar { position: relative !important; width: 100% !important; height: auto !important; border-right: none !important; border-bottom: 2px solid #D4AF37 !important; }
-            .main-content { margin-left: 0 !important; padding: 15px !important; }
-            .nav { flex-direction: row !important; justify-content: space-around !important; }
-            .nav-link { border-bottom: none !important; padding: 10px !important; font-size: 1.2rem !important; }
-            .link-text { display: none; } /* Op mobiel alleen icoontjes voor ruimte */
-        }
-
-        /* PC: Tekst weer tonen */
-        @@media (min-width: 992px) {
-            .link-text { display: inline !important; margin-left: 10px; }
-        }
+        .sidebar { background: rgba(0, 0, 0, 0.9); border-right: 2px solid #D4AF37; height: 100vh; position: fixed; width: 250px; }
+        .main-content { margin-left: 250px; padding: 20px; background: rgba(0,0,0,0.6); min-height: 100vh; }
+        .nav-link { color: #D4AF37 !important; font-weight: bold; margin: 10px 0; border-bottom: 1px solid rgba(212,175,55,0.1); }
+        .nav-link:hover { background: rgba(212,175,55,0.1); color: #fff !important; }
+        h1, h2, h3, h4, label, p, span { color: #D4AF37 !important; } /* Alles goud maken */
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <a class="navbar-brand text-center d-block py-3" href="/Home/Index" style="color:#D4AF37; font-weight:900; text-decoration:none; font-size: 1.5rem;">V.I.P SECURITY</a>
+    <div class="sidebar text-center">
+        <h3 class="py-4" style="letter-spacing:3px;">V.I.P</h3>
         <nav class="nav flex-column">
-            <a class="nav-link" href="/Home/Index">🏠 <span class="link-text">Dashboard</span></a>
-            <a class="nav-link" href="/Home/Planning">📅 <span class="link-text">Planning</span></a>
-            <a class="nav-link" href="/Home/Werknemers">👥 <span class="link-text">Personeel</span></a>
-            <a class="nav-link" href="/Home/Instellingen">⚙️ <span class="link-text">Instellingen</span></a>
-            <a class="nav-link text-danger" href="/Account/Logout">🚪 <span class="link-text">Uitloggen</span></a>
+            <a class="nav-link" href="/Home/Index">OVERZICHT</a>
+            <a class="nav-link" href="/Home/Planning">PLANNING</a>
+            <a class="nav-link" href="/Home/Werknemers">PERSONEEL</a>
+            <a class="nav-link" href="/Home/Instellingen">INSTELLINGEN</a>
+            <a class="nav-link" href="/Home/Instellingen" style="font-size: 0.8rem;">└ PINCODE WIJZIGEN</a>
+            <a class="nav-link text-danger mt-5" href="/Account/Logout">UITLOGGEN</a>
         </nav>
     </div>
-    <div class="main-content">
-        <div class="table-responsive">
-            @RenderBody()
-        </div>
-    </div>
+    <div class="main-content">@RenderBody()</div>
 </body>
 </html>
