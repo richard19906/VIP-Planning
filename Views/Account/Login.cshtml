@@ -6,27 +6,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { background: url('/images/glitter_bg.png') no-repeat center center fixed !important; background-size: cover !important; }
-        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.75); z-index: -1; }
-        .login-card { background: rgba(10, 10, 10, 0.9); border: 2px solid #D4AF37; border-radius: 30px; padding: 40px; width: 100%; max-width: 400px; backdrop-filter: blur(10px); }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: -1; }
+        .login-card { background: rgba(10, 10, 10, 0.9); border: 2px solid #D4AF37; border-radius: 30px; padding: 40px; width: 100%; max-width: 400px; backdrop-filter: blur(10px); box-shadow: 0 0 30px rgba(212,175,55,0.3); }
         .diamonds { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; }
         .diamond { position: absolute; background: #D4AF37; width: 3px; height: 3px; transform: rotate(45deg); animation: blink 4s infinite ease-in-out; }
-        @@keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; box-shadow: 0 0 10px #D4AF37; } }
+        @@keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
         .btn-gold { background: #D4AF37; color: #000; font-weight: 900; border: none; border-radius: 12px; padding: 12px; }
         .form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
-        a { color: #D4AF37 !important; text-decoration: none; font-weight: bold; }
+        a { color: #D4AF37 !important; text-decoration: none; font-weight: bold; font-size: 0.9rem; }
     </style>
 </head>
 <body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="overlay"></div>
     <div class="diamonds" id="diamondContainer"></div>
     <div class="login-card text-center">
-        <h1 style="color:#D4AF37; font-weight:900; letter-spacing:5px;">V.I.P</h1>
+        <h1 style="color:#D4AF37; font-weight:900; letter-spacing:8px;">V.I.P</h1>
         <form action="/Account/Verify" method="post" class="mt-4">
             <input type="text" name="username" class="form-control mb-3" placeholder="E-mail" required />
             <input type="password" name="pincode" class="form-control mb-4" placeholder="Wachtwoord" required />
             <button type="submit" class="btn btn-gold w-100">INLOGGEN</button>
         </form>
-        <div class="d-flex justify-content-between mt-3">
+        <div class="d-flex justify-content-between mt-4">
             <a href="/Account/Register">Account maken</a>
             <a href="/Account/ForgotPassword">Wachtwoord vergeten</a>
         </div>
@@ -36,8 +36,7 @@
         for (let i = 0; i < 50; i++) {
             const d = document.createElement('div');
             d.className = 'diamond';
-            d.style.left = Math.random() * 100 + '%';
-            d.style.top = Math.random() * 100 + '%';
+            d.style.left = Math.random() * 100 + '%'; d.style.top = Math.random() * 100 + '%';
             d.style.animationDelay = Math.random() * 5 + 's';
             container.appendChild(d);
         }
