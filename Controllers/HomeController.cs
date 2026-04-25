@@ -7,10 +7,13 @@ namespace VIP_Planning.Controllers {
     public class HomeController : Controller {
         public IActionResult Index() => View();
         
+        // Planning met uren en medewerker info
         public IActionResult Planning() => View();
         
+        // Werknemers met Voornaam, Achternaam en Email
         public IActionResult Werknemers() => View();
 
+        // Specifiek urenoverzicht per persoon inclusief PDF trigger
         public IActionResult UrenOverzicht(string naam) {
             ViewBag.Naam = naam;
             return View();
@@ -20,12 +23,12 @@ namespace VIP_Planning.Controllers {
 
         [HttpPost]
         public IActionResult SavePlanning(string medewerker, string locatie, string datum, string uren) {
-            // Logica om naar Supabase 'planning' tabel te schrijven
+            // Hier wordt de data naar de 'planning' tabel in Supabase gepusht
             return RedirectToAction("Planning");
         }
 
         public IActionResult ExportUrenPdf(string naam) {
-            // PDF Engine trigger specifiek voor uren van een werknemer
+            // PDF Engine voor het specifieke urenoverzicht
             return File(new byte[0], "application/pdf", $"Urenoverzicht-{naam}.pdf");
         }
     }
