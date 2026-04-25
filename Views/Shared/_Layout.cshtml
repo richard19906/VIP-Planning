@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,27 +7,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { 
-            background: url('/images/glitter_bg.png') no-repeat center center fixed !important; 
-            background-size: cover !important; color: #fff !important; font-family: 'Segoe UI', sans-serif; margin: 0; 
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
+            background-size: cover !important; 
+            color: #D4AF37 !important; 
         }
-        .sidebar { background: rgba(0, 0, 0, 0.95); border-right: 2px solid #D4AF37; height: 100vh; position: fixed; width: 250px; z-index: 100; }
-        .main-content { margin-left: 250px; padding: 20px; background: rgba(0,0,0,0.7); min-height: 100vh; }
-        .nav-link { color: #D4AF37 !important; font-weight: bold; margin: 5px 0; border-bottom: 1px solid rgba(212,175,55,0.1); padding: 12px; }
-        .nav-link:hover { background: rgba(212,175,55,0.1); color: #fff !important; }
-        h1, h2, h3, h4, h5, label, p, span, td, th { color: #D4AF37 !important; } 
-        .btn-gold { background: #D4AF37; color: #000; font-weight: bold; border-radius: 10px; }
+        .sidebar { background: rgba(0, 0, 0, 0.95) !important; border-right: 2px solid #D4AF37 !important; height: 100vh; position: fixed; width: 250px; }
+        .main-content { margin-left: 250px; padding: 30px; min-height: 100vh; }
+        .nav-link, h1, h2, h3, h4, label, td, th, span { color: #D4AF37 !important; font-weight: bold; }
+        .nav-link:hover { color: #fff !important; }
+        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: bold; border: none; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <h2 class="text-center py-4" style="letter-spacing:5px; font-weight:900;">V.I.P</h2>
+    <div class="sidebar text-center">
+        <h2 class="py-4">V.I.P</h2>
         <nav class="nav flex-column px-3">
             <a class="nav-link" href="/Home/Index">OVERZICHT</a>
             <a class="nav-link" href="/Home/Planning">PLANNING</a>
             <a class="nav-link" href="/Home/Werknemers">PERSONEEL</a>
             <a class="nav-link" href="/Home/Instellingen">INSTELLINGEN</a>
-            <a class="nav-link" href="/Home/Instellingen" style="font-size: 0.75rem; padding-left: 25px;">└ PINCODE WIJZIGEN</a>
-            <a class="nav-link text-danger mt-5" href="/Account/Logout" style="border:none;">UITLOGGEN</a>
+            <a class="nav-link" href="/Home/Instellingen" style="font-size: 0.7rem; padding-left: 20px;">└ PINCODE WIJZIGEN</a>
+            <a class="nav-link text-danger mt-5" href="/Account/Logout">UITLOGGEN</a>
         </nav>
     </div>
     <div class="main-content">@RenderBody()</div>
