@@ -7,29 +7,52 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { background-color: #000 !important; color: #fff !important; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
-        .sidebar { background-color: #000; border-right: 2px solid #D4AF37; height: 100vh; position: fixed; width: 250px; z-index: 1000; }
-        .main-content { margin-left: 250px; padding: 20px; }
         
-        /* De dubbele @@ is nodig in .cshtml bestanden voor CSS media queries */
+        .sidebar { 
+            background-color: #000; 
+            border-right: 2px solid #D4AF37; 
+            height: 100vh; 
+            position: fixed; 
+            width: 250px; 
+            z-index: 1000; 
+        }
+
+        .main-content { margin-left: 250px; padding: 20px; }
+
+        .nav-link { 
+            color: #D4AF37 !important; 
+            font-weight: bold; 
+            text-decoration: none; 
+            padding: 15px 25px; 
+            display: block;
+            border-bottom: 1px solid #1a1a1a;
+        }
+        .nav-link:hover { background: #D4AF37; color: #000 !important; }
+
+        /* MOBIEL: Sidebar wordt bovenbalk */
         @@media (max-width: 991px) {
-            .sidebar { position: relative !important; width: 100% !important; height: auto !important; border-right: none !important; border-bottom: 2px solid #D4AF37 !important; padding: 10px 0 !important; }
+            .sidebar { position: relative !important; width: 100% !important; height: auto !important; border-right: none !important; border-bottom: 2px solid #D4AF37 !important; }
             .main-content { margin-left: 0 !important; padding: 15px !important; }
             .nav { flex-direction: row !important; justify-content: space-around !important; }
+            .nav-link { border-bottom: none !important; padding: 10px !important; font-size: 1.2rem !important; }
+            .link-text { display: none; } /* Op mobiel alleen icoontjes voor ruimte */
         }
-        .nav-link { color: #D4AF37 !important; font-weight: bold; text-decoration: none; padding: 10px; }
+
+        /* PC: Tekst weer tonen */
+        @@media (min-width: 992px) {
+            .link-text { display: inline !important; margin-left: 10px; }
+        }
     </style>
 </head>
 <body>
     <div class="sidebar">
-        <a class="navbar-brand text-center d-block" href="/Home/Index" style="color:#D4AF37; font-weight:900; text-decoration:none; font-size: 1.5rem;">V.I.P SECURITY</a>
+        <a class="navbar-brand text-center d-block py-3" href="/Home/Index" style="color:#D4AF37; font-weight:900; text-decoration:none; font-size: 1.5rem;">V.I.P SECURITY</a>
         <nav class="nav flex-column">
-            <div class="d-flex flex-md-column justify-content-around">
-                <a class="nav-link" href="/Home/Index">🏠</a>
-                <a class="nav-link" href="/Home/Planning">📅</a>
-                <a class="nav-link" href="/Home/Werknemers">👥</a>
-                <a class="nav-link" href="/Home/Instellingen">⚙️</a>
-                <a class="nav-link text-danger" href="/Account/Logout">🚪</a>
-            </div>
+            <a class="nav-link" href="/Home/Index">🏠 <span class="link-text">Dashboard</span></a>
+            <a class="nav-link" href="/Home/Planning">📅 <span class="link-text">Planning</span></a>
+            <a class="nav-link" href="/Home/Werknemers">👥 <span class="link-text">Personeel</span></a>
+            <a class="nav-link" href="/Home/Instellingen">⚙️ <span class="link-text">Instellingen</span></a>
+            <a class="nav-link text-danger" href="/Account/Logout">🚪 <span class="link-text">Uitloggen</span></a>
         </nav>
     </div>
     <div class="main-content">
@@ -37,6 +60,5 @@
             @RenderBody()
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
