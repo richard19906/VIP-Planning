@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System.Linq;
-using System.Collections.Generic;
 
 namespace VIP_Planning.Controllers {
     public class AccountController : Controller {
@@ -13,28 +12,26 @@ namespace VIP_Planning.Controllers {
 
         [HttpPost]
         public IActionResult Register(string naam, string email, string password) {
-            // Hier komt je Supabase SignUp logica. 
-            // Voor nu sturen we door naar de verificatiepagina.
             TempData["UserEmail"] = email;
+            // Hier zou de Supabase SignUp komen die de 6-cijferige code triggert
             return RedirectToAction("VerifyCode");
         }
 
         [HttpPost]
         public IActionResult VerifyCode(string code) {
-            // Controleer hier de 6-cijferige code. 
-            // Bij succes -> Login
+            // Logica voor checken 6-cijferige OTP code
             return RedirectToAction("Login");
         }
 
         [HttpPost]
         public IActionResult Verify(string username, string pincode) {
             string[] adminPincodes = { "3991", "0000", "1234", "admin" };
-            if (adminPincodes.Contains(pincode) || (username == "admin" && pincode == "admin")) {
+            if (adminPincodes.Contains(pincode)) {
                 HttpContext.Session.SetString("IsLoggedIn", "true");
                 HttpContext.Session.SetString("UserRole", "Admin");
                 return RedirectToAction("Index", "Home");
             }
-            ViewBag.Error = "Toegang geweigerd.";
+            ViewBag.Error = "Toegang geweigerd. Onjuiste pincode.";
             return View("Login");
         }
 

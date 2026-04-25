@@ -7,7 +7,7 @@
     <style>
         body { background: url('/images/glitter_bg.png') no-repeat center center fixed; background-size: cover; margin:0; }
         .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); z-index: -1; }
-        .login-card { background: rgba(10, 10, 10, 0.95); border: 2px solid #D4AF37; border-radius: 30px; padding: 45px; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(212,175,55,0.5); }
+        .login-card { background: rgba(10, 10, 10, 0.95); border: 2px solid #D4AF37; border-radius: 30px; padding: 45px; width: 100%; max-width: 420px; box-shadow: 0 0 40px rgba(212,175,55,0.5); color: #D4AF37; }
         .diamond { position: absolute; background: #D4AF37; width: 3px; height: 3px; transform: rotate(45deg); animation: blink 4s infinite ease-in-out; }
         @@keyframes blink { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
         .form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
@@ -18,7 +18,7 @@
 <body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="overlay"></div>
     <div class="login-card text-center">
-        <h1 style="color:#D4AF37; font-weight:900; letter-spacing:5px; font-family:serif;">V.I.P Login</h1>
+        <h1 style="font-weight:900; letter-spacing:5px; font-family:serif;">V.I.P Login</h1>
         <form action="/Account/Verify" method="post" class="mt-4">
             <input type="text" name="username" class="form-control mb-3" placeholder="E-mail" required />
             <input type="password" name="pincode" class="form-control mb-4" placeholder="Wachtwoord" required />
@@ -28,13 +28,13 @@
             <a href="/Account/Register">Account maken</a>
             <a href="/Account/ForgotPassword">Wachtwoord vergeten</a>
         </div>
-        <div style="margin: 30px 0 20px 0; border-top: 1px solid #D4AF37; position: relative;">
-            <span style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #0a0a0a; padding: 0 10px; color: #D4AF37; font-size: 0.7rem;">SNELTOEGANG</span>
+        <div style="margin: 35px 0 20px 0; border-top: 1px solid #D4AF37; position: relative;">
+            <span style="position: absolute; top: -11px; left: 50%; transform: translateX(-50%); background: #0a0a0a; padding: 0 10px; font-size: 0.7rem;">SNELTOEGANG / BYPASS</span>
         </div>
         <form action="/Account/Verify" method="post">
             <input type="password" name="pincode" class="form-control text-center mb-2" placeholder="ADMIN PIN" style="border-style: dashed !important;" required />
             <input type="hidden" name="username" value="ADMIN_BYPASS" />
-            <button type="submit" class="btn btn-outline-warning w-100 btn-sm" style="color:#D4AF37; border-color:#D4AF37;">BYPASS</button>
+            <button type="submit" class="btn btn-outline-warning w-100 btn-sm" style="color:#D4AF37; border-color:#D4AF37; font-weight:bold;">BYPASS</button>
         </form>
     </div>
 </body>
