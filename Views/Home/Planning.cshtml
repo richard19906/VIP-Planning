@@ -1,7 +1,13 @@
 @{ Layout = "_Layout"; }
 <div class="container-fluid">
-    <h2 class="mb-4" style="font-weight:900; letter-spacing:3px;">📅 VOLLEDIGE PLANNING</h2>
-    <div class="card p-4" style="background:rgba(0,0,0,0.85); border:2px solid #D4AF37; border-radius:20px;">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 style="font-weight:900; letter-spacing:3px;">📅 VOLLEDIGE PLANNING</h2>
+        <a href="/Home/ExportPlanningPdf" class="btn btn-gold px-4 py-2">
+            📄 EXPORT PDF
+        </a>
+    </div>
+
+    <div class="card p-4" style="background:rgba(10,10,10,0.85); border:2px solid #D4AF37; border-radius:20px;">
         <table class="table" style="color:#D4AF37 !important;">
             <thead>
                 <tr style="border-bottom: 2px solid #D4AF37;">
