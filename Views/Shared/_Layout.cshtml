@@ -3,30 +3,30 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>VIP Planning</title>
+    <title>VIP Planning Elite</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { 
-            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
-            background-size: cover !important; color: #D4AF37 !important; font-family: 'Segoe UI', sans-serif; margin: 0;
+            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
+            background-size: cover !important; color: #D4AF37 !important; font-family: 'Segoe UI', sans-serif;
         }
         .sidebar { background: #000 !important; border-right: 2px solid #D4AF37 !important; height: 100vh; position: fixed; width: 250px; }
         .main-content { margin-left: 250px; padding: 40px; }
-        h1, h2, h3, h4, label, span, p, td, th { color: #D4AF37 !important; text-transform: uppercase; letter-spacing: 1px; }
-        .nav-link { color: #D4AF37 !important; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.1); font-weight: bold; }
+        h1, h2, h3, h4, th, td, label, p, span { color: #D4AF37 !important; }
+        .nav-link { color: #D4AF37 !important; padding: 15px 25px; border-bottom: 1px solid rgba(212,175,55,0.1); font-weight: bold; }
         .nav-link:hover { background: rgba(212,175,55,0.1); color: #fff !important; }
-        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: 900; border: none; border-radius: 0; padding: 15px; }
-        input.form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
+        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: 900; border: none; }
     </style>
 </head>
 <body>
     <div class="sidebar text-center">
-        <h1 class="py-5" style="letter-spacing:10px; font-size:1.5rem; border-bottom: 2px solid #D4AF37;">V.I.P</h1>
+        <h2 class="py-5" style="letter-spacing:10px; font-weight:900; border-bottom: 2px solid #D4AF37;">V.I.P</h2>
         <nav class="nav flex-column">
-            <a class="nav-link" href="/Home/Index">OVERZICHT</a>
-            <a class="nav-link" href="/Home/Planning">PLANNING</a>
-            <a class="nav-link" href="/Home/Instellingen">INSTELLINGEN</a>
-            <a class="nav-link text-danger mt-5" href="/Account/Logout">LOGOUT</a>
+            <a class="nav-link" href="/Home/Index">🏆 OVERZICHT</a>
+            <a class="nav-link" href="/Home/Planning">📅 PLANNING</a>
+            <a class="nav-link" href="/Home/Werknemers">👥 WERKNEMERS</a>
+            <a class="nav-link" href="/Home/Instellingen">⚙️ INSTELLINGEN</a>
+            <a class="nav-link text-danger mt-5" href="/Account/Logout">🔒 LOGOUT</a>
         </nav>
     </div>
     <div class="main-content">@RenderBody()</div>
