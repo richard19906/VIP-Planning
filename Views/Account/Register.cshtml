@@ -2,26 +2,56 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { background: url('/images/glitter_bg.png') no-repeat center center fixed; background-size: cover; color: #D4AF37; }
         .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: -1; }
-        .card { background: rgba(10,10,10,0.95); border: 2px solid #D4AF37; border-radius: 20px; padding: 35px; width: 100%; max-width: 400px; box-shadow: 0 0 30px #D4AF37; }
-        .form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
+        .card { background: rgba(10,10,10,0.95); border: 2px solid #D4AF37; border-radius: 20px; padding: 40px; width: 420px; box-shadow: 0 0 30px #D4AF37; }
+        .form-control { background: rgba(255,255,255,0.1) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
+        .feedback { font-size: 0.85rem; margin-top: -10px; margin-bottom: 15px; font-weight: bold; transition: 0.3s; }
+        .text-ok { color: #28a745 !important; } 
+        .text-fail { color: #dc3545 !important; }
     </style>
 </head>
 <body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="overlay"></div>
-    <div class="card text-center">
-        <h2 style="font-weight:900; letter-spacing:2px;">VIP REGISTREREN</h2>
-        <form action="/Account/Register" method="post" class="mt-4">
+    <div class="card">
+        <h2 class="text-center mb-4" style="letter-spacing:2px; font-weight:900;">VIP REGISTRATIE</h2>
+        <form action="/Account/Register" method="post" id="regForm">
             <input type="text" name="naam" class="form-control mb-3" placeholder="Volledige Naam" required />
             <input type="email" name="email" class="form-control mb-3" placeholder="E-mailadres" required />
-            <input type="password" name="password" class="form-control mb-4" placeholder="Wachtwoord" required />
-            <button type="submit" class="btn btn-gold w-100" style="background:#D4AF37; color:#000; font-weight:bold; border:none; padding:12px; border-radius:10px;">STUUR VERIFICATIECODE</button>
+            
+            <input type="password" id="pw" name="password" class="form-control mb-3" placeholder="Wachtwoord" required />
+            <div id="pw-feedback" class="feedback">Wachtwoord te kort (min. 8)</div>
+
+            <input type="password" id="pw-confirm" name="confirmPassword" class="form-control mb-3" placeholder="Bevestig Wachtwoord" required />
+            <div id="match-feedback" class="feedback">Wachtwoorden komen niet overeen</div>
+            
+            <button type="submit" class="btn w-100" style="background:#D4AF37; color:#000; font-weight:900; padding:12px; margin-top:10px;">ONTVANG VERIFICATIECODE</button>
         </form>
-        <div class="mt-3"><a href="/Account/Login" style="color:#D4AF37; text-decoration:none;">Terug naar inloggen</a></div>
     </div>
+
+    <script>
+        const pw = document.getElementById('pw');
+        const pwConfirm = document.getElementById('pw-confirm');
+        const pwF = document.getElementById('pw-feedback');
+        const matchF = document.getElementById('match-feedback');
+
+        pw.addEventListener('input', () => {
+            if(pw.value.length >= 8) {
+                pwF.textContent = 'Wachtwoord OK'; pwF.className = 'feedback text-ok';
+            } else {
+                pwF.textContent = 'Wachtwoord te kort (min. 8)'; pwF.className = 'feedback text-fail';
+            }
+        });
+
+        pwConfirm.addEventListener('input', () => {
+            if(pwConfirm.value === pw.value && pw.value !== "") {
+                matchF.textContent = 'Wachtwoorden komen overeen'; matchF.className = 'feedback text-ok';
+            } else {
+                matchF.textContent = 'Wachtwoorden komen niet overeen'; matchF.className = 'feedback text-fail';
+            }
+        });
+    </script>
 </body>
 </html>

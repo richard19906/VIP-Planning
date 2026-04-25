@@ -1,43 +1,17 @@
-@model dynamic
 @{ Layout = "_Layout"; }
-
-<div class="container-fluid py-4">
-    <h1 style="color:#D4AF37; font-weight:900; text-transform:uppercase; margin-bottom:30px;">⚙️ Instellingen & Beheer</h1>
-
-    <div class="row g-4">
+<div class="container mt-5">
+    <h2 style="color:#D4AF37; font-weight:900; letter-spacing:2px;">⚙️ Instellingen & Beheer</h2>
+    <hr style="border-color:#D4AF37;">
+    
+    <div class="row mt-4">
         <div class="col-md-6">
-            <div style="background:#0f0f0f; border:1px solid #D4AF37; border-radius:20px; padding:25px; height:100%;">
-                <h4 style="color:#D4AF37;">👤 Accountgegevens</h4>
-                <p class="text-white-50">Beheer je toegang tot het systeem.</p>
-                <hr style="border-color:#333;">
-                <div class="mb-3">
-                    <label class="text-white-50 d-block">Huidig Wachtwoord</label>
-                    <span class="text-white fw-bold">*********</span>
-                </div>
-                <a href="/Account/Logout" class="btn btn-outline-danger fw-bold w-100">AFMELDEN / UITLOGGEN</a>
-            </div>
-        </div>
-
-        <div class="col-md-6">
-            <div style="background:#0f0f0f; border:1px solid #D4AF37; border-radius:20px; padding:25px; height:100%;">
-                <h4 style="color:#D4AF37;">💻 Systeem Status</h4>
-                <p class="text-white-50">Informatie over de actuele versie.</p>
-                <hr style="border-color:#333;">
-                <ul class="list-unstyled text-white">
-                    <li class="mb-2">✅ Database: <span class="text-success">Verbonden (Supabase)</span></li>
-                    <li class="mb-2">✅ PDF Engine: <span class="text-success">iTextSharp Actief</span></li>
-                    <li class="mb-2">✅ Versie: <span class="text-secondary">2.1 (VIP Dashboard)</span></li>
-                </ul>
-            </div>
-        </div>
-    </div>
-
-    <div class="mt-4">
-        <div style="background:#0f0f0f; border:1px solid #D4AF37; border-radius:20px; padding:25px;">
-            <h4 style="color:#D4AF37;">🛠️ Snelle Acties</h4>
-            <div class="d-flex gap-3 mt-3">
-                <a href="/Home/Werknemers" class="btn btn-warning fw-bold" style="background:#D4AF37; color:black; border:none;">PERSONEEL BEHEREN</a>
-                <a href="/Home/Planning" class="btn btn-outline-warning fw-bold">PLANNING OPENEN</a>
+            <div class="p-4" style="background: rgba(10,10,10,0.8); border: 2px solid #D4AF37; border-radius: 20px;">
+                <h4 style="color:#D4AF37; margin-bottom:20px;">Toegangscode (Pincode)</h4>
+                <p class="small text-white-50">Stel hier een 4-cijferige pincode in voor de snelle admin-bypass op het inlogscherm.</p>
+                <form action="/Home/SavePincode" method="post">
+                    <input type="password" name="newPin" class="form-control mb-3 text-center" placeholder="Nieuwe 4-cijferige pincode" maxlength="4" style="background:rgba(255,255,255,0.05); border:1px solid #D4AF37; color:#fff; font-size:1.5rem;">
+                    <button type="submit" class="btn w-100" style="background:#D4AF37; color:#000; font-weight:bold;">PINCODE OPSLAAN</button>
+                </form>
             </div>
         </div>
     </div>
