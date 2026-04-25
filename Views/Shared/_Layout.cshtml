@@ -9,7 +9,9 @@
         body { background-color: #000 !important; color: #fff !important; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; }
         .sidebar { background-color: #000; border-right: 2px solid #D4AF37; height: 100vh; position: fixed; width: 250px; z-index: 1000; }
         .main-content { margin-left: 250px; padding: 20px; }
-        @media (max-width: 991px) {
+        
+        /* De dubbele @@ is nodig in .cshtml bestanden voor CSS media queries */
+        @@media (max-width: 991px) {
             .sidebar { position: relative !important; width: 100% !important; height: auto !important; border-right: none !important; border-bottom: 2px solid #D4AF37 !important; padding: 10px 0 !important; }
             .main-content { margin-left: 0 !important; padding: 15px !important; }
             .nav { flex-direction: row !important; justify-content: space-around !important; }
@@ -20,12 +22,14 @@
 <body>
     <div class="sidebar">
         <a class="navbar-brand text-center d-block" href="/Home/Index" style="color:#D4AF37; font-weight:900; text-decoration:none; font-size: 1.5rem;">V.I.P SECURITY</a>
-        <nav class="nav flex-column flex-md-row justify-content-center">
-            <a class="nav-link" href="/Home/Index">🏠</a>
-            <a class="nav-link" href="/Home/Planning">📅</a>
-            <a class="nav-link" href="/Home/Werknemers">👥</a>
-            <a class="nav-link" href="/Home/Instellingen">⚙️</a>
-            <a class="nav-link text-danger" href="/Account/Logout">🚪</a>
+        <nav class="nav flex-column">
+            <div class="d-flex flex-md-column justify-content-around">
+                <a class="nav-link" href="/Home/Index">🏠</a>
+                <a class="nav-link" href="/Home/Planning">📅</a>
+                <a class="nav-link" href="/Home/Werknemers">👥</a>
+                <a class="nav-link" href="/Home/Instellingen">⚙️</a>
+                <a class="nav-link text-danger" href="/Account/Logout">🚪</a>
+            </div>
         </nav>
     </div>
     <div class="main-content">
