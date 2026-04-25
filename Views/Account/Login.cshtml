@@ -15,7 +15,9 @@
         .form-control:focus { border-color: #D4AF37 !important; box-shadow: none; }
         .divider { border-top: 1px solid #333; margin: 25px 0; position: relative; }
         .divider span { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0f0f0f; padding: 0 15px; color: #D4AF37; font-size: 0.8rem; font-weight: bold; }
-        .admin-bypass { background: rgba(212, 175, 55, 0.05); border: 1px dashed #D4AF37; border-radius: 15px; padding: 20px; }
+        .admin-bypass { background: rgba(212, 175, 55, 0.05); border: 1px dashed #D4AF37; border-radius: 15px; padding: 20px; margin-bottom: 20px; }
+        .extra-links a { color: #888; text-decoration: none; font-size: 0.85rem; transition: 0.3s; }
+        .extra-links a:hover { color: #D4AF37; }
     </style>
 </head>
 <body>
@@ -33,6 +35,11 @@
             </div>
             <button type="submit" class="btn btn-gold w-100">INLOGGEN</button>
         </form>
+
+        <div class="extra-links d-flex justify-content-between mt-3">
+            <a href="/Account/Register">Account maken</a>
+            <a href="/Account/ForgotPassword">Wachtwoord vergeten?</a>
+        </div>
 
         <div class="divider"><span>OF SNELLE TOEGANG</span></div>
 
