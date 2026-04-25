@@ -1,38 +1,45 @@
-@model List<VIP_Planning.Models.PlanningModel>
+@model List<VIP_Planning.Models.UrenModel>
 @{ Layout = "_Layout"; }
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-weight:900;">📊 URENVERANTWOORDING: @ViewBag.Naam</h2>
-        <a href="/Home/ExportUrenPdf?naam=@ViewBag.Naam" class="btn btn-gold">📄 EXPORT PDF</a>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>📊 UREN: @ViewBag.Naam</h2>
+    <a href="/Home/ExportUrenPdf?email=@ViewBag.Email&naam=@ViewBag.Naam&maand=@ViewBag.GeselecteerdeMaand" class="btn btn-gold">📄 PDF EXPORT</a>
+</div>
+
+<div class="d-flex justify-content-center mb-4">
+    <div class="btn-group">
+        @foreach(var m in (List<string>)ViewBag.Maanden) {
+            <a href="/Home/UrenOverzicht?email=@ViewBag.Email&naam=@ViewBag.Naam&maand=@m" 
+               class="btn @(ViewBag.GeselecteerdeMaand == m ? "btn-gold" : "btn-outline-warning")">@m.ToUpper()</a>
+        }
     </div>
-    <div class="card p-0" style="background:rgba(10,10,10,0.9); border:2px solid #D4AF37; border-radius:20px; overflow:hidden;">
-        <table class="table table-dark table-hover mb-0">
-            <thead>
+</div>
+
+<div class="card bg-black border-warning overflow-hidden">
+    <table class="table table-dark mb-0">
+        <thead>
+            <tr class="text-gold"><th>DATUM</th><th>LOCATIE</th><th>UREN</th><th>ACTIE</th></tr>
+        </thead>
+        <tbody>
+            @foreach(var item in Model) {
                 <tr>
-                    <th class="p-3">DATUM</th>
-                    <th class="p-3">LOCATIE</th>
-                    <th class="p-3">UREN</th>
-                    <th class="p-3">TOESLAG</th>
+                    <td>@item.DatumString</td>
+                    <td>@item.Locatie</td>
+                    <td style="font-weight:bold;">@item.DisplayUren</td>
+                    <td>
+                        @if(!item.IsUitbetaald) {
+                            <form action="/Home/MarkeerAlsBetaald" method="post" style="display:inline;">
+                                <input type="hidden" name="id" value="@item.Id" />
+                                <input type="hidden" name="email" value="@ViewBag.Email" />
+                                <input type="hidden" name="naam" value="@ViewBag.Naam" />
+                                <input type="hidden" name="maand" value="@ViewBag.GeselecteerdeMaand" />
+                                <button type="submit" class="btn btn-sm btn-gold">UITBETALEN</button>
+                            </form>
+                        } else {
+                            <span class="badge border border-success text-success">VERWERKT</span>
+                        }
+                    </td>
                 </tr>
-            </thead>
-            <tbody>
-                @if (Model != null && Model.Any()) {
-                    foreach (var item in Model) {
-                        <tr>
-                            <td class="p-3">@item.Datum</td>
-                            <td class="p-3">@item.Locatie</td>
-                            <td class="p-3">@item.Uren</td>
-                            <td class="p-3">
-                                @if(item.Uren.Contains("*")) { <span class="text-warning">125% (*)</span> }
-                                else if(item.Uren.Contains("**")) { <span class="text-danger">150% (**)</span> }
-                                else { <span>100%</span> }
-                            </td>
-                        </tr>
-                    }
-                } else {
-                    <tr><td colspan="4" class="p-4 text-center">Geen data gevonden in Supabase.</td></tr>
-                }
-            </tbody>
-        </table>
-    </div>
+            }
+        </tbody>
+    </table>
 </div>

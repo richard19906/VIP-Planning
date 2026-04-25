@@ -1,23 +1,42 @@
 using Postgrest.Attributes;
 using Postgrest.Models;
+using Newtonsoft.Json;
 using System;
 
 namespace VIP_Planning.Models {
+    [Table("uren")] 
+    public class UrenModel : BaseModel {
+        [PrimaryKey("id", false)] public int Id { get; set; }
+        [Column("user_email")] public string UserEmail { get; set; } = "";
+        [Column("datum_string")] public string DatumString { get; set; } = "";
+        [Column("locatie")] public string Locatie { get; set; } = "";
+        [Column("uren")] public double Uren { get; set; }
+        [Column("periode_naam")] public string PeriodeNaam { get; set; } = "";
+        [Column("is_uitbetaald")] public bool IsUitbetaald { get; set; }
+
+        [JsonIgnore] public string Status => IsUitbetaald ? "BETAALD" : "OPEN";
+        [JsonIgnore] public double AantalUren => (Uren < 0) ? 0 : Uren;
+        [JsonIgnore] public string DisplayUren => IsUitbetaald ? "✅" : AantalUren.ToString();
+        
+        [JsonIgnore]
+        public int MaandVolgorde => PeriodeNaam switch {
+            "Jan" => 1, "Feb" => 2, "Mrt" => 3, "Apr" => 4, "Mei" => 5, "Jun" => 6,
+            "Jul" => 7, "Aug" => 8, "Sep" => 9, "Okt" => 10, "Nov" => 11, "Dec" => 12, _ => 99
+        };
+    }
+
     [Table("planning")]
     public class PlanningModel : BaseModel {
         [PrimaryKey("id", false)] public int Id { get; set; }
-        [Column("medewerker")] public string Medewerker { get; set; } = "";
-        [Column("locatie")] public string Locatie { get; set; } = "";
+        [Column("user_email")] public string UserEmail { get; set; } = "";
         [Column("datum")] public string Datum { get; set; } = "";
-        [Column("uren")] public string Uren { get; set; } = "";
+        [Column("locatie")] public string Locatie { get; set; } = "";
+        [Column("uren")] public double Uren { get; set; }
     }
 
-    [Table("profiles")]
+    [Table("profielen")]
     public class ProfielModel : BaseModel {
-        [PrimaryKey("id", false)] public Guid Id { get; set; }
-        [Column("email")] public string Email { get; set; } = "";
-        [Column("voornaam")] public string Voornaam { get; set; } = "";
-        [Column("achternaam")] public string Achternaam { get; set; } = "";
-        [Column("pincode")] public string Pincode { get; set; } = "";
+        [PrimaryKey("email", false)] public string Email { get; set; } = "";
+        [Column("naam")] public string Naam { get; set; } = ""; 
     }
 }

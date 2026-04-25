@@ -4,18 +4,29 @@ using Microsoft.AspNetCore.Http;
 namespace VIP_Planning.Controllers {
     public class AccountController : Controller {
         [HttpGet] public IActionResult Login() => View();
-        [HttpGet] public IActionResult Register() => View();
-        [HttpGet] public IActionResult VerifyCode() => View();
+        
+        [HttpPost]
+        public IActionResult Login(string username) {
+            if (!string.IsNullOrEmpty(username)) {
+                TempData["Username"] = username;
+                return RedirectToAction("VerifyCode");
+            }
+            return View();
+        }
+
+        [HttpGet] public IActionResult VerifyCode() {
+            ViewBag.Username = TempData["Username"];
+            return View();
+        }
 
         [HttpPost]
-        public IActionResult Verify(string username, string pincode) {
+        public IActionResult Verify(string pincode) {
             // De vertrouwde bypass codes
-            string[] bypassCodes = { "3991", "0000", "1234", "admin" };
-            if (bypassCodes.Contains(pincode)) {
+            if (pincode == "3991" || pincode == "0000") {
                 HttpContext.Session.SetString("IsLoggedIn", "true");
                 return RedirectToAction("Index", "Home");
             }
-            return View("Login");
+            return RedirectToAction("Login");
         }
 
         public IActionResult Logout() {

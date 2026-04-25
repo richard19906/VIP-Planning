@@ -1,37 +1,33 @@
 @{ Layout = "_Layout"; }
-<div class="container py-5">
-    <h1 style="font-weight:900; color:#D4AF37; text-transform:uppercase; font-size:3rem; margin-bottom:30px; text-shadow: 0 0 10px rgba(212,175,55,0.3);">💎 VIP DASHBOARD</h1>
-    
-    <div class="row g-4 mb-5">
-        <div class="col-md-4">
-            <div class="card bg-dark text-white p-4" style="border: 1px solid #D4AF37; border-radius:20px; background:linear-gradient(145deg, #1a1a1a, #000); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                <h5 style="color:#D4AF37; text-transform:uppercase; font-size:0.8rem; font-weight:700; letter-spacing:1px;">Medewerkers</h5>
-                <h2 style="color:white; font-weight:900; font-size:2.5rem;">@ViewBag.TotaalWerknemers</h2>
-                <a href="/Home/Werknemers" class="btn btn-outline-warning btn-sm mt-3 fw-bold" style="border-color:#D4AF37; color:#D4AF37;">BEKIJK LIJST</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark text-white p-4" style="border: 1px solid #D4AF37; border-radius:20px; background:linear-gradient(145deg, #1a1a1a, #000); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                <h5 style="color:#D4AF37; text-transform:uppercase; font-size:0.8rem; font-weight:700; letter-spacing:1px;">Openstaande Planningen</h5>
-                <h2 style="color:white; font-weight:900; font-size:2.5rem;">@ViewBag.OpenstaandeDiensten</h2>
-                <a href="/Home/Planning" class="btn btn-outline-warning btn-sm mt-3 fw-bold" style="border-color:#D4AF37; color:#D4AF37;">NAAR PLANNING</a>
-            </div>
-        </div>
-        <div class="col-md-4">
-            <div class="card bg-dark text-white p-4" style="border: 1px solid #D4AF37; border-radius:20px; background:linear-gradient(145deg, #1a1a1a, #000); box-shadow: 0 10px 20px rgba(0,0,0,0.5);">
-                <h5 style="color:#D4AF37; text-transform:uppercase; font-size:0.8rem; font-weight:700; letter-spacing:1px;">Systeem Status</h5>
-                <h2 style="color:#00ff00; font-weight:900; font-size:2.5rem; text-shadow: 0 0 10px rgba(0,255,0,0.2);">ONLINE</h2>
-                <p style="color:white; font-size:0.8rem; font-weight:500;">Cloudverbinding Actief</p>
-            </div>
-        </div>
+<div class="container-fluid">
+    <div class="mb-5">
+        <h1 style="color:#D4AF37; font-size: 3.5rem; font-weight:900;">WELCOME V.I.P ELITE</h1>
+        <p class="text-white-50">Kies een module om het systeem te beheren.</p>
     </div>
 
-    <div class="row">
-        <div class="col-12 text-center text-md-start">
-            <h4 style="color:white; font-weight:900; text-transform:uppercase; letter-spacing:2px; margin-bottom:25px;">Snelmenu</h4>
-            <div class="d-flex flex-column flex-md-row gap-3">
-                <a href="/Home/Planning" class="btn btn-warning p-4 fw-bold shadow" style="background:#D4AF37; color:black; border:none; border-radius:15px; flex:1; font-size:1.2rem;">📅 NIEUWE DIENST PLANNEN</a>
-                <a href="/Home/Werknemers" class="btn btn-dark p-4 fw-bold border border-warning shadow" style="background:transparent; border-color:#D4AF37; border-width:2px; border-radius:15px; flex:1; font-size:1.2rem; color:#D4AF37;">👥 UREN CONTROLEREN</a>
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">📅</div>
+                <h3 style="color:#D4AF37;">Planning</h3>
+                <p class="text-white-50">Beheer het rooster en voeg nieuwe diensten toe.</p>
+                <a href="/Home/Planning" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">OPEN PLANNING</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">👥</div>
+                <h3 style="color:#D4AF37;">Werknemers</h3>
+                <p class="text-white-50">Bekijk urenoverzichten en profielen van personeel.</p>
+                <a href="/Home/Werknemers" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">BEHEER TEAM</a>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">⚙️</div>
+                <h3 style="color:#D4AF37;">Instellingen</h3>
+                <p class="text-white-50">Bekijk systeemstatus en configuratie.</p>
+                <a href="/Home/Instellingen" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">CONFIGURATIE</a>
             </div>
         </div>
     </div>

@@ -1,37 +1,45 @@
+@model List<VIP_Planning.Models.UrenModel>
 @{ Layout = "_Layout"; }
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h2 style="font-weight:900;">📅 PLANNING OVERZICHT</h2>
-        <button class="btn btn-gold" data-bs-toggle="modal" data-bs-target="#addPlan">➕ NIEUWE DIENST</button>
-    </div>
-    <div class="card p-0" style="background:rgba(10,10,10,0.9); border:2px solid #D4AF37; border-radius:20px; overflow:hidden;">
-        <table class="table table-dark table-hover mb-0">
-            <thead>
-                <tr><th>DATUM</th><th>MEDEWERKER</th><th>LOCATIE</th><th>UREN</th></tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>25-04-2026</td>
-                    <td>Richard Janssen</td>
-                    <td>Main Event Hall</td>
-                    <td>08:00 - 17:00</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
+<style>
+    .vip-input { background: #000 !important; color: #FFF !important; border: 2px solid #D4AF37 !important; font-weight: bold; }
+    .vip-label { color: #D4AF37 !important; font-weight: 900; text-transform: uppercase; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
+</style>
+
+<h2 class="mb-4" style="color:#D4AF37; font-weight:900;">📅 ROOSTER BOUWEN</h2>
+
+<div class="card p-4 shadow mb-4" style="background: rgba(10,10,10,0.9); border: 2px solid #D4AF37; border-radius:15px;">
+    <form action="/Home/OpslaanLokaal" method="post" class="row g-3">
+        <div class="col-md-3">
+            <label class="vip-label small">WERKNEMER</label>
+            <select name="UserEmail" class="form-select vip-input" required>
+                <option value="">-- KIES --</option>
+                @foreach(var w in (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers) {
+                    <option value="@w.Email">@w.Naam</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-3"><label class="vip-label small">DATUM</label><input name="DatumString" class="form-control vip-input" type="date" required /></div>
+        <div class="col-md-3"><label class="vip-label small">LOCATIE</label><input name="Locatie" class="form-control vip-input" required /></div>
+        <div class="col-md-1"><label class="vip-label small">UREN</label><input name="Uren" type="number" step="0.1" class="form-control vip-input" required /></div>
+        <div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-outline-warning w-100 font-weight-bold">💾 OPSLAAN</button></div>
+    </form>
 </div>
 
-<div class="modal fade" id="addPlan" tabindex="-1">
-    <div class="modal-dialog">
-        <form action="/Home/SavePlanning" method="post" class="modal-content" style="background:#000; border:2px solid #D4AF37;">
-            <div class="modal-header border-0"><h5 style="color:#D4AF37;">Nieuwe Planning Toevoegen</h5></div>
-            <div class="modal-body">
-                <input type="date" name="datum" class="form-control mb-3" required>
-                <input type="text" name="medewerker" class="form-control mb-3" placeholder="Voor- en achternaam" required>
-                <input type="text" name="locatie" class="form-control mb-3" placeholder="Locatie" required>
-                <input type="text" name="uren" class="form-control mb-3" placeholder="Tijden (bijv. 09:00 - 18:00)" required>
-                <button type="submit" class="btn btn-gold w-100">OPSLAAN IN SUPABASE</button>
-            </div>
-        </form>
+@if(Model != null && Model.Count > 0) {
+    <div class="card p-3 border-warning bg-black">
+        <h5 class="text-gold mb-3">CONCEPT ROOSTER (@Model.Count regels)</h5>
+        <table class="table table-dark table-hover">
+            <thead><tr class="text-gold"><th>DATUM</th><th>LOCATIE</th><th>EMAIL</th><th>UREN</th><th></th></tr></thead>
+            <tbody>
+                @for(int i = 0; i < Model.Count; i++) {
+                    <tr>
+                        <td>@Model[i].DatumString</td><td>@Model[i].Locatie</td><td>@Model[i].UserEmail</td><td>@Model[i].Uren</td>
+                        <td><form action="/Home/VerwijderConcept" method="post"><input type="hidden" name="index" value="@i" /><button type="submit" class="btn btn-sm btn-outline-danger">✖</button></form></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        <form action="/Home/PushNaarDatabase" method="post"><button type="submit" class="btn btn-gold w-100 py-3 mt-2" style="background:#D4AF37; color:#000; font-weight:900;">🚀 PUSH NAAR SUPABASE & APP</button></form>
     </div>
-</div>
+}
