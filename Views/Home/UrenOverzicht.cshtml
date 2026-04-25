@@ -11,7 +11,8 @@
                 <tr>
                     <th class="p-3">DATUM</th>
                     <th class="p-3">LOCATIE</th>
-                    <th class="p-3">UREN (Systeem)</th>
+                    <th class="p-3">UREN</th>
+                    <th class="p-3">TOESLAG</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,13 +22,17 @@
                             <td class="p-3">@item.Datum</td>
                             <td class="p-3">@item.Locatie</td>
                             <td class="p-3">@item.Uren</td>
+                            <td class="p-3">
+                                @if(item.Uren.Contains("*")) { <span class="text-warning">125% (*)</span> }
+                                else if(item.Uren.Contains("**")) { <span class="text-danger">150% (**)</span> }
+                                else { <span>100%</span> }
+                            </td>
                         </tr>
                     }
                 } else {
-                    <tr><td colspan="3" class="p-4 text-center text-white">Geen uren gevonden in Supabase voor deze VIP.</td></tr>
+                    <tr><td colspan="4" class="p-4 text-center">Geen data gevonden in Supabase.</td></tr>
                 }
             </tbody>
         </table>
     </div>
-    <button class="btn btn-outline-warning mt-4" onclick="history.back()">TERUG NAAR WERKNEMERS</button>
 </div>
