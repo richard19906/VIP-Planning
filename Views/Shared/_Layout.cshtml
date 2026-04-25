@@ -7,38 +7,26 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { 
-            background: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
-            background-size: cover !important; color: #D4AF37 !important; font-family: 'Segoe UI', sans-serif; 
+            background: linear-gradient(rgba(0,0,0,0.9), rgba(0,0,0,0.9)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
+            background-size: cover !important; color: #D4AF37 !important; font-family: 'Segoe UI', sans-serif; margin: 0;
         }
-        .sidebar { background: rgba(0, 0, 0, 0.98) !important; border-right: 2px solid #D4AF37 !important; height: 100vh; position: fixed; width: 250px; z-index: 1000; }
-        .main-content { margin-left: 250px; padding: 30px; min-height: 100vh; background: rgba(0,0,0,0.4); }
-        
-        /* Elite Goud & Wit - GEEN GRIJS */
-        h1, h2, h3, h4, h5, label, p, span, div, td, th, small, input, a, li { 
-            color: #D4AF37 !important; 
-            text-shadow: 0 0 1px rgba(212,175,55,0.2);
-        }
-        
-        /* Overschrijf alle bootstrap grijstinten */
-        .text-white-50, .text-muted, .small, .text-secondary { color: #ffffff !important; opacity: 1 !important; font-weight: normal; }
-        
-        .nav-link { color: #D4AF37 !important; font-weight: bold; padding: 18px; border-bottom: 1px solid rgba(212,175,55,0.1); transition: 0.3s; }
-        .nav-link:hover { background: rgba(212,175,55,0.15); color: #fff !important; padding-left: 25px; }
-        
-        .btn-gold { background: linear-gradient(135deg, #D4AF37, #F5E08F) !important; color: #000 !important; font-weight: 900; border: none; border-radius: 12px; }
-        input.form-control { background: rgba(255,255,255,0.08) !important; border: 1px solid #D4AF37 !important; color: #fff !important; border-radius: 10px; }
-        input::placeholder { color: rgba(212,175,55,0.4) !important; }
+        .sidebar { background: #000 !important; border-right: 2px solid #D4AF37 !important; height: 100vh; position: fixed; width: 250px; }
+        .main-content { margin-left: 250px; padding: 40px; }
+        h1, h2, h3, h4, label, span, p, td, th { color: #D4AF37 !important; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-link { color: #D4AF37 !important; padding: 20px; border-bottom: 1px solid rgba(212,175,55,0.1); font-weight: bold; }
+        .nav-link:hover { background: rgba(212,175,55,0.1); color: #fff !important; }
+        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: 900; border: none; border-radius: 0; padding: 15px; }
+        input.form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
     </style>
 </head>
 <body>
     <div class="sidebar text-center">
-        <h2 class="py-4" style="letter-spacing:8px; font-weight:900; color:#D4AF37;">V.I.P</h2>
-        <nav class="nav flex-column px-0">
-            <a class="nav-link" href="/Home/Index">🏆 OVERZICHT</a>
-            <a class="nav-link" href="/Home/Planning">📅 PLANNING</a>
-            <a class="nav-link" href="/Home/Werknemers">👥 PERSONEEL</a>
-            <a class="nav-link" href="/Home/Instellingen">⚙️ INSTELLINGEN</a>
-            <a class="nav-link text-danger mt-5" href="/Account/Logout" style="border:none; color:#ff4444 !important; font-size: 0.9rem;">🔒 LOGOUT</a>
+        <h1 class="py-5" style="letter-spacing:10px; font-size:1.5rem; border-bottom: 2px solid #D4AF37;">V.I.P</h1>
+        <nav class="nav flex-column">
+            <a class="nav-link" href="/Home/Index">OVERZICHT</a>
+            <a class="nav-link" href="/Home/Planning">PLANNING</a>
+            <a class="nav-link" href="/Home/Instellingen">INSTELLINGEN</a>
+            <a class="nav-link text-danger mt-5" href="/Account/Logout">LOGOUT</a>
         </nav>
     </div>
     <div class="main-content">@RenderBody()</div>

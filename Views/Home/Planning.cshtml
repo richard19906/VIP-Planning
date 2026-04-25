@@ -1,148 +1,24 @@
-@model List<VIP_Planning.Models.PlanningModel>
-@{ 
-    Layout = "_Layout"; 
-    var medewerkers = ViewBag.Medewerkers as List<VIP_Planning.Models.ProfielModel> ?? new List<VIP_Planning.Models.ProfielModel>();
-}
-
-<style>
-    label { color: #D4AF37 !important; font-weight: bold; }
-    h5 { color: white !important; font-weight: bold; }
-    .form-control, .form-select { background-color: #000 !important; color: white !important; border: 1px solid #444 !important; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
-</style>
-
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 style="font-weight:900; color:#D4AF37; text-transform:uppercase;">📅 Planning Beheer</h1>
-        @if (Model.Any(x => !x.IsGepusht)) {
-            <form action="/Home/PushAlles" method="post">
-                <button type="submit" class="btn" style="background:#D4AF37; color:black; font-weight:900; border-radius:10px;">🚀 PUSH NAAR APP (@Model.Count(x => !x.IsGepusht))</button>
-            </form>
-        }
-    </div>
-
-    <div class="card mb-5" style="background: #0f0f0f; border: 1px solid #D4AF37; border-radius: 15px;">
-        <div class="card-body">
-            <h5 id="form-title">Dienst Invoeren</h5>
-            <form id="planning-form" action="/Home/OpslaanPlanning" method="post" class="row g-3">
-                <input type="hidden" name="id" id="edit-id" />
-                <div class="col-md-3">
-                    <label class="small">MEDEWERKER</label>
-                    <select name="email" id="edit-email" class="form-select">
-                        @foreach(var m in medewerkers) { <option value="@m.Email">@m.Naam</option> }
-                    </select>
-                </div>
-                <div class="col-md-3">
-                    <label class="small">DATUM</label>
-                    <input type="date" name="datum" id="edit-datum" class="form-control" required>
-                </div>
-                <div class="col-md-3">
-                    <label class="small">LOCATIE</label>
-                    <input type="text" name="locatie" id="edit-locatie" class="form-control" placeholder="..." required>
-                </div>
-                <div class="col-md-1">
-                    <label class="small">UREN</label>
-                    <input type="number" step="0.5" name="uren" id="edit-uren" class="form-control" required>
-                </div>
-                <div class="col-md-2 d-flex align-items-end">
-                    <button type="submit" id="submit-btn" class="btn btn-warning w-100 fw-bold" style="background:#D4AF37; color:black;">💾 OPSLAAN</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <div class="table-responsive">
-        <table class="table table-dark align-middle">
-            <thead style="border-bottom: 2px solid #D4AF37;">
-                <tr style="color:#D4AF37; text-transform:uppercase; font-size:0.8rem;">
-                    <th>Naam</th><th>Datum</th><th>Locatie</th><th>Uren</th><th class="text-end">Acties</th>
+@{ Layout = "_Layout"; }
+<div class="container">
+    <h2 class="mb-5" style="font-weight:900; letter-spacing:3px;">📅 VIP PLANNING</h2>
+    <div class="card p-4" style="background:rgba(0,0,0,0.8); border:2px solid #D4AF37;">
+        <table class="table" style="color:#D4AF37;">
+            <thead>
+                <tr>
+                    <th>DATUM</th>
+                    <th>LOCATIE</th>
+                    <th>STATUS</th>
+                    <th>ACTIE</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach(var p in Model.Where(x => !x.IsGepusht).OrderBy(x => x.Datum)) {
-                    var m_naam = medewerkers.FirstOrDefault(m => m.Email == p.UserEmail)?.Naam ?? p.UserEmail;
-                    <tr>
-                        <td style="color:white; font-weight:bold;">@m_naam</td>
-                        <td style="color:white;">@p.Datum.ToString("dd-MM-yyyy")</td>
-                        <td style="color:white;">@p.Locatie</td>
-                        <td style="color:#D4AF37; font-weight:bold;">@p.AantalUren</td>
-                        <td class="text-end">
-                            <button type="button" onclick="editItem(@p.Id)" class="btn btn-sm btn-info">✏️</button>
-                            <form action="/Home/VerwijderPlanning?id=@p.Id" method="post" style="display:inline;">
-                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Wissen?')">🗑️</button>
-                            </form>
-                        </td>
-                    </tr>
-                }
+                <tr>
+                    <td>25-04-2026</td>
+                    <td>Main Stage Elite</td>
+                    <td><span class="badge border border-success text-success">GEPLAND</span></td>
+                    <td><button class="btn btn-sm btn-outline-warning">DETAILS</button></td>
+                </tr>
             </tbody>
         </table>
     </div>
 </div>
-
-<script>
-function editItem(id) {
-    fetch('/Home/GetPlanningItem?id=' + id)
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById('edit-id').value = data.id;
-            document.getElementById('edit-email').value = data.userEmail;
-            document.getElementById('edit-datum').value = data.datum; // Nu direct goed formaat
-            document.getElementById('edit-locatie').value = data.locatie;
-            document.getElementById('edit-uren').value = data.uren;
-            
-            document.getElementById('form-title').innerText = "⚠️ DIENST WIJZIGEN";
-            document.getElementById('planning-form').action = "/Home/UpdatePlanning";
-            document.getElementById('submit-btn').innerText = "🔄 BIJWERKEN";
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        })
-        .catch(err => alert("Fout: " + err));
-}
-</script>
-<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content" style="background:#0f0f0f; border:2px solid #D4AF37; border-radius:20px;">
-            <div class="modal-header" style="border-bottom:1px solid #333;">
-                <h5 class="modal-title" style="color:#D4AF37; font-weight:900;">➕ NIEUWE DIENST TOEVOEGEN</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="/Planning/Opslaan" method="post">
-                <div class="modal-body text-white">
-                    <div class="mb-3">
-                        <label class="form-label">Selecteer Medewerker</label>
-                        <select name="NaamMedewerker" class="form-select bg-dark text-white border-secondary" required>
-                            <option value="">-- Kies een medewerker --</option>
-                            @if (ViewBag.Medewerkers != null) {
-                                foreach (var m in (List<VIP_Planning.Models.ProfielModel>)ViewBag.Medewerkers) {
-                                    <option value="@m.Naam">@m.Naam</option>
-                                }
-                            }
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Datum</label>
-                        <input type="date" name="Datum" class="form-control bg-dark text-white border-secondary" required />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Locatie</label>
-                        <input type="text" name="Locatie" class="form-control bg-dark text-white border-secondary" required />
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <label class="form-label">Begin</label>
-                            <input type="time" name="BeginTijd" class="form-control bg-dark text-white border-secondary" required />
-                        </div>
-                        <div class="col">
-                            <label class="form-label">Eind</label>
-                            <input type="time" name="EindTijd" class="form-control bg-dark text-white border-secondary" required />
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer" style="border-top:1px solid #333;">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Sluiten</button>
-                    <button type="submit" class="btn btn-warning fw-bold" style="background:#D4AF37; color:black;">OPSLAAN</button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
