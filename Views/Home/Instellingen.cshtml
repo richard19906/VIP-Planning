@@ -1,33 +1,49 @@
 @{ Layout = "_Layout"; }
-<div class="container-fluid mt-4 px-4">
-    <h1 style="color:#D4AF37; font-weight:900; letter-spacing:2px; font-family:serif; margin-bottom:30px;">⚙️ INSTELLINGEN & BEHEER</h1>
+<div class="container-fluid mt-2">
+    <h1 style="font-weight:900; letter-spacing:2px; margin-bottom:30px;">⚙️ INSTELLINGEN & BEHEER</h1>
+    
     <div class="row g-4">
-        <div class="col-md-6">
-            <div class="p-4 h-100" style="background: rgba(10,10,10,0.85); border: 2px solid #D4AF37; border-radius: 25px;">
-                <h3 style="color:#D4AF37;">🔐 Pincode Beheer</h3>
-                <form action="/Home/SavePincode" method="post" class="mt-4">
-                    <input type="password" name="newPin" class="form-control text-center mb-4" placeholder="****" maxlength="4" style="background:rgba(255,255,255,0.05); border:1px solid #D4AF37; color:#D4AF37; font-size:2rem; letter-spacing:15px;">
-                    <button type="submit" class="btn w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">PINCODE OPSLAAN</button>
+        <div class="col-md-4">
+            <div class="p-4 h-100" style="background: rgba(10,10,10,0.9); border: 2px solid #D4AF37; border-radius: 20px;">
+                <h3 style="margin-bottom:20px;">🔐 Pincode</h3>
+                <form action="/Home/SavePincode" method="post">
+                    <label>Nieuwe 4-cijferige Code</label>
+                    <input type="password" name="newPin" class="form-control text-center mb-3" placeholder="****" maxlength="4" style="font-size:1.5rem; letter-spacing:10px;">
+                    <button type="submit" class="btn btn-gold w-100">PINCODE OPSLAAN</button>
                 </form>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="p-4 h-100" style="background: rgba(10,10,10,0.85); border: 2px solid #D4AF37; border-radius: 25px;">
-                <h3 style="color:#D4AF37; margin-bottom:20px;">💻 Systeem Status</h3>
-                <div class="p-3 mb-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #28a745; display:flex; justify-content:space-between; align-items:center;">
-                    <div><b style="color:#D4AF37;">DATABASE</b><br><small class="text-white-50">Supabase Cloud</small></div>
-                    <div style="width:12px; height:12px; background:#28a745; border-radius:50%; box-shadow:0 0 10px #28a745; animation:pulse 2s infinite;"></div>
+
+        <div class="col-md-4">
+            <div class="p-4 h-100" style="background: rgba(10,10,10,0.9); border: 2px solid #D4AF37; border-radius: 20px;">
+                <h3 style="margin-bottom:20px;">🔑 Wachtwoord</h3>
+                <form action="/Home/UpdatePassword" method="post">
+                    <label>Huidig Wachtwoord</label>
+                    <input type="password" name="oldPw" class="form-control mb-2" placeholder="******">
+                    <label>Nieuw Wachtwoord</label>
+                    <input type="password" name="newPw" class="form-control mb-3" placeholder="******">
+                    <button type="submit" class="btn btn-gold w-100">WACHTWOORD UPDATEN</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="p-4 h-100" style="background: rgba(10,10,10,0.9); border: 2px solid #D4AF37; border-radius: 20px;">
+                <h3 style="margin-bottom:20px;">💻 Systeem Status</h3>
+                <div class="p-2 mb-2 d-flex justify-content-between align-items-center" style="border-bottom: 1px solid rgba(212,175,55,0.2);">
+                    <span>DATABASE</span>
+                    <div style="width:10px; height:10px; background:#28a745; border-radius:50%; box-shadow:0 0 10px #28a745;"></div>
                 </div>
-                <div class="p-3 mb-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #28a745; display:flex; justify-content:space-between; align-items:center;">
-                    <div><b style="color:#D4AF37;">PDF ENGINE</b><br><small class="text-white-50">iTextSharp Actief</small></div>
-                    <div style="width:12px; height:12px; background:#28a745; border-radius:50%; box-shadow:0 0 10px #28a745;"></div>
+                <div class="p-2 mb-2 d-flex justify-content-between align-items-center" style="border-bottom: 1px solid rgba(212,175,55,0.2);">
+                    <span>PDF ENGINE</span>
+                    <span style="color:#fff !important;">ACTIEF</span>
                 </div>
-                <div class="p-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #D4AF37; display:flex; justify-content:space-between; align-items:center;">
-                    <div><b style="color:#D4AF37;">VERSIE</b><br><small class="text-white-50">Last Push: 05:02 25-04</small></div>
-                    <span class="badge bg-warning text-dark" style="font-size:0.8rem;">2.2.2504-0502 (VIP Elite)</span>
+                <div class="p-2">
+                    <span style="display:block; font-size:0.8rem;">SOFTWARE VERSIE</span>
+                    <span class="badge bg-warning text-dark mt-1">2.3.2504-0506 (VIP Elite)</span>
+                    <small style="display:block; margin-top:5px; color:#fff !important;">Push: 05:06 25-04</small>
                 </div>
             </div>
         </div>
     </div>
 </div>
-<style>@@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }</style>

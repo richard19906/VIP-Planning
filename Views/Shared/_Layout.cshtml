@@ -7,17 +7,23 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
         body { 
-            background: linear-gradient(rgba(0,0,0,0.75), rgba(0,0,0,0.75)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
-            background-size: cover !important; 
-            color: #D4AF37 !important; 
-            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(rgba(0,0,0,0.8), rgba(0,0,0,0.8)), url('/images/glitter_bg.png') no-repeat center center fixed !important; 
+            background-size: cover !important; color: #D4AF37 !important; font-family: 'Segoe UI', sans-serif; 
         }
         .sidebar { background: rgba(0, 0, 0, 0.95) !important; border-right: 2px solid #D4AF37 !important; height: 100vh; position: fixed; width: 250px; z-index: 1000; }
         .main-content { margin-left: 250px; padding: 30px; min-height: 100vh; background: rgba(0,0,0,0.5); }
-        .nav-link, h1, h2, h3, h4, label, td, th, span, div { color: #D4AF37 !important; }
-        .nav-link:hover { color: #fff !important; text-shadow: 0 0 10px #D4AF37; }
-        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: 900; border: none; border-radius: 10px; }
+        
+        /* Verbannings-regels voor grijs */
+        h1, h2, h3, h4, h5, label, p, span, div, td, th, small, input, a { 
+            color: #D4AF37 !important; 
+        }
+        .text-white-50, .text-muted, .small { color: #fff !important; opacity: 1 !important; } /* Maak wit ipv grijs */
+        
+        .nav-link { color: #D4AF37 !important; font-weight: bold; padding: 15px; border-bottom: 1px solid rgba(212,175,55,0.2); }
+        .nav-link:hover { background: rgba(212,175,55,0.1); color: #fff !important; }
+        .btn-gold { background: #D4AF37 !important; color: #000 !important; font-weight: 900; border: none; }
         input.form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
+        input::placeholder { color: rgba(212,175,55,0.5) !important; }
     </style>
 </head>
 <body>
@@ -28,8 +34,7 @@
             <a class="nav-link" href="/Home/Planning">PLANNING</a>
             <a class="nav-link" href="/Home/Werknemers">PERSONEEL</a>
             <a class="nav-link" href="/Home/Instellingen">INSTELLINGEN</a>
-            <a class="nav-link" href="/Home/Instellingen" style="font-size: 0.7rem; padding-left: 20px;">└ PINCODE WIJZIGEN</a>
-            <a class="nav-link text-danger mt-5" href="/Account/Logout" style="border:none;">UITLOGGEN</a>
+            <a class="nav-link text-danger mt-5" href="/Account/Logout" style="border:none; color:#ff4444 !important;">UITLOGGEN</a>
         </nav>
     </div>
     <div class="main-content">@RenderBody()</div>
