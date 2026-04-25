@@ -14,6 +14,7 @@ namespace VIP_Planning.Controllers {
                 ViewBag.Error = "Wachtwoorden komen niet overeen.";
                 return View();
             }
+            TempData["UserEmail"] = email;
             return RedirectToAction("VerifyCode");
         }
 

@@ -1,18 +1,33 @@
 @{ Layout = "_Layout"; }
-<div class="container mt-5">
-    <h2 style="color:#D4AF37; font-weight:900; letter-spacing:2px;">⚙️ Instellingen & Beheer</h2>
-    <hr style="border-color:#D4AF37;">
-    
-    <div class="row mt-4">
+<div class="container-fluid mt-4 px-4">
+    <h1 style="color:#D4AF37; font-weight:900; letter-spacing:2px; font-family:serif; margin-bottom:30px;">⚙️ INSTELLINGEN & BEHEER</h1>
+    <div class="row g-4">
         <div class="col-md-6">
-            <div class="p-4" style="background: rgba(10,10,10,0.8); border: 2px solid #D4AF37; border-radius: 20px;">
-                <h4 style="color:#D4AF37; margin-bottom:20px;">Toegangscode (Pincode)</h4>
-                <p class="small text-white-50">Stel hier een 4-cijferige pincode in voor de snelle admin-bypass op het inlogscherm.</p>
-                <form action="/Home/SavePincode" method="post">
-                    <input type="password" name="newPin" class="form-control mb-3 text-center" placeholder="Nieuwe 4-cijferige pincode" maxlength="4" style="background:rgba(255,255,255,0.05); border:1px solid #D4AF37; color:#fff; font-size:1.5rem;">
-                    <button type="submit" class="btn w-100" style="background:#D4AF37; color:#000; font-weight:bold;">PINCODE OPSLAAN</button>
+            <div class="p-4 h-100" style="background: rgba(10,10,10,0.85); border: 2px solid #D4AF37; border-radius: 25px;">
+                <h3 style="color:#D4AF37;">🔐 Pincode Beheer</h3>
+                <form action="/Home/SavePincode" method="post" class="mt-4">
+                    <input type="password" name="newPin" class="form-control text-center mb-4" placeholder="****" maxlength="4" style="background:rgba(255,255,255,0.05); border:1px solid #D4AF37; color:#D4AF37; font-size:2rem; letter-spacing:15px;">
+                    <button type="submit" class="btn w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">PINCODE OPSLAAN</button>
                 </form>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="p-4 h-100" style="background: rgba(10,10,10,0.85); border: 2px solid #D4AF37; border-radius: 25px;">
+                <h3 style="color:#D4AF37; margin-bottom:20px;">💻 Systeem Status</h3>
+                <div class="p-3 mb-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #28a745; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b style="color:#D4AF37;">DATABASE</b><br><small class="text-white-50">Supabase Cloud</small></div>
+                    <div style="width:12px; height:12px; background:#28a745; border-radius:50%; box-shadow:0 0 10px #28a745; animation:pulse 2s infinite;"></div>
+                </div>
+                <div class="p-3 mb-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #28a745; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b style="color:#D4AF37;">PDF ENGINE</b><br><small class="text-white-50">iTextSharp Actief</small></div>
+                    <div style="width:12px; height:12px; background:#28a745; border-radius:50%; box-shadow:0 0 10px #28a745;"></div>
+                </div>
+                <div class="p-3" style="background:rgba(255,255,255,0.03); border-radius:15px; border-left:4px solid #D4AF37; display:flex; justify-content:space-between; align-items:center;">
+                    <div><b style="color:#D4AF37;">VERSIE</b><br><small class="text-white-50">Last Push: 05:02 25-04</small></div>
+                    <span class="badge bg-warning text-dark" style="font-size:0.8rem;">2.2.2504-0502 (VIP Elite)</span>
+                </div>
             </div>
         </div>
     </div>
 </div>
+<style>@@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }</style>
