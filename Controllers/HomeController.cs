@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Supabase;
 using System.Threading.Tasks;
+using System.Linq;
 using VIP_Planning.Models;
 
 namespace VIP_Planning.Controllers {
@@ -20,23 +21,15 @@ namespace VIP_Planning.Controllers {
             return View(response.Models);
         }
 
-        public IActionResult UrenOverzicht(string naam) {
+        public async Task<IActionResult> UrenOverzicht(string naam) {
             ViewBag.Naam = naam;
-            return View();
+            // Haal uren op waarbij medewerker gelijk is aan de geklikte naam
+            var response = await _supabase.From<PlanningModel>()
+                .Where(x => x.Medewerker == naam)
+                .Get();
+            return View(response.Models);
         }
 
         public IActionResult Instellingen() => View();
-
-        [HttpPost]
-        public async Task<IActionResult> SavePlanning(string medewerker, string locatie, string datum, string uren) {
-            var model = new PlanningModel { 
-                Medewerker = medewerker, 
-                Locatie = locatie, 
-                Datum = datum, 
-                Uren = uren 
-            };
-            await _supabase.From<PlanningModel>().Insert(model);
-            return RedirectToAction("Planning");
-        }
     }
 }
