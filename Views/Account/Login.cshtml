@@ -1,44 +1,54 @@
 @{ Layout = null; }
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>Login - VIP Security</title>
+    <title>VIP Login</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
     <style>
-        body { background-color: #000; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .login-card { 
-            background: #0f0f0f; 
-            border: 2px solid #D4AF37; 
-            border-radius: 20px; 
-            padding: 40px; 
-            width: 100%; 
-            max-width: 400px; 
-            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
-        }
-        /* Specifiek voor mobiel: kader vult schermbreedte */
-        @@media (max-width: 480px) {
-            .login-card { margin: 20px; padding: 25px; }
-            h2 { font-size: 1.5rem !important; }
-        }
-        .btn-gold { background: #D4AF37; color: #000; font-weight: 900; border: none; }
-        .btn-gold:hover { background: #b8962d; }
+        body { background-color: #000; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; font-family: 'Segoe UI', sans-serif; }
+        .login-card { background: #0f0f0f; border: 2px solid #D4AF37; border-radius: 25px; padding: 35px; width: 100%; max-width: 400px; box-shadow: 0 15px 35px rgba(212, 175, 55, 0.2); }
+        .btn-gold { background: #D4AF37; color: #000; font-weight: 900; border: none; padding: 12px; border-radius: 12px; transition: 0.3s; }
+        .btn-gold:hover { background: #fff; color: #000; transform: translateY(-2px); }
+        .form-control { background: #1a1a1a !important; border: 1px solid #333 !important; color: #fff !important; border-radius: 12px; padding: 12px; }
+        .form-control:focus { border-color: #D4AF37 !important; box-shadow: none; }
+        .divider { border-top: 1px solid #333; margin: 25px 0; position: relative; }
+        .divider span { position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #0f0f0f; padding: 0 15px; color: #D4AF37; font-size: 0.8rem; font-weight: bold; }
+        .admin-bypass { background: rgba(212, 175, 55, 0.05); border: 1px dashed #D4AF37; border-radius: 15px; padding: 20px; }
     </style>
 </head>
 <body>
     <div class="login-card text-center">
-        <h2 style="color:#D4AF37; font-weight:900; margin-bottom:30px;">V.I.P SECURITY</h2>
+        <h2 style="color:#D4AF37; font-weight:900; letter-spacing: 3px; margin-bottom: 30px;">V.I.P LOGIN</h2>
+        
         <form action="/Account/Verify" method="post">
             <div class="mb-3 text-start">
-                <label class="text-white-50">Gebruikersnaam</label>
-                <input type="text" name="username" class="form-control bg-dark text-white border-secondary" required />
+                <label class="text-white-50 small fw-bold">E-MAIL / GEBRUIKER</label>
+                <input type="text" name="username" class="form-control" placeholder="naam@vip.nl" />
             </div>
             <div class="mb-4 text-start">
-                <label class="text-white-50">Pincode</label>
-                <input type="password" name="pincode" class="form-control bg-dark text-white border-secondary" required />
+                <label class="text-white-50 small fw-bold">WACHTWOORD / PIN</label>
+                <input type="password" name="pincode" class="form-control" placeholder="****" />
             </div>
-            <button type="submit" class="btn btn-gold w-100 py-3">INLOGGEN</button>
+            <button type="submit" class="btn btn-gold w-100">INLOGGEN</button>
         </form>
+
+        <div class="divider"><span>OF SNELLE TOEGANG</span></div>
+
+        <div class="admin-bypass">
+            <form action="/Account/Verify" method="post">
+                <div class="mb-3">
+                    <input type="password" name="pincode" class="form-control text-center" placeholder="ADMIN CODE" style="border-color: #D4AF37 !important; font-size: 1.2rem; letter-spacing: 5px;" />
+                    <input type="hidden" name="username" value="ADMIN_BYPASS" />
+                </div>
+                <button type="submit" class="btn btn-outline-warning w-100 fw-bold" style="border-radius: 10px; border-color: #D4AF37; color: #D4AF37;">BYPASS ADMIN</button>
+            </form>
+        </div>
+        
+        @if(ViewBag.Error != null) {
+            <p class="text-danger mt-3 small fw-bold">@ViewBag.Error</p>
+        }
     </div>
 </body>
 </html>
