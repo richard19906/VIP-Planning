@@ -8,7 +8,7 @@ namespace VIP_Planning.Models {
         [PrimaryKey("id", false)] public int Id { get; set; }
         [Column("medewerker")] public string Medewerker { get; set; } = "";
         [Column("locatie")] public string Locatie { get; set; } = "";
-        [Column("datum")] public string Datum { get; set; } = ""; // Als string om conversiefouten te voorkomen
+        [Column("datum")] public string Datum { get; set; } = "";
         [Column("uren")] public string Uren { get; set; } = "";
     }
 
