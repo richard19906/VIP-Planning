@@ -8,5 +8,5 @@ RUN dotnet publish -c Release -o out
 FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
 COPY --from=build /app/out .
-# Zorg dat de DLL naam exact overeenkomt met je projectnaam
+ENV ASPNETCORE_URLS=http://+:8080
 ENTRYPOINT ["dotnet", "VIP-Planning.dll"]
