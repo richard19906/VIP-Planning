@@ -1,56 +1,227 @@
-@{ Layout = "_Layout"; }
-<div class="container-fluid">
-    <h2 style="color:#D4AF37; font-weight:900; margin-bottom:30px; letter-spacing:1px;">âš™ï¸ SYSTEEM INSTELLINGEN</h2>
+@{
+    Layout = "_Layout";
+    var syncTime = DateTime.Now.ToString("HH:mm:ss");
+    var syncDate = DateTime.Now.ToString("dd-MM-yyyy");
+}
+
+<div class="container-fluid py-4 px-4 bg-vip-main">
+    <!-- Header met Glass-effect -->
+    <div class="d-flex justify-content-between align-items-end mb-5 glass-header p-4 rounded-4 border-gold-subtle">
+        <div>
+            <h1 class="vip-title-gold mb-0">SYSTEEM CONFIGURATIE</h1>
+            <p class="text-gold-muted tracking-widest mb-0">V.I.P. SECURITY SERVICE PORTAL &bull; ELITE ACCESS ONLY</p>
+        </div>
+        <div class="text-end d-none d-md-block">
+            <span class="badge bg-gold-liquid text-black px-3 py-2 rounded-pill fw-bold">VERSION 2026.4.1-PRO</span>
+        </div>
+    </div>
 
     <div class="row g-4">
-        <div class="col-md-6">
-            <div class="card p-4 bg-dark border-warning h-100" style="border-radius:15px; background: rgba(10,10,10,0.9) !important;">
-                <h4 style="color:#D4AF37; font-weight:800;">ðŸ’» Systeem Status</h4>
-                <hr style="background:#D4AF37; opacity:0.5;">
-                <div class="mt-3">
-                    <p class="mb-2">DATABASE STATUS: <span class="text-success" style="font-weight:bold;">â— ONLINE</span></p>
-                    <p class="mb-2">PDF CLOUD ENGINE: <span class="text-success" style="font-weight:bold;">â— CONNECTED</span></p>
-                    <p class="mb-2">SERVER LOCATIE: <span class="text-white">EU-WEST (AMSTERDAM)</span></p>
-                    <hr style="background:rgba(212,175,55,0.3);">
-                    <p class="small text-white-50 mb-1">BUILD VERSION: 2.6.8-VIP ELITE</p>
-                    <p class="small text-white-50">LAATSTE SYNC: @DateTime.Now.ToString("HH:mm dd-MM-yyyy")</p>
+        <!-- KOLOM 1: SYSTEEM STATUS -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="vip-panel h-100">
+                <div class="panel-glow"></div>
+                <div class="p-4">
+                    <div class="d-flex align-items-center mb-4">
+                        <div class="status-pulse me-3"></div>
+                        <h4 class="text-white fw-bold mb-0">SYSTEEM STATUS</h4>
+                    </div>
+                    
+                    <div class="status-grid">
+                        <div class="status-item">
+                            <span class="label">DATABASE</span>
+                            <span class="value text-success">CORE-ONLINE</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">ENCRYPTION</span>
+                            <span class="value text-info">AES-256 ACTIVE</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">CLOUD ENGINE</span>
+                            <span class="value text-success">STABLE</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label">SERVER UPTIME</span>
+                            <span class="value">99.98%</span>
+                        </div>
+                    </div>
+
+                    <div class="info-box mt-4 p-3 rounded-3 bg-black-depth border-gold-subtle">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small class="text-white-50">SYNC TIME</small>
+                            <small class="text-gold">@syncTime</small>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <small class="text-white-50">SYNC DATE</small>
+                            <small class="text-gold">@syncDate</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-6">
-            <div class="card p-4 bg-dark border-warning h-100" style="border-radius:15px; background: rgba(10,10,10,0.9) !important;">
-                <h4 style="color:#D4AF37; font-weight:800;">ðŸ”’ Beveiliging & Toegang</h4>
-                <hr style="background:#D4AF37; opacity:0.5;">
-                <div class="mt-3">
-                    <div class="mb-3">
-                        <label class="text-white-50 small d-block">MASTER PINCODE (ADMIN)</label>
-                        <div class="d-flex gap-2">
-                            <input type="password" class="form-control border-warning bg-black text-gold" value="3991" readonly style="width: 120px; letter-spacing: 5px;">
-                            <button class="btn btn-outline-warning btn-sm">WIJZIG</button>
+        <!-- KOLOM 2: BEVEILIGING & ACCOUNT -->
+        <div class="col-xl-4 col-lg-7">
+            <div class="vip-panel h-100 border-gold-bright">
+                <div class="p-4">
+                    <h4 class="text-gold fw-bold mb-4"><i class="bi bi-shield-lock-fill me-2"></i>BEVEILIGING & TOEGANG</h4>
+                    
+                    <!-- ADMIN PINCODES -->
+                    <div class="mb-4">
+                        <label class="vip-label">MASTER ADMIN PIN (SYSTEM)</label>
+                        <div class="input-group vip-input-group mb-2">
+                            <input type="password" class="form-control vip-input" value="3991" id="pinAdmin">
+                            <button class="btn btn-gold-outline" onclick="toggleView('pinAdmin')"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-gold-solid">UPDATE</button>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="text-white-50 small d-block">BYPASS CODE</label>
-                        <div class="d-flex gap-2">
-                            <input type="password" class="form-control border-warning bg-black text-gold" value="0000" readonly style="width: 120px; letter-spacing: 5px;">
-                            <button class="btn btn-outline-warning btn-sm">WIJZIG</button>
+
+                    <hr class="border-gold-subtle my-4">
+
+                    <!-- ACCOUNT WACHTWOORD WIJZIGEN -->
+                    <div class="account-security-box">
+                        <h5 class="text-white small fw-bold mb-3 text-uppercase tracking-widest">Werkgever Account</h5>
+                        
+                        <div class="mb-3">
+                            <label class="vip-label">HUIDIG WACHTWOORD</label>
+                            <input type="password" class="form-control vip-input" placeholder="••••••••">
                         </div>
+
+                        <div class="mb-3">
+                            <label class="vip-label">NIEUW WACHTWOORD ELITE</label>
+                            <input type="password" class="form-control vip-input" placeholder="Min. 12 tekens">
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="vip-label">BEVESTIG NIEUW WACHTWOORD</label>
+                            <input type="password" class="form-control vip-input" placeholder="Herhaal wachtwoord">
+                        </div>
+
+                        <button class="btn btn-gold-glow w-100 mt-2">
+                            <i class="bi bi-key-fill me-2"></i>WACHTWOORD VERNIEUWEN
+                        </button>
                     </div>
-                    <hr style="background:rgba(212,175,55,0.3);">
-                    <p class="small text-warning">Let op: Wijzigingen hier hebben direct invloed op het inlogscherm.</p>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-12">
-            <div class="card p-4 bg-dark border-warning" style="border-radius:15px; background: rgba(10,10,10,0.9) !important;">
-                <h4 style="color:#D4AF37; font-weight:800;">ðŸ”§ Onderhoud</h4>
-                <div class="d-flex gap-3 mt-3">
-                    <button class="btn btn-gold py-2 px-4" style="background:#D4AF37; color:#000; font-weight:bold;">DATABASE BACKUP MAKEN</button>
-                    <button class="btn btn-outline-danger py-2 px-4">SYSTEEM LOGS WISSEN</button>
+        <!-- KOLOM 3: INTERFACE & PERSONALISATIE -->
+        <div class="col-xl-4">
+            <div class="vip-panel h-100">
+                <div class="p-4">
+                    <h4 class="text-white fw-bold mb-4"><i class="bi bi-palette2 me-2"></i>INTERFACE</h4>
+                    
+                    <div class="mb-3">
+                        <label class="vip-label">ACCENT KLEUR</label>
+                        <div class="d-flex gap-2">
+                            <div class="color-dot active" style="background: #D4AF37;"></div>
+                            <div class="color-dot" style="background: #C0C0C0;"></div>
+                            <div class="color-dot" style="background: #E5E4E2;"></div>
+                            <div class="color-dot" style="background: #4682B4;"></div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="vip-label">DASHBOARD HELDERHEID</label>
+                        <input type="range" class="form-range vip-range" min="0" max="100" value="85">
+                    </div>
+
+                    <div class="form-check form-switch vip-switch mb-4">
+                        <input class="form-check-input" type="checkbox" id="notifySwitch" checked>
+                        <label class="form-check-label text-white-50" for="notifySwitch">Login notificaties aan</label>
+                    </div>
+
+                    <button class="btn btn-outline-light w-100 py-2 border-gold-subtle text-gold">THEMA OPSLAAN</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ONDER: SYSTEM ACTIONS -->
+        <div class="col-12">
+            <div class="vip-panel action-bar">
+                <div class="p-3 d-flex flex-wrap gap-3 justify-content-between align-items-center">
+                    <div class="d-flex gap-3">
+                        <button class="btn btn-gold-glow"><i class="bi bi-cloud-arrow-down me-2"></i>BACKUP DATABASE</button>
+                        <button class="btn btn-dark-vip"><i class="bi bi-journal-text me-2"></i>SYSTEM LOGS</button>
+                    </div>
+                    <button class="btn btn-danger-vip"><i class="bi bi-exclamation-triangle me-2"></i>FACTORY RESET</button>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    :root {
+        --vip-gold: #D4AF37;
+        --vip-gold-glow: rgba(212, 175, 55, 0.4);
+        --vip-black: #050505;
+        --vip-dark: #121212;
+    }
+
+    body { background-color: var(--vip-black); color: white; font-family: 'Inter', sans-serif; }
+
+    /* VIP Typography */
+    .vip-title-gold { font-weight: 900; letter-spacing: -1px; color: var(--vip-gold); text-shadow: 0 0 15px var(--vip-gold-glow); }
+    .text-gold-muted { color: #8a7024; font-size: 0.75rem; font-weight: 700; }
+    .tracking-widest { letter-spacing: 0.3em; }
+
+    /* Panels */
+    .vip-panel {
+        background: linear-gradient(145deg, #151515, #0a0a0a);
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .border-gold-bright { border: 1px solid var(--vip-gold-glow) !important; }
+    .border-gold-subtle { border: 1px solid rgba(212, 175, 55, 0.2) !important; }
+    .bg-black-depth { background: #000; }
+
+    /* Status Items */
+    .status-pulse {
+        width: 12px; height: 12px; background: #28a745; border-radius: 50%;
+        box-shadow: 0 0 10px #28a745; animation: pulse 2s infinite;
+    }
+    @@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
+
+    .status-grid .status-item {
+        display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(212,175,55,0.1);
+    }
+    .status-item .label { color: #555; font-size: 0.8rem; font-weight: bold; }
+    .status-item .value { font-family: 'JetBrains Mono', monospace; font-weight: bold; }
+
+    /* Inputs */
+    .vip-label { color: var(--vip-gold); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; display: block; letter-spacing: 1px; }
+    .vip-input { background: #000 !important; border: 1px solid #333 !important; color: var(--vip-gold) !important; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; }
+    .vip-input:focus { border-color: var(--vip-gold) !important; box-shadow: 0 0 10px var(--vip-gold-glow) !important; }
+
+    /* Buttons */
+    .btn-gold-solid { background: var(--vip-gold); color: black; font-weight: 900; border: none; padding: 0 20px; transition: 0.3s; }
+    .btn-gold-solid:hover { background: white; box-shadow: 0 0 20px white; }
+    .btn-gold-outline { border: 1px solid var(--vip-gold); color: var(--vip-gold); transition: 0.3s; }
+    .btn-gold-outline:hover { background: var(--vip-gold); color: black; }
+    
+    .btn-gold-glow { background: var(--vip-gold); color: black; font-weight: bold; box-shadow: 0 0 15px var(--vip-gold-glow); border: none; padding: 12px 25px; border-radius: 8px; transition: 0.3s; }
+    .btn-gold-glow:hover { background: white; box-shadow: 0 0 25px rgba(255,255,255,0.4); transform: scale(1.02); }
+
+    .btn-dark-vip { background: #222; color: white; border: 1px solid #333; padding: 10px 25px; border-radius: 8px; }
+    .btn-danger-vip { background: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 10px 25px; border-radius: 8px; font-weight: bold; }
+
+    /* Interface Elements */
+    .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
+    .color-dot.active { border-color: white; box-shadow: 0 0 10px white; }
+    .glass-header { background: rgba(20,20,20,0.6); backdrop-filter: blur(15px); border: 1px solid rgba(212,175,55,0.2); }
+    .bg-gold-liquid { background: linear-gradient(90deg, #D4AF37, #f7e08a); }
+
+    /* Custom Switch */
+    .vip-switch .form-check-input:checked { background-color: var(--vip-gold); border-color: var(--vip-gold); }
+</style>
+
+<script>
+    function toggleView(id) {
+        const input = document.getElementById(id);
+        input.type = input.type === 'password' ? 'text' : 'password';
+    }
+</script>

@@ -1,14 +1,153 @@
 @model List<VIP_Planning.Models.ProfielModel>
-@{ Layout = "_Layout"; }
-<h2 class="mb-4" style="color:#D4AF37; font-weight:900;">👥 GEREGISTREERDE WERKNEMERS</h2>
-<div class="row g-3">
-    @foreach(var w in Model) {
-        <div class="col-md-4">
-            <div class="card p-3 bg-black border-warning text-center" style="border-radius:15px;">
-                <h4 class="text-white">@w.Naam</h4>
-                <p class="text-gold small">@w.Email</p>
-                <a href="/Home/UrenOverzicht?email=@w.Email&naam=@w.Naam" class="btn btn-sm btn-gold" style="background:#D4AF37; color:#000; font-weight:bold;">BEKIJK UREN</a>
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-4 px-4">
+    <!-- Header Sectie: Alleen de essentiële titel -->
+    <div class="mb-5 text-center text-md-start">
+        <h2 class="vip-title-gold"><i class="bi bi-shield-shaded me-3"></i>GEREGISTREERDE OPERATORS</h2>
+        <div class="gold-line"></div>
+    </div>
+
+    <!-- Werknemers Grid -->
+    <div class="row g-4">
+        @foreach (var w in Model)
+        {
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="vip-profile-card">
+                    <div class="card-glow"></div>
+                    <div class="card-content p-4 text-center">
+                        <!-- Avatar met Operator Initialen -->
+                        <div class="avatar-circle mb-3 mx-auto">
+                            <span class="avatar-initial">@w.Naam.Substring(0, 1).ToUpper()</span>
+                        </div>
+                        
+                        <!-- Operator Info -->
+                        <h4 class="text-white fw-bold mb-1 tracking-tight">@w.Naam.ToUpper()</h4>
+                        <p class="text-gold-muted small mb-4 font-monospace">@w.Email.ToLower()</p>
+                        
+                        <hr class="border-gold-subtle mb-4">
+                        
+                        <!-- Actie Knop naar Urenoverzicht -->
+                        <a href="/Home/UrenOverzicht?email=@w.Email&naam=@w.Naam" class="btn-vip-outline w-100">
+                            <i class="bi bi-file-earmark-bar-graph me-2"></i>BEKIJK UREN
+                        </a>
+                    </div>
+                </div>
             </div>
+        }
+
+        <!-- Snelkoppeling naar instellingen voor beheer -->
+        <div class="col-xl-3 col-lg-4 col-md-6">
+            <a href="/Home/Instellingen" class="text-decoration-none h-100 d-block">
+                <div class="vip-profile-card add-card d-flex align-items-center justify-content-center">
+                    <div class="text-center">
+                        <i class="bi bi-plus-lg text-gold-muted display-5"></i>
+                        <p class="text-gold-muted mt-2 fw-bold small tracking-widest">BEHEER PROFIELEN</p>
+                    </div>
+                </div>
+            </a>
         </div>
-    }
+    </div>
 </div>
+
+<style>
+    :root {
+        --vip-gold: #D4AF37;
+        --vip-gold-glow: rgba(212, 175, 55, 0.4);
+        --vip-black: #050505;
+    }
+
+    body { background-color: var(--vip-black); color: white; font-family: 'Inter', sans-serif; }
+
+    /* Clean Header */
+    .vip-title-gold { 
+        font-weight: 900; 
+        letter-spacing: 1px; 
+        color: var(--vip-gold); 
+        text-shadow: 0 0 15px var(--vip-gold-glow); 
+    }
+    .gold-line { width: 100px; height: 3px; background: var(--vip-gold); border-radius: 2px; }
+
+    /* Elite Profile Card */
+    .vip-profile-card {
+        background: linear-gradient(145deg, #121212, #080808);
+        border: 1px solid rgba(212, 175, 55, 0.15);
+        border-radius: 16px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease-in-out;
+        height: 100%;
+    }
+
+    .vip-profile-card:hover {
+        transform: translateY(-8px);
+        border-color: var(--vip-gold);
+        box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
+    }
+
+    .add-card {
+        border: 2px dashed rgba(212, 175, 55, 0.2);
+        background: transparent;
+        min-height: 280px;
+    }
+
+    .add-card:hover {
+        border-style: solid;
+        background: rgba(212, 175, 55, 0.03);
+    }
+
+    /* Avatar Styling */
+    .avatar-circle {
+        width: 64px;
+        height: 64px;
+        background: rgba(212, 175, 55, 0.05);
+        border: 1px solid var(--vip-gold);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .avatar-initial {
+        color: var(--vip-gold);
+        font-size: 1.5rem;
+        font-weight: 800;
+    }
+
+    /* Typography & Details */
+    .tracking-tight { letter-spacing: -0.5px; }
+    .tracking-widest { letter-spacing: 2px; }
+    .text-gold-muted { color: #8a7024; }
+    .border-gold-subtle { border-color: rgba(212, 175, 55, 0.1) !important; }
+    
+    .card-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent);
+        pointer-events: none;
+    }
+
+    /* Elite Button */
+    .btn-vip-outline {
+        display: inline-block;
+        background: transparent;
+        border: 1px solid var(--vip-gold);
+        color: var(--vip-gold);
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.8rem;
+        transition: 0.2s;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-vip-outline:hover {
+        background: var(--vip-gold);
+        color: black;
+        box-shadow: 0 0 15px var(--vip-gold-glow);
+    }
+</style>

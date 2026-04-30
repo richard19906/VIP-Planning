@@ -1,34 +1,122 @@
-@{ Layout = "_Layout"; }
-<div class="container-fluid">
-    <div class="mb-5">
-        <h1 style="color:#D4AF37; font-size: 3.5rem; font-weight:900;">WELCOME V.I.P ELITE</h1>
-        <p class="text-white-50">Kies een module om het systeem te beheren.</p>
+@{
+    Layout = "_Layout";
+}
+
+<div class="container-fluid py-5 px-4">
+    <!-- Header Sectie -->
+    <div class="mb-5 text-center text-md-start">
+        <h1 class="vip-title">Welkom bij V.I.P-Planning</h1>
+        <div class="gold-line mb-3"></div>
+        <p class="text-white-50 tracking-wide">Beheer het systeem, de planning en de personeelsuren.</p>
     </div>
 
+    <!-- Dashboard Kaarten -->
     <div class="row g-4">
+        <!-- PLANNING -->
         <div class="col-md-4">
-            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">📅</div>
-                <h3 style="color:#D4AF37;">Planning</h3>
-                <p class="text-white-50">Beheer het rooster en voeg nieuwe diensten toe.</p>
-                <a href="/Home/Planning" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">OPEN PLANNING</a>
+            <div class="vip-card">
+                <div class="card-glow"></div>
+                <div class="card-body p-5 text-center">
+                    <div class="vip-icon mb-4">📅</div>
+                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Planning</h3>
+                    <p class="text-white-50 mb-4">Beheer het rooster en voeg nieuwe diensten toe aan de database.</p>
+                    <a href="/Home/Planning" class="btn-vip">Open Planning</a>
+                </div>
             </div>
         </div>
+
+        <!-- WERKNEMERS -->
         <div class="col-md-4">
-            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">👥</div>
-                <h3 style="color:#D4AF37;">Werknemers</h3>
-                <p class="text-white-50">Bekijk urenoverzichten en profielen van personeel.</p>
-                <a href="/Home/Werknemers" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">BEHEER TEAM</a>
+            <div class="vip-card">
+                <div class="card-glow"></div>
+                <div class="card-body p-5 text-center">
+                    <div class="vip-icon mb-4">👥</div>
+                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Werknemers</h3>
+                    <p class="text-white-50 mb-4">Bekijk urenoverzichten (21-20 regel) en personeelsprofielen.</p>
+                    <a href="/Home/Werknemers" class="btn-vip">Beheer Team</a>
+                </div>
             </div>
         </div>
+
+        <!-- INSTELLINGEN -->
         <div class="col-md-4">
-            <div class="card p-4 text-center" style="background: rgba(20,20,20,0.8); border: 1px solid #D4AF37; border-radius: 15px;">
-                <div style="font-size: 3rem; margin-bottom: 15px;">⚙️</div>
-                <h3 style="color:#D4AF37;">Instellingen</h3>
-                <p class="text-white-50">Bekijk systeemstatus en configuratie.</p>
-                <a href="/Home/Instellingen" class="btn btn-gold w-100 py-3" style="background:#D4AF37; color:#000; font-weight:900;">CONFIGURATIE</a>
+            <div class="vip-card">
+                <div class="card-glow"></div>
+                <div class="card-body p-5 text-center">
+                    <div class="vip-icon mb-4">⚙️</div>
+                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Instellingen</h3>
+                    <p class="text-white-50 mb-4">Bekijk de actuele systeemstatus en configureer de portal.</p>
+                    <a href="/Home/Instellingen" class="btn-vip">Configuratie</a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+<style>
+    /* Achtergrond en Basis */
+    body { background-color: #050505; color: white; }
+    .text-gold { color: #D4AF37 !important; }
+    .tracking-wide { letter-spacing: 1px; font-size: 0.9rem; }
+
+    /* Titel Styling - Nu iets subtieler */
+    .vip-title {
+        color: #D4AF37;
+        font-size: clamp(2rem, 4vw, 3rem);
+        font-weight: 800;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+
+    .gold-line {
+        width: 100px;
+        height: 3px;
+        background: #D4AF37;
+        border-radius: 2px;
+    }
+
+    /* VIP Card Concept */
+    .vip-card {
+        background: rgba(15, 15, 15, 0.95);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 15px;
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+        height: 100%;
+    }
+
+    .vip-card:hover {
+        transform: translateY(-8px);
+        border-color: #D4AF37;
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+    }
+
+    .vip-icon {
+        font-size: 3.5rem;
+    }
+
+    .card-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent);
+        pointer-events: none;
+    }
+
+    /* VIP Button */
+    .btn-vip {
+        display: block;
+        background: #D4AF37;
+        color: #000;
+        text-decoration: none;
+        font-weight: 700;
+        padding: 12px;
+        border-radius: 8px;
+        transition: 0.2s;
+    }
+
+    .btn-vip:hover {
+        background: #fff;
+        color: #000;
+        transform: scale(1.03);
+    }
+</style>

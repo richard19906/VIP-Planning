@@ -3,9 +3,11 @@ using Postgrest.Models;
 using Newtonsoft.Json;
 using System;
 
-namespace VIP_Planning.Models {
-    [Table("uren")] 
-    public class UrenModel : BaseModel {
+namespace VIP_Planning.Models
+{
+    [Table("uren")]
+    public class UrenModel : BaseModel
+    {
         [PrimaryKey("id", false)] public int Id { get; set; }
         [Column("user_email")] public string UserEmail { get; set; } = "";
         [Column("datum_string")] public string DatumString { get; set; } = "";
@@ -14,19 +16,46 @@ namespace VIP_Planning.Models {
         [Column("periode_naam")] public string PeriodeNaam { get; set; } = "";
         [Column("is_uitbetaald")] public bool IsUitbetaald { get; set; }
 
-        [JsonIgnore] public string Status => IsUitbetaald ? "BETAALD" : "OPEN";
-        [JsonIgnore] public double AantalUren => (Uren < 0) ? 0 : Uren;
-        [JsonIgnore] public string DisplayUren => IsUitbetaald ? "✅" : AantalUren.ToString();
-        
+        // --- DEZE VELDEN WORDEN NIET NAAR SUPABASE GESTUURD (JSONIGNORE) ---
+
+        [JsonIgnore] public string Status => IsUitbetaald ? "Betaald" : "Open";
+
+        // FIX: Voeg AantalUren weer toe zodat je Controller en View niet meer crashen
+        [JsonIgnore] public double AantalUren => Uren;
+
         [JsonIgnore]
-        public int MaandVolgorde => PeriodeNaam switch {
-            "Jan" => 1, "Feb" => 2, "Mrt" => 3, "Apr" => 4, "Mei" => 5, "Jun" => 6,
-            "Jul" => 7, "Aug" => 8, "Sep" => 9, "Okt" => 10, "Nov" => 11, "Dec" => 12, _ => 99
+        public string DisplayUren
+        {
+            get
+            {
+                if (IsUitbetaald) return "✓";
+                if (!string.IsNullOrEmpty(Locatie) && Locatie.ToLower().Contains("vrij")) return "*";
+                return Uren.ToString("N1");
+            }
+        }
+
+        [JsonIgnore]
+        public int MaandVolgorde => PeriodeNaam switch
+        {
+            "Jan" => 1,
+            "Feb" => 2,
+            "Mrt" => 3,
+            "Apr" => 4,
+            "Mei" => 5,
+            "Jun" => 6,
+            "Jul" => 7,
+            "Aug" => 8,
+            "Sep" => 9,
+            "Okt" => 10,
+            "Nov" => 11,
+            "Dec" => 12,
+            _ => 99
         };
     }
 
     [Table("planning")]
-    public class PlanningModel : BaseModel {
+    public class PlanningModel : BaseModel
+    {
         [PrimaryKey("id", false)] public int Id { get; set; }
         [Column("user_email")] public string UserEmail { get; set; } = "";
         [Column("datum")] public string Datum { get; set; } = "";
@@ -35,8 +64,9 @@ namespace VIP_Planning.Models {
     }
 
     [Table("profielen")]
-    public class ProfielModel : BaseModel {
+    public class ProfielModel : BaseModel
+    {
         [PrimaryKey("email", false)] public string Email { get; set; } = "";
-        [Column("naam")] public string Naam { get; set; } = ""; 
+        [Column("naam")] public string Naam { get; set; } = "";
     }
 }

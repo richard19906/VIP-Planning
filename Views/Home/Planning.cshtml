@@ -1,45 +1,204 @@
 @model List<VIP_Planning.Models.UrenModel>
-@{ Layout = "_Layout"; }
-<style>
-    .vip-input { background: #000 !important; color: #FFF !important; border: 2px solid #D4AF37 !important; font-weight: bold; }
-    .vip-label { color: #D4AF37 !important; font-weight: 900; text-transform: uppercase; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-</style>
+@{
+    Layout = "_Layout";
+    var werknemers = (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers;
+}
 
-<h2 class="mb-4" style="color:#D4AF37; font-weight:900;">📅 ROOSTER BOUWEN</h2>
+<div class="container-fluid py-4 px-4">
+    <!-- Header -->
+    <div class="mb-5">
+        <h2 class="vip-title-gold"><i class="bi bi-calendar-plus me-3"></i>ROOSTER BOUWEN</h2>
+        <div class="gold-line"></div>
+        <p class="text-white-50 mt-2 tracking-wide">Configureer nieuwe diensten voor het VIP Security Team</p>
+    </div>
 
-<div class="card p-4 shadow mb-4" style="background: rgba(10,10,10,0.9); border: 2px solid #D4AF37; border-radius:15px;">
-    <form action="/Home/OpslaanLokaal" method="post" class="row g-3">
-        <div class="col-md-3">
-            <label class="vip-label small">WERKNEMER</label>
-            <select name="UserEmail" class="form-select vip-input" required>
-                <option value="">-- KIES --</option>
-                @foreach(var w in (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers) {
-                    <option value="@w.Email">@w.Naam</option>
-                }
-            </select>
+    <!-- Invoer Sectie -->
+    <div class="vip-panel mb-5">
+        <div class="panel-glow"></div>
+        <div class="p-4">
+            <form action="/Home/OpslaanLokaal" method="post" class="row g-4 align-items-end">
+                <div class="col-md-3">
+                    <label class="vip-label">WERKNEMER SELECTIE</label>
+                    <select name="UserEmail" class="form-select vip-input" required>
+                        <option value="">-- KIES OPERATOR --</option>
+                        @foreach (var w in werknemers)
+                        {
+                            <option value="@w.Email">@w.Naam.ToUpper()</option>
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label class="vip-label">DIENST DATUM</label>
+                    <input name="DatumString" class="form-control vip-input" type="date" required />
+                </div>
+                <div class="col-md-3">
+                    <label class="vip-label">LOCATIE / POST</label>
+                    <input name="Locatie" class="form-control vip-input" placeholder="Bijv. Havenbedrijf" required />
+                </div>
+                <div class="col-md-1">
+                    <label class="vip-label">UREN</label>
+                    <input name="Uren" type="number" step="0.1" class="form-control vip-input text-center" placeholder="0.0" required />
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-gold-glow w-100 py-2">
+                        <i class="bi bi-plus-lg me-2"></i>TOEVOEGEN
+                    </button>
+                </div>
+            </form>
         </div>
-        <div class="col-md-3"><label class="vip-label small">DATUM</label><input name="DatumString" class="form-control vip-input" type="date" required /></div>
-        <div class="col-md-3"><label class="vip-label small">LOCATIE</label><input name="Locatie" class="form-control vip-input" required /></div>
-        <div class="col-md-1"><label class="vip-label small">UREN</label><input name="Uren" type="number" step="0.1" class="form-control vip-input" required /></div>
-        <div class="col-md-2 d-flex align-items-end"><button type="submit" class="btn btn-outline-warning w-100 font-weight-bold">💾 OPSLAAN</button></div>
-    </form>
+    </div>
+
+    <!-- Concept Tabel -->
+    @if (Model != null && Model.Count > 0)
+    {
+        <div class="vip-panel concept-section">
+            <div class="p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="text-white fw-bold mb-0">
+                        <span class="badge bg-gold-liquid text-black me-2">@Model.Count</span> CONCEPT REGELS
+                    </h5>
+                    <small class="text-gold-muted text-uppercase fw-bold">Niet gepubliceerd</small>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table vip-table">
+                        <thead>
+                            <tr>
+                                <th>DATUM</th>
+                                <th>LOCATIE</th>
+                                <th>EMAIL IDENTIFIER</th>
+                                <th class="text-center">UREN</th>
+                                <th class="text-end">ACTIE</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (int i = 0; i < Model.Count; i++)
+                            {
+                                <tr>
+                                    <td class="fw-bold text-white">@Model[i].DatumString</td>
+                                    <td>@Model[i].Locatie</td>
+                                    <td class="text-white-50">@Model[i].UserEmail</td>
+                                    <td class="text-center fw-bold text-gold">@Model[i].Uren.ToString("N1")</td>
+                                    <td class="text-end">
+                                        <form action="/Home/VerwijderConcept" method="post" class="d-inline">
+                                            <input type="hidden" name="index" value="@i" />
+                                            <button type="submit" class="btn btn-action-delete">
+                                                <i class="bi bi-trash3"></i>
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="mt-4 pt-3 border-top-gold-subtle">
+                    <form action="/Home/PushNaarDatabase" method="post">
+                        <button type="submit" class="btn btn-push-elite w-100">
+                            <i class="bi bi-rocket-takeoff me-2"></i>PUBLICEER NAAR SUPABASE & APP
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    }
 </div>
 
-@if(Model != null && Model.Count > 0) {
-    <div class="card p-3 border-warning bg-black">
-        <h5 class="text-gold mb-3">CONCEPT ROOSTER (@Model.Count regels)</h5>
-        <table class="table table-dark table-hover">
-            <thead><tr class="text-gold"><th>DATUM</th><th>LOCATIE</th><th>EMAIL</th><th>UREN</th><th></th></tr></thead>
-            <tbody>
-                @for(int i = 0; i < Model.Count; i++) {
-                    <tr>
-                        <td>@Model[i].DatumString</td><td>@Model[i].Locatie</td><td>@Model[i].UserEmail</td><td>@Model[i].Uren</td>
-                        <td><form action="/Home/VerwijderConcept" method="post"><input type="hidden" name="index" value="@i" /><button type="submit" class="btn btn-sm btn-outline-danger">✖</button></form></td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-        <form action="/Home/PushNaarDatabase" method="post"><button type="submit" class="btn btn-gold w-100 py-3 mt-2" style="background:#D4AF37; color:#000; font-weight:900;">🚀 PUSH NAAR SUPABASE & APP</button></form>
-    </div>
-}
+<style>
+    :root {
+        --vip-gold: #D4AF37;
+        --vip-gold-glow: rgba(212, 175, 55, 0.4);
+        --vip-black: #050505;
+        --vip-dark: #121212;
+    }
+
+    body { background-color: var(--vip-black); color: white; font-family: 'Inter', sans-serif; }
+
+    /* Header */
+    .vip-title-gold { font-weight: 900; letter-spacing: -1px; color: var(--vip-gold); text-shadow: 0 0 15px var(--vip-gold-glow); }
+    .gold-line { width: 80px; height: 4px; background: var(--vip-gold); border-radius: 2px; }
+    .tracking-wide { letter-spacing: 1px; font-size: 0.9rem; }
+
+    /* Panels */
+    .vip-panel {
+        background: linear-gradient(145deg, #151515, #0a0a0a);
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    .panel-glow {
+        position: absolute;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent);
+        pointer-events: none;
+    }
+
+    /* Form Inputs */
+    .vip-label { color: var(--vip-gold); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; display: block; letter-spacing: 1px; }
+    .vip-input { 
+        background: #000 !important; 
+        border: 1px solid #333 !important; 
+        color: white !important; 
+        border-radius: 10px;
+        padding: 12px;
+        transition: 0.3s;
+    }
+    .vip-input:focus { border-color: var(--vip-gold) !important; box-shadow: 0 0 10px var(--vip-gold-glow) !important; }
+    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+
+    /* Buttons */
+    .btn-gold-glow { 
+        background: var(--vip-gold); 
+        color: black; 
+        font-weight: 800; 
+        border: none; 
+        border-radius: 10px; 
+        box-shadow: 0 0 15px var(--vip-gold-glow);
+        transition: 0.3s;
+    }
+    .btn-gold-glow:hover { background: white; transform: scale(1.02); }
+
+    .btn-push-elite {
+        background: linear-gradient(90deg, #D4AF37, #f7e08a);
+        color: black;
+        font-weight: 900;
+        border: none;
+        padding: 18px;
+        border-radius: 12px;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        transition: 0.4s;
+    }
+    .btn-push-elite:hover { 
+        box-shadow: 0 0 30px var(--vip-gold-glow);
+        transform: translateY(-3px);
+    }
+
+    .btn-action-delete {
+        background: rgba(220, 53, 69, 0.1);
+        border: 1px solid #dc3545;
+        color: #dc3545;
+        border-radius: 8px;
+        padding: 5px 10px;
+        transition: 0.3s;
+    }
+    .btn-action-delete:hover { background: #dc3545; color: white; }
+
+    /* Table Styling */
+    .vip-table { color: #ccc; margin-bottom: 0; }
+    .vip-table thead th { 
+        color: var(--vip-gold); 
+        border-bottom: 2px solid rgba(212, 175, 55, 0.1); 
+        font-size: 0.75rem; 
+        letter-spacing: 1px;
+        padding: 15px;
+    }
+    .vip-table tbody td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+    .border-top-gold-subtle { border-top: 1px solid rgba(212, 175, 55, 0.2); }
+    .text-gold-muted { color: #8a7024; font-size: 0.7rem; }
+    .bg-gold-liquid { background: linear-gradient(90deg, #D4AF37, #f7e08a); padding: 2px 10px; border-radius: 5px; }
+
+</style>

@@ -7,99 +7,120 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Globalization;
 using System.IO;
-
-// Specifieke PDF bibliotheek verwijzingen
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 
-namespace VIP_Planning.Controllers {
-    public class UrenController : Controller {
+namespace VIP_Planning.Controllers
+{
+    public class UrenController : Controller
+    {
         private readonly Supabase.Client _supabase;
-        public UrenController(Supabase.Client supabase) { _supabase = supabase; }
 
-        public async Task<IActionResult> PersoonlijkeUren(string email, string naam, int maandOffset = 0) {
-            var data = await HaalUrenOp(email, maandOffset);
-            
-            // BEREKENING: Alleen uren die NIET betaald zijn
-            double totaalOpenstaand = data.Gefilterd
-                .Where(u => !u.IsUitbetaald && u.Status != "Ziek" && u.Status != "Vrij" && u.AantalUren > 0)
-                .Sum(u => u.AantalUren);
-
-            ViewBag.TotaalUren = totaalOpenstaand;
-            ViewBag.WerknemerNaam = naam;
-            ViewBag.WerknemerEmail = email;
-            ViewBag.PeriodeLabel = data.Label;
-            ViewBag.MaandOffset = maandOffset;
-
-            return View("~/Views/Home/PersoonlijkeUren.cshtml", data.Gefilterd);
+        public UrenController(Supabase.Client supabase)
+        {
+            _supabase = supabase;
         }
 
-        public async Task<IActionResult> ExportPdf(string email, string naam, int maandOffset = 0) {
-            var data = await HaalUrenOp(email, maandOffset);
-            double openstaand = data.Gefilterd
-                .Where(u => !u.IsUitbetaald && u.Status != "Ziek" && u.Status != "Vrij" && u.AantalUren > 0)
-                .Sum(u => u.AantalUren);
+        public async Task<IActionResult> ExportPdf(string email, string naam, string maand)
+        {
+            var culture = new CultureInfo("nl-NL");
 
-            using (MemoryStream ms = new MemoryStream()) {
-                // iTextSharp logica
-                Document doc = new Document(PageSize.A4, 25, 25, 30, 30);
+            // 1. Bereken de loonperiode (21e vorige maand t/m 20e huidige maand)
+            // Voorbeeld: Als 'maand' Apr is, dan wordt het 21 Maart t/m 20 April
+            int jaar = 2026;
+            DateTime geselecteerdeMaandDatum = DateTime.ParseExact(maand, "MMM", culture);
+
+            DateTime eindPeriode = new DateTime(jaar, geselecteerdeMaandDatum.Month, 20); // 20ste van geselecteerde maand
+            DateTime startPeriode = eindPeriode.AddMonths(-1).AddDays(1); // 21ste van de vorige maand
+
+            // 2. Haal ALLE uren op voor deze medewerker
+            var response = await _supabase.From<UrenModel>().Where(x => x.UserEmail == email).Get();
+            var alleUren = response.Models ?? new List<UrenModel>();
+
+            // 3. Filter op de fysieke datum (ongeacht de 'periode_naam' kolom)
+            var urenVoorPdf = alleUren
+                .Where(u => {
+                    if (DateTime.TryParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime d))
+                    {
+                        // Check of de datum echt tussen de 21e en 20e valt
+                        return d.Date >= startPeriode.Date && d.Date <= eindPeriode.Date;
+                    }
+                    return false;
+                })
+                .OrderBy(u => DateTime.ParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture))
+                .ToList();
+
+            // 4. Totaal berekenen van openstaande uren in deze periode
+            double totaalOpenstaand = urenVoorPdf
+                .Where(u => !u.IsUitbetaald && !(u.Locatie?.ToLower().Contains("vrij") ?? false))
+                .Sum(u => u.Uren);
+
+            // 5. PDF Genereren
+            using (MemoryStream ms = new MemoryStream())
+            {
+                Document doc = new Document(PageSize.A4, 30, 30, 40, 40);
                 PdfWriter.GetInstance(doc, ms);
                 doc.Open();
 
-                var fontTitle = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 18);
-                var fontNormal = FontFactory.GetFont(FontFactory.HELVETICA, 10);
+                var fontH1 = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 16);
                 var fontBold = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
+                var fontNormal = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
-                doc.Add(new Paragraph("V.I.P SECURITY SERVICE - URENVERANTWOORDING", fontTitle));
-                doc.Add(new Paragraph($"Naam: {naam} | Periode: {data.Label}", fontNormal));
+                // Header
+                doc.Add(new Paragraph(new Phrase("GEWERKTE UREN 2026", fontH1)));
+                doc.Add(new Paragraph(new Phrase($"Naam: {naam}", fontNormal)));
+                doc.Add(new Paragraph(new Phrase("Bedrijf: V.I.P Security Service", fontNormal)));
+
+                // Toon de loonperiode in de kop
+                string periodeLabel = $"{startPeriode.Day} {culture.TextInfo.ToTitleCase(startPeriode.ToString("MMMM", culture))} - " +
+                                     $"{eindPeriode.Day} {culture.TextInfo.ToTitleCase(eindPeriode.ToString("MMMM", culture))}";
+                doc.Add(new Paragraph(new Phrase($"Periode: {periodeLabel}", fontNormal)));
                 doc.Add(new Paragraph(" "));
-                
-                PdfPTable table = new PdfPTable(4);
+
+                PdfPTable table = new PdfPTable(5);
                 table.WidthPercentage = 100;
-                table.AddCell(new PdfPCell(new Phrase("Datum", fontBold)));
-                table.AddCell(new PdfPCell(new Phrase("Locatie", fontBold)));
-                table.AddCell(new PdfPCell(new Phrase("Status", fontBold)));
-                table.AddCell(new PdfPCell(new Phrase("Uren", fontBold)));
-                
-                foreach (var u in data.Gefilterd) {
-                    table.AddCell(new Phrase(u.DatumString, fontNormal));
-                    table.AddCell(new Phrase(u.Locatie, fontNormal));
-                    table.AddCell(new Phrase(u.IsUitbetaald ? "BETAALD" : "Open", fontNormal));
-                    
-                    string urenTekst = u.Status == "Vrij" ? "*" : (u.Status == "Ziek" ? "**" : u.AantalUren.ToString("N1"));
-                    table.AddCell(new Phrase(urenTekst, fontNormal));
+                table.SetWidths(new float[] { 2f, 2.5f, 4f, 2f, 1.5f });
+
+                string[] headers = { "Dag", "Datum", "Locatie", "Status", "Uren" };
+                foreach (var h in headers)
+                {
+                    table.AddCell(new PdfPCell(new Phrase(h, fontBold)) { Border = Rectangle.BOTTOM_BORDER, PaddingBottom = 5 });
                 }
+
+                foreach (var u in urenVoorPdf)
+                {
+                    DateTime d = DateTime.ParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                    table.AddCell(new PdfPCell(new Phrase(d.ToString("dddd", culture), fontNormal)) { Border = 0, PaddingTop = 5 });
+                    table.AddCell(new PdfPCell(new Phrase(u.DatumString, fontNormal)) { Border = 0, PaddingTop = 5 });
+                    table.AddCell(new PdfPCell(new Phrase(u.Locatie ?? "", fontNormal)) { Border = 0, PaddingTop = 5 });
+                    table.AddCell(new PdfPCell(new Phrase(u.IsUitbetaald ? "Betaald" : "Open", fontNormal)) { Border = 0, PaddingTop = 5 });
+
+                    // Gebruik de ✓ en * tekens
+                    string display = u.IsUitbetaald ? "✓" : (u.Locatie?.ToLower().Contains("vrij") == true ? "*" : u.Uren.ToString("N1", culture));
+                    table.AddCell(new PdfPCell(new Phrase(display, fontNormal)) { Border = 0, PaddingTop = 5 });
+                }
+
+                if (!urenVoorPdf.Any())
+                {
+                    table.AddCell(new PdfPCell(new Phrase("Geen uren gevonden voor de periode 21-20.", fontNormal)) { Colspan = 5, Border = 0, PaddingTop = 10 });
+                }
+
                 doc.Add(table);
-                doc.Add(new Paragraph($"\nOPENSTAAND TOTAAL: {openstaand:N1} UUR", fontBold));
-                
+
+                doc.Add(new Paragraph(" "));
+                doc.Add(new Paragraph(new Phrase("TOTAAL PERIODE OPENSTAAND", fontBold)));
+                doc.Add(new Paragraph(new Phrase($"{totaalOpenstaand.ToString("N1", culture)} UUR", fontH1)));
+
                 doc.Close();
-                byte[] bytes = ms.ToArray();
-                return File(bytes, "application/pdf", $"Uren_{naam}.pdf");
+                return this.File(ms.ToArray(), "application/pdf", $"Uren_{naam}_{maand}.pdf");
             }
         }
 
-        private async Task<(List<UrenModel> Gefilterd, string Label)> HaalUrenOp(string email, int offset) {
-            DateTime refDate = DateTime.Now.AddMonths(offset);
-            DateTime start = new DateTime(refDate.AddMonths(-1).Year, refDate.AddMonths(-1).Month, 21);
-            DateTime eind = new DateTime(refDate.Year, refDate.Month, 20);
-            
-            var response = await _supabase.From<UrenModel>().Get();
-            var lijst = response.Models ?? new List<UrenModel>();
-
-            var gefilterd = lijst
-                .Where(u => u.UserEmail.ToLower() == email.ToLower()).ToList()
-                .Where(u => {
-                    DateTime d;
-                    return DateTime.TryParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out d) && d >= start && d <= eind;
-                })
-                .OrderBy(u => DateTime.ParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture)).ToList();
-                
-            return (gefilterd, $" {start:dd/MM} - {eind:dd/MM/yyyy}");
-        }
-
-        [HttpPost] public async Task<IActionResult> MarkeerAlsBetaald(long id) {
+        [HttpPost]
+        public async Task<IActionResult> MarkeerAlsBetaald(long id, string email, string naam, string maand)
+        {
             await _supabase.From<UrenModel>().Where(x => x.Id == id).Set(x => x.IsUitbetaald, true).Update();
-            return Json(new { success = true });
+            return RedirectToAction("UrenOverzicht", "Home", new { email = email, naam = naam, maand = maand });
         }
     }
 }
