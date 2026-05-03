@@ -2,51 +2,51 @@
     Layout = "_Layout";
 }
 
+<!-- Google Fonts voor de VIP Style -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+
 <div class="container-fluid py-5 px-4">
     <!-- Header Sectie -->
     <div class="mb-5 text-center text-md-start">
-        <h1 class="vip-title">Welkom bij V.I.P-Planning</h1>
-        <div class="gold-line mb-3"></div>
-        <p class="text-white-50 tracking-wide">Beheer het systeem, de planning en de personeelsuren.</p>
+        <h1 class="vip-header-title">V.I.P. PLANNING</h1>
+        <div class="vip-gold-divider mb-3"></div>
+        <p class="vip-sub-text">Beheer het systeem, de planning en de personeelsuren.</p>
     </div>
 
     <!-- Dashboard Kaarten -->
     <div class="row g-4">
         <!-- PLANNING -->
         <div class="col-md-4">
-            <div class="vip-card">
-                <div class="card-glow"></div>
+            <div class="vip-card-glow-index">
                 <div class="card-body p-5 text-center">
-                    <div class="vip-icon mb-4">📅</div>
-                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Planning</h3>
-                    <p class="text-white-50 mb-4">Beheer het rooster en voeg nieuwe diensten toe aan de database.</p>
-                    <a href="/Home/Planning" class="btn-vip">Open Planning</a>
+                    <div class="vip-icon-style mb-4">📅</div>
+                    <h3 class="vip-card-title">Planning</h3>
+                    <p class="text-white mb-4" style="opacity: 0.8;">Beheer het rooster en voeg nieuwe diensten toe aan de live database.</p>
+                    <a href="/Home/Planning" class="btn-vip-gold">OPEN PLANNING</a>
                 </div>
             </div>
         </div>
 
         <!-- WERKNEMERS -->
         <div class="col-md-4">
-            <div class="vip-card">
-                <div class="card-glow"></div>
+            <div class="vip-card-glow-index">
                 <div class="card-body p-5 text-center">
-                    <div class="vip-icon mb-4">👥</div>
-                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Werknemers</h3>
-                    <p class="text-white-50 mb-4">Bekijk urenoverzichten (21-20 regel) en personeelsprofielen.</p>
-                    <a href="/Home/Werknemers" class="btn-vip">Beheer Team</a>
+                    <div class="vip-icon-style mb-4">👥</div>
+                    <h3 class="vip-card-title">Werknemers</h3>
+                    <p class="text-white mb-4" style="opacity: 0.8;">Bekijk urenoverzichten (21-20 regel) en personeelsprofielen.</p>
+                    <a href="/Home/Werknemers" class="btn-vip-gold">BEHEER TEAM</a>
                 </div>
             </div>
         </div>
 
         <!-- INSTELLINGEN -->
         <div class="col-md-4">
-            <div class="vip-card">
-                <div class="card-glow"></div>
+            <div class="vip-card-glow-index">
                 <div class="card-body p-5 text-center">
-                    <div class="vip-icon mb-4">⚙️</div>
-                    <h3 class="text-gold fw-bold mb-3 text-uppercase">Instellingen</h3>
-                    <p class="text-white-50 mb-4">Bekijk de actuele systeemstatus en configureer de portal.</p>
-                    <a href="/Home/Instellingen" class="btn-vip">Configuratie</a>
+                    <div class="vip-icon-style mb-4">⚙️</div>
+                    <h3 class="vip-card-title">Instellingen</h3>
+                    <p class="text-white mb-4" style="opacity: 0.8;">Bekijk de actuele systeemstatus en configureer de portal.</p>
+                    <a href="/Home/Instellingen" class="btn-vip-gold">CONFIGURATIE</a>
                 </div>
             </div>
         </div>
@@ -54,69 +54,93 @@
 </div>
 
 <style>
-    /* Achtergrond en Basis */
-    body { background-color: #050505; color: white; }
-    .text-gold { color: #D4AF37 !important; }
-    .tracking-wide { letter-spacing: 1px; font-size: 0.9rem; }
-
-    /* Titel Styling - Nu iets subtieler */
-    .vip-title {
-        color: #D4AF37;
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 800;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    :root {
+        --gold: #D4AF37;
+        --gold-bright: #F9E27D;
+        --glow: rgba(212, 175, 55, 0.4);
     }
 
-    .gold-line {
-        width: 100px;
-        height: 3px;
-        background: #D4AF37;
+    body {
+        background-color: #050505;
+        color: white;
+        font-family: 'Inter', sans-serif;
+    }
+
+    /* VIP HEADER STYLE */
+    .vip-header-title {
+        font-family: 'Cinzel', serif;
+        font-weight: 900;
+        font-size: clamp(2.5rem, 5vw, 4rem);
+        letter-spacing: 4px;
+        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px var(--glow);
+    }
+    
+    .vip-gold-divider {
+        width: 150px;
+        height: 4px;
+        background: linear-gradient(to right, var(--gold), transparent);
         border-radius: 2px;
     }
 
-    /* VIP Card Concept */
-    .vip-card {
-        background: rgba(15, 15, 15, 0.95);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 15px;
+    .vip-sub-text {
+        font-size: 1rem;
+        letter-spacing: 1px;
+        color: #ffffff;
+        opacity: 0.9;
+    }
+
+    /* VIP Card Styling */
+    .vip-card-glow-index {
+        background: linear-gradient(145deg, #111, #050505);
+        border: 1px solid var(--gold);
+        border-radius: 20px;
         position: relative;
         overflow: hidden;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         height: 100%;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
 
-    .vip-card:hover {
-        transform: translateY(-8px);
-        border-color: #D4AF37;
-        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.15);
+        .vip-card-glow-index:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 15px 40px var(--glow);
+            border-color: var(--gold-bright);
+        }
+
+    .vip-card-title {
+        font-family: 'Cinzel', serif;
+        color: var(--gold);
+        font-weight: 700;
+        letter-spacing: 2px;
+        text-transform: uppercase;
     }
 
-    .vip-icon {
-        font-size: 3.5rem;
-    }
-
-    .card-glow {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent);
-        pointer-events: none;
+    .vip-icon-style {
+        font-size: 4rem;
+        filter: drop-shadow(0 0 10px var(--glow));
     }
 
     /* VIP Button */
-    .btn-vip {
+    .btn-vip-gold {
         display: block;
-        background: #D4AF37;
+        background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
         color: #000;
         text-decoration: none;
-        font-weight: 700;
-        padding: 12px;
-        border-radius: 8px;
-        transition: 0.2s;
+        font-weight: 900;
+        padding: 14px;
+        border-radius: 10px;
+        transition: 0.3s;
+        letter-spacing: 1px;
+        border: none;
     }
 
-    .btn-vip:hover {
-        background: #fff;
-        color: #000;
-        transform: scale(1.03);
-    }
+        .btn-vip-gold:hover {
+            background: #ffffff;
+            color: #000;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(255,255,255,0.4);
+        }
 </style>

@@ -8,20 +8,35 @@ namespace VIP_Planning.Models
     [Table("uren")]
     public class UrenModel : BaseModel
     {
-        [PrimaryKey("id", false)] public int Id { get; set; }
-        [Column("user_email")] public string UserEmail { get; set; } = "";
-        [Column("datum_string")] public string DatumString { get; set; } = "";
-        [Column("locatie")] public string Locatie { get; set; } = "";
-        [Column("uren")] public double Uren { get; set; }
-        [Column("periode_naam")] public string PeriodeNaam { get; set; } = "";
-        [Column("is_uitbetaald")] public bool IsUitbetaald { get; set; }
+        [PrimaryKey("id", false)]
+        public int Id { get; set; }
 
-        // --- DEZE VELDEN WORDEN NIET NAAR SUPABASE GESTUURD (JSONIGNORE) ---
+        [Column("user_email")]
+        public string UserEmail { get; set; } = "";
 
-        [JsonIgnore] public string Status => IsUitbetaald ? "Betaald" : "Open";
+        [Column("user_naam")]
+        public string UserNaam { get; set; } = "";
 
-        // FIX: Voeg AantalUren weer toe zodat je Controller en View niet meer crashen
-        [JsonIgnore] public double AantalUren => Uren;
+        [Column("datum_string")]
+        public string DatumString { get; set; } = "";
+
+        [Column("locatie")]
+        public string Locatie { get; set; } = "";
+
+        [Column("uren")]
+        public double Uren { get; set; }
+
+        [Column("periode_naam")]
+        public string PeriodeNaam { get; set; } = "";
+
+        [Column("is_uitbetaald")]
+        public bool IsUitbetaald { get; set; }
+
+        [Column("status")]
+        public string Status { get; set; } = "Concept";
+
+        [JsonIgnore]
+        public double AantalUren => Uren;
 
         [JsonIgnore]
         public string DisplayUren
@@ -56,17 +71,41 @@ namespace VIP_Planning.Models
     [Table("planning")]
     public class PlanningModel : BaseModel
     {
-        [PrimaryKey("id", false)] public int Id { get; set; }
-        [Column("user_email")] public string UserEmail { get; set; } = "";
-        [Column("datum")] public string Datum { get; set; } = "";
-        [Column("locatie")] public string Locatie { get; set; } = "";
-        [Column("uren")] public double Uren { get; set; }
+        [PrimaryKey("id", false)]
+        public long Id { get; set; }
+
+        [Column("user_email")]
+        public string UserEmail { get; set; } = "";
+
+        [Column("user_naam")]
+        public string UserNaam { get; set; } = "";
+
+        [Column("datum")]
+        public string Datum { get; set; } = "";
+
+        [Column("locatie")]
+        public string Locatie { get; set; } = "";
+
+        [Column("start_tijd")]
+        public string StartTijd { get; set; } = "";
+
+        [Column("eind_tijd")]
+        public string EindTijd { get; set; } = "";
+
+        [Column("uren")]
+        public double Uren { get; set; }
+
+        [Column("is_gepusht")]
+        public bool IsGepusht { get; set; } = false;
     }
 
     [Table("profielen")]
     public class ProfielModel : BaseModel
     {
-        [PrimaryKey("email", false)] public string Email { get; set; } = "";
-        [Column("naam")] public string Naam { get; set; } = "";
+        [PrimaryKey("email", false)]
+        public string Email { get; set; } = "";
+
+        [Column("naam")]
+        public string Naam { get; set; } = "";
     }
 }

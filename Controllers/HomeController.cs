@@ -14,22 +14,46 @@ namespace VIP_Planning.Controllers
     public class HomeController : Controller
     {
         private readonly Supabase.Client _supabase;
-        public HomeController(Supabase.Client supabase) { _supabase = supabase; }
+
+        public HomeController(Supabase.Client supabase)
+        {
+            _supabase = supabase;
+        }
 
         public IActionResult Index() => View();
         public IActionResult Instellingen() => View();
 
-        public async Task<IActionResult> Planning()
+        // Haalt live data uit de 'planning' tabel en ondersteunt de maandkiezer filtering
+        public async Task<IActionResult> Planning(string maand)
         {
+            var culture = new CultureInfo("nl-NL");
+
+            // 1. Profielen ophalen voor de dropdown
             var profielen = await _supabase.From<ProfielModel>().Get();
             ViewBag.Werknemers = profielen.Models ?? new List<ProfielModel>();
 
-            var conceptJson = HttpContext.Session.GetString("ConceptRooster");
-            var conceptLijst = string.IsNullOrEmpty(conceptJson)
-                ? new List<UrenModel>()
-                : JsonConvert.DeserializeObject<List<UrenModel>>(conceptJson);
+            // 2. Bepaal de geselecteerde maand voor de maandkiezer-styling
+            if (string.IsNullOrEmpty(maand))
+            {
+                maand = culture.TextInfo.ToTitleCase(DateTime.Now.ToString("MMM", culture).Replace(".", ""));
+            }
+            ViewBag.GeselecteerdeMaand = maand;
 
-            return View(conceptLijst);
+            // 3. Live planning ophalen uit Supabase
+            var response = await _supabase.From<PlanningModel>().Get();
+            var planningLijst = response.Models ?? new List<PlanningModel>();
+
+            // 4. FILTERING: Toon alleen diensten die vallen in de geselecteerde maand
+            var gefilterdeLijst = planningLijst.Where(x =>
+            {
+                if (DateTime.TryParse(x.Datum, out DateTime d))
+                {
+                    return d.ToString("MMM", culture).Replace(".", "").Equals(maand, StringComparison.OrdinalIgnoreCase);
+                }
+                return false;
+            }).OrderBy(x => x.Datum).ToList();
+
+            return View(gefilterdeLijst);
         }
 
         public async Task<IActionResult> Werknemers()
@@ -41,7 +65,6 @@ namespace VIP_Planning.Controllers
         public async Task<IActionResult> UrenOverzicht(string email, string naam, string maand)
         {
             var culture = new CultureInfo("nl-NL");
-
             if (string.IsNullOrEmpty(maand))
             {
                 DateTime nu = DateTime.Now;
@@ -55,52 +78,96 @@ namespace VIP_Planning.Controllers
             ViewBag.Maanden = new List<string> { "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" };
 
             var response = await _supabase.From<UrenModel>().Where(x => x.UserEmail == email).Get();
-
-            // AANPASSING: OrderByDescending zorgt dat de nieuwste datum bovenaan staat
             var gefilterd = (response.Models ?? new List<UrenModel>())
-                .Where(x => x.PeriodeNaam.Equals(maand, StringComparison.OrdinalIgnoreCase))
-                .OrderByDescending(x => DateTime.ParseExact(x.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture))
+                .Where(x => x.PeriodeNaam != null && x.PeriodeNaam.Equals(maand, StringComparison.OrdinalIgnoreCase))
+                .OrderByDescending(x => x.DatumString)
                 .ToList();
 
             return View(gefilterd);
         }
 
         [HttpPost]
-        public IActionResult OpslaanLokaal(UrenModel nieuw)
+        public async Task<IActionResult> OpslaanLokaal(UrenModel nieuw)
         {
-            var conceptJson = HttpContext.Session.GetString("ConceptRooster");
-            var lijst = string.IsNullOrEmpty(conceptJson)
-                ? new List<UrenModel>()
-                : JsonConvert.DeserializeObject<List<UrenModel>>(conceptJson);
+            // 1. Zoek het profiel van de werknemer
+            var profielenResponse = await _supabase.From<ProfielModel>().Get();
+            var werknemerProfiel = profielenResponse.Models?.FirstOrDefault(p => p.Email == nieuw.UserEmail);
 
+            if (werknemerProfiel == null) return RedirectToAction("Planning");
+
+            // 2. Datum voorbereiden (database formaat)
+            string dbDatum = "";
             if (DateTime.TryParse(nieuw.DatumString, out DateTime d))
             {
-                var culture = new CultureInfo("nl-NL");
-                nieuw.DatumString = d.ToString("dd-MM-yyyy");
-
-                DateTime periodeDatum = d.Day >= 21 ? d.AddMonths(1) : d;
-                string m = periodeDatum.ToString("MMM", culture).Replace(".", "");
-                nieuw.PeriodeNaam = culture.TextInfo.ToTitleCase(m);
+                dbDatum = d.ToString("yyyy-MM-dd");
+            }
+            else
+            {
+                return RedirectToAction("Planning");
             }
 
-            lijst.Add(nieuw);
-            HttpContext.Session.SetString("ConceptRooster", JsonConvert.SerializeObject(lijst));
+            // 3. --- SLIMMERE BEVEILIGING TEGEN DUBBELE INVOER ---
+            // Sta 2 diensten op 1 dag toe, MAAR alleen als de locatie verschilt
+            var bestaand = await _supabase.From<PlanningModel>()
+                .Where(x => x.UserEmail == nieuw.UserEmail)
+                .Where(x => x.Datum == dbDatum)
+                .Where(x => x.Locatie == nieuw.Locatie)
+                .Get();
+
+            if (bestaand.Models.Any())
+            {
+                return RedirectToAction("Planning", new { fout = "dubbel" });
+            }
+
+            // 4. Nieuw item aanmaken
+            var roosterItem = new PlanningModel
+            {
+                UserEmail = nieuw.UserEmail,
+                UserNaam = werknemerProfiel.Naam,
+                Locatie = nieuw.Locatie,
+                Uren = nieuw.Uren,
+                Datum = dbDatum,
+                IsGepusht = false,
+                StartTijd = "00:00",
+                EindTijd = "00:00"
+            };
+
+            // 5. Direct invoegen in Supabase
+            await _supabase.From<PlanningModel>().Insert(roosterItem);
+
+            var culture = new CultureInfo("nl-NL");
+            string maandVanDienst = DateTime.Parse(dbDatum).ToString("MMM", culture).Replace(".", "");
+            return RedirectToAction("Planning", new { maand = culture.TextInfo.ToTitleCase(maandVanDienst) });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> VerwijderPlanning(long id)
+        {
+            await _supabase.From<PlanningModel>().Where(x => x.Id == id).Delete();
             return RedirectToAction("Planning");
         }
 
         [HttpPost]
         public async Task<IActionResult> PushNaarDatabase()
         {
-            var conceptJson = HttpContext.Session.GetString("ConceptRooster");
-            if (!string.IsNullOrEmpty(conceptJson))
+            var response = await _supabase.From<PlanningModel>().Where(x => x.IsGepusht == false).Get();
+            var nietGepusht = response.Models;
+
+            if (nietGepusht != null)
             {
-                var lijst = JsonConvert.DeserializeObject<List<UrenModel>>(conceptJson);
-                foreach (var item in lijst)
+                foreach (var item in nietGepusht)
                 {
-                    await _supabase.From<UrenModel>().Insert(item);
+                    item.IsGepusht = true;
+                    await _supabase.From<PlanningModel>().Update(item);
                 }
-                HttpContext.Session.Remove("ConceptRooster");
             }
+
+            return RedirectToAction("Planning");
+        }
+
+        [HttpPost]
+        public IActionResult VerwijderUitConcept(int index)
+        {
             return RedirectToAction("Planning");
         }
     }

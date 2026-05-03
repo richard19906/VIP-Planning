@@ -1,204 +1,238 @@
-@model List<VIP_Planning.Models.UrenModel>
+@model List<VIP_Planning.Models.PlanningModel>
 @{
     Layout = "_Layout";
     var werknemers = (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers;
+    var geselecteerdeMaand = ViewBag.GeselecteerdeMaand;
 }
+
+<!-- Google Fonts voor de VIP Style & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <div class="container-fluid py-4 px-4">
     <!-- Header -->
-    <div class="mb-5">
-        <h2 class="vip-title-gold"><i class="bi bi-calendar-plus me-3"></i>ROOSTER BOUWEN</h2>
-        <div class="gold-line"></div>
-        <p class="text-white-50 mt-2 tracking-wide">Configureer nieuwe diensten voor het VIP Security Team</p>
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <div>
+            <h1 class="vip-header-title">ROOSTER BOUWEN</h1>
+            <div class="vip-gold-divider"></div>
+        </div>
+        <div class="maand-selector">
+            @foreach (var m in new[] { "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" })
+            {
+                <a href="?maand=@m" class="btn-maand @(geselecteerdeMaand == m ? "active" : "")">@m</a>
+            }
+        </div>
     </div>
 
-    <!-- Invoer Sectie -->
-    <div class="vip-panel mb-5">
-        <div class="panel-glow"></div>
+    <!-- Invoer Balk -->
+    <div class="vip-card-glow mb-4">
         <div class="p-4">
-            <form action="/Home/OpslaanLokaal" method="post" class="row g-4 align-items-end">
+            <form action="/Home/OpslaanLokaal" method="post" class="row g-3 align-items-end">
                 <div class="col-md-3">
-                    <label class="vip-label">WERKNEMER SELECTIE</label>
+                    <label class="vip-label">WERKNEMER</label>
                     <select name="UserEmail" class="form-select vip-input" required>
-                        <option value="">-- KIES OPERATOR --</option>
-                        @foreach (var w in werknemers)
-                        {
-                            <option value="@w.Email">@w.Naam.ToUpper()</option>
-                        }
+                        <option value="">-- SELECTEER --</option>
+                        @foreach (var w in werknemers) { <option value="@w.Email">@w.Naam.ToUpper()</option> }
                     </select>
                 </div>
                 <div class="col-md-3">
-                    <label class="vip-label">DIENST DATUM</label>
-                    <input name="DatumString" class="form-control vip-input" type="date" required />
+                    <label class="vip-label">DATUM</label>
+                    <input name="DatumString" class="form-control vip-input custom-date" type="date" required />
                 </div>
                 <div class="col-md-3">
-                    <label class="vip-label">LOCATIE / POST</label>
-                    <input name="Locatie" class="form-control vip-input" placeholder="Bijv. Havenbedrijf" required />
+                    <label class="vip-label">LOCATIE</label>
+                    <input name="Locatie" class="form-control vip-input" placeholder="Voer locatie in..." required />
                 </div>
                 <div class="col-md-1">
                     <label class="vip-label">UREN</label>
-                    <input name="Uren" type="number" step="0.1" class="form-control vip-input text-center" placeholder="0.0" required />
+                    <input name="Uren" type="number" step="0.5" class="form-control vip-input" value="0" required />
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn btn-gold-glow w-100 py-2">
-                        <i class="bi bi-plus-lg me-2"></i>TOEVOEGEN
-                    </button>
+                    <button type="submit" class="btn-voegtoe w-100">TOEVOEGEN</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- Concept Tabel -->
-    @if (Model != null && Model.Count > 0)
-    {
-        <div class="vip-panel concept-section">
-            <div class="p-4">
-                <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="text-white fw-bold mb-0">
-                        <span class="badge bg-gold-liquid text-black me-2">@Model.Count</span> CONCEPT REGELS
-                    </h5>
-                    <small class="text-gold-muted text-uppercase fw-bold">Niet gepubliceerd</small>
-                </div>
-
-                <div class="table-responsive">
-                    <table class="table vip-table">
-                        <thead>
+    <!-- Rooster Voorbeeld -->
+    <div class="vip-card-black-glow mb-4">
+        <div class="p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h5 class="text-gold fw-bold mb-0" style="font-family: 'Cinzel', serif; letter-spacing: 2px;">ROOSTER VOORBEELD - @geselecteerdeMaand.ToUpper()</h5>
+                
+                <form action="/Home/PushNaarDatabase" method="post" onsubmit="showPublishFeedback(event, this)">
+                    <button type="submit" id="publishBtn" class="btn-push-small">
+                        <i class="bi bi-send-fill me-1"></i> PUBLICEER
+                    </button>
+                </form>
+            </div>
+            
+            <div class="table-responsive">
+                <table class="table table-dark vip-table">
+                    <thead>
+                        <tr>
+                            <th class="text-gold">DATUM</th>
+                            <th class="text-gold">WERKNEMER</th>
+                            <th class="text-gold">LOCATIE</th>
+                            <th class="text-center text-gold">UREN</th>
+                            <th class="text-end text-gold">BEHEER</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
                             <tr>
-                                <th>DATUM</th>
-                                <th>LOCATIE</th>
-                                <th>EMAIL IDENTIFIER</th>
-                                <th class="text-center">UREN</th>
-                                <th class="text-end">ACTIE</th>
+                                <td class="text-white">@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
+                                <td class="text-white fw-bold">@item.UserNaam</td>
+                                <td class="text-white">@item.Locatie</td>
+                                <td class="text-center text-white">@item.Uren</td>
+                                <td class="text-end">
+                                    <button onclick="editRow('@item.Id', '@item.Locatie', '@item.Uren')" class="btn-action-edit me-3">
+                                        <i class="bi bi-pencil-fill"></i>
+                                    </button>
+                                    
+                                    <button onclick="confirmDelete('@item.Id')" class="btn-action-delete">
+                                        <i class="bi bi-x-lg"></i>
+                                    </button>
+                                    <form id="delete-form-@item.Id" action="/Home/VerwijderPlanning" method="post" style="display:none;">
+                                        <input type="hidden" name="id" value="@item.Id" />
+                                    </form>
+                                </td>
                             </tr>
-                        </thead>
-                        <tbody>
-                            @for (int i = 0; i < Model.Count; i++)
-                            {
-                                <tr>
-                                    <td class="fw-bold text-white">@Model[i].DatumString</td>
-                                    <td>@Model[i].Locatie</td>
-                                    <td class="text-white-50">@Model[i].UserEmail</td>
-                                    <td class="text-center fw-bold text-gold">@Model[i].Uren.ToString("N1")</td>
-                                    <td class="text-end">
-                                        <form action="/Home/VerwijderConcept" method="post" class="d-inline">
-                                            <input type="hidden" name="index" value="@i" />
-                                            <button type="submit" class="btn btn-action-delete">
-                                                <i class="bi bi-trash3"></i>
-                                            </button>
-                                        </form>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="mt-4 pt-3 border-top-gold-subtle">
-                    <form action="/Home/PushNaarDatabase" method="post">
-                        <button type="submit" class="btn btn-push-elite w-100">
-                            <i class="bi bi-rocket-takeoff me-2"></i>PUBLICEER NAAR SUPABASE & APP
-                        </button>
-                    </form>
-                </div>
+                        }
+                    </tbody>
+                </table>
             </div>
         </div>
-    }
+    </div>
 </div>
 
 <style>
-    :root {
-        --vip-gold: #D4AF37;
-        --vip-gold-glow: rgba(212, 175, 55, 0.4);
-        --vip-black: #050505;
-        --vip-dark: #121212;
+    :root { 
+        --gold: #D4AF37; 
+        --gold-bright: #F9E27D;
+        --glow: rgba(212, 175, 55, 0.5); 
+    }
+    
+    body { background-color: #000; color: white; font-family: 'Inter', sans-serif; }
+
+    /* VIP HEADER STYLE */
+    .vip-header-title { 
+        font-family: 'Cinzel', serif; 
+        font-weight: 900; 
+        font-size: 3rem; 
+        color: var(--gold); 
+        letter-spacing: 4px;
+        margin-bottom: 5px;
+        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px var(--glow);
+    }
+    
+    .vip-gold-divider { 
+        width: 150px; 
+        height: 4px; 
+        background: linear-gradient(to right, var(--gold), transparent); 
+        border-radius: 2px;
     }
 
-    body { background-color: var(--vip-black); color: white; font-family: 'Inter', sans-serif; }
+    /* Kaders & Glow */
+    .vip-card-glow, .vip-card-black-glow { border: 1px solid var(--gold); border-radius: 15px; box-shadow: 0 0 20px var(--glow); }
+    .vip-card-glow { background: #0a0a0a; }
+    .vip-card-black-glow { background: #000; }
 
-    /* Header */
-    .vip-title-gold { font-weight: 900; letter-spacing: -1px; color: var(--vip-gold); text-shadow: 0 0 15px var(--vip-gold-glow); }
-    .gold-line { width: 80px; height: 4px; background: var(--vip-gold); border-radius: 2px; }
-    .tracking-wide { letter-spacing: 1px; font-size: 0.9rem; }
-
-    /* Panels */
-    .vip-panel {
-        background: linear-gradient(145deg, #151515, #0a0a0a);
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 20px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-    }
-    .panel-glow {
-        position: absolute;
-        top: 0; left: 0; width: 100%; height: 100%;
-        background: radial-gradient(circle at top right, rgba(212, 175, 55, 0.05), transparent);
-        pointer-events: none;
+    /* Kalender Icoon */
+    .custom-date::-webkit-calendar-picker-indicator {
+        filter: invert(0.7) sepia(1) saturate(10) hue-rotate(10deg);
+        cursor: pointer;
+        background-color: var(--gold);
+        border-radius: 3px;
     }
 
-    /* Form Inputs */
-    .vip-label { color: var(--vip-gold); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; display: block; letter-spacing: 1px; }
-    .vip-input { 
-        background: #000 !important; 
-        border: 1px solid #333 !important; 
-        color: white !important; 
-        border-radius: 10px;
-        padding: 12px;
-        transition: 0.3s;
-    }
-    .vip-input:focus { border-color: var(--vip-gold) !important; box-shadow: 0 0 10px var(--vip-gold-glow) !important; }
-    input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); cursor: pointer; }
+    /* Maand Filter */
+    .btn-maand { color: #fff; text-decoration: none; padding: 5px 12px; border: 1px solid #333; margin-left: 2px; font-size: 0.8rem; transition: 0.3s; }
+    .btn-maand.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; box-shadow: 0 0 10px var(--glow); }
 
-    /* Buttons */
-    .btn-gold-glow { 
-        background: var(--vip-gold); 
-        color: black; 
-        font-weight: 800; 
-        border: none; 
-        border-radius: 10px; 
-        box-shadow: 0 0 15px var(--vip-gold-glow);
-        transition: 0.3s;
-    }
-    .btn-gold-glow:hover { background: white; transform: scale(1.02); }
+    /* Inputs */
+    .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; display: block; }
+    .vip-input { background: #000 !important; color: #fff !important; border: 1px solid #444 !important; }
+    .vip-input::placeholder { color: #fff !important; opacity: 1; }
 
-    .btn-push-elite {
-        background: linear-gradient(90deg, #D4AF37, #f7e08a);
-        color: black;
-        font-weight: 900;
-        border: none;
-        padding: 18px;
-        border-radius: 12px;
-        text-transform: uppercase;
-        letter-spacing: 2px;
-        transition: 0.4s;
-    }
-    .btn-push-elite:hover { 
-        box-shadow: 0 0 30px var(--vip-gold-glow);
-        transform: translateY(-3px);
-    }
+    /* Knoppen */
+    .btn-voegtoe { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 8px; padding: 10px; }
+    .btn-push-small { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 6px 20px; font-size: 0.85rem; }
+    .btn-push-small.success { background: #28a745 !important; color: white; }
 
-    .btn-action-delete {
-        background: rgba(220, 53, 69, 0.1);
-        border: 1px solid #dc3545;
-        color: #dc3545;
-        border-radius: 8px;
-        padding: 5px 10px;
-        transition: 0.3s;
-    }
-    .btn-action-delete:hover { background: #dc3545; color: white; }
+    /* Icons */
+    .btn-action-edit { background: none; border: none; color: var(--gold); font-size: 1.1rem; }
+    .btn-action-delete { background: none; border: none; color: #ff4d4d; font-size: 1.1rem; }
 
-    /* Table Styling */
-    .vip-table { color: #ccc; margin-bottom: 0; }
-    .vip-table thead th { 
-        color: var(--vip-gold); 
-        border-bottom: 2px solid rgba(212, 175, 55, 0.1); 
-        font-size: 0.75rem; 
-        letter-spacing: 1px;
-        padding: 15px;
-    }
-    .vip-table tbody td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
-    .border-top-gold-subtle { border-top: 1px solid rgba(212, 175, 55, 0.2); }
-    .text-gold-muted { color: #8a7024; font-size: 0.7rem; }
-    .bg-gold-liquid { background: linear-gradient(90deg, #D4AF37, #f7e08a); padding: 2px 10px; border-radius: 5px; }
-
+    /* Custom Popups */
+    .vip-swal-popup { border: 2px solid var(--gold) !important; box-shadow: 0 0 30px var(--glow) !important; background-color: #000 !important; border-radius: 20px !important; }
+    .vip-swal-input { background: #000 !important; color: white !important; border: 1px solid #444 !important; border-radius: 10px !important; margin: 10px auto !important; width: 80% !important; }
+    .vip-swal-label { color: var(--gold); font-family: 'Cinzel', serif; font-weight: bold; font-size: 0.9rem; display: block; margin-top: 15px; }
 </style>
+
+<script>
+    function showPublishFeedback(event, form) {
+        event.preventDefault();
+        const btn = document.getElementById('publishBtn');
+        btn.classList.add('success');
+        btn.innerHTML = '<i class="bi bi-check-lg"></i> GEPUBLICEERD';
+
+        Swal.fire({
+            title: 'GEPUBLICEERD',
+            text: 'Het rooster is verzonden naar de medewerkers.',
+            icon: 'success',
+            customClass: { popup: 'vip-swal-popup' },
+            background: '#000',
+            color: '#D4AF37',
+            confirmButtonColor: '#D4AF37'
+        }).then(() => { form.submit(); });
+    }
+
+    function confirmDelete(id) {
+        Swal.fire({
+            title: 'VERWIJDEREN?',
+            text: "Deze dienst wordt definitief gewist.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#ff4d4d',
+            cancelButtonColor: '#444',
+            confirmButtonText: 'JA, VERWIJDER',
+            cancelButtonText: 'ANNULEER',
+            customClass: { popup: 'vip-swal-popup' },
+            background: '#000',
+            color: '#fff'
+        }).then((result) => { if (result.isConfirmed) { document.getElementById('delete-form-' + id).submit(); } });
+    }
+
+    async function editRow(id, huidigeLocatie, huidigeUren) {
+        const { value: formValues } = await Swal.fire({
+            title: 'DIENST BEWERKEN',
+            background: '#000',
+            color: '#D4AF37',
+            customClass: { popup: 'vip-swal-popup' },
+            html:
+                `<label class="vip-swal-label">LOCATIE</label>` +
+                `<input id="swal-loc" class="vip-swal-input" value="${huidigeLocatie}">` +
+                `<label class="vip-swal-label">UREN</label>` +
+                `<input id="swal-uren" type="number" class="vip-swal-input" value="${huidigeUren}">`,
+            focusConfirm: false,
+            confirmButtonColor: '#D4AF37',
+            confirmButtonText: 'WIJZIGING OPSLAAN',
+            preConfirm: () => {
+                return {
+                    locatie: document.getElementById('swal-loc').value,
+                    uren: document.getElementById('swal-uren').value
+                }
+            }
+        });
+        if (formValues) {
+            Swal.fire({ title: 'BIJGEWERKT', icon: 'success', background: '#000', color: '#D4AF37', customClass: { popup: 'vip-swal-popup' } })
+            .then(() => location.reload());
+        }
+    }
+</script>
