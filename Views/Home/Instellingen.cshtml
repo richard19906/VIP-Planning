@@ -1,103 +1,115 @@
+@model List<VIP_Planning.Models.PlanningModel>
 @{
     Layout = "_Layout";
     var syncTime = DateTime.Now.ToString("HH:mm:ss");
     var syncDate = DateTime.Now.ToString("dd-MM-yyyy");
+    int activeCount = ViewBag.ActiveWorkers ?? 0; 
 }
 
-<div class="container-fluid py-4 px-4 bg-vip-main">
-    <!-- Header met Glass-effect -->
-    <div class="d-flex justify-content-between align-items-end mb-5 glass-header p-4 rounded-4 border-gold-subtle">
+<!-- Google Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<div class="container-fluid py-4 px-4" id="main-content">
+    <!-- Header Sectie -->
+    <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="vip-title-gold mb-0">SYSTEEM CONFIGURATIE</h1>
-            <p class="text-gold-muted tracking-widest mb-0">V.I.P. SECURITY SERVICE PORTAL &bull; ELITE ACCESS ONLY</p>
+            <h1 class="vip-header-title-main text-start">SYSTEEM CONFIGURATIE</h1>
+            <div class="vip-gold-line-main m-0" style="width: 100px;"></div>
+            <p class="text-gold-gradient mt-2 mb-0 fw-bold">V.I.P. SECURITY SERVICE PORTAL</p>
         </div>
         <div class="text-end d-none d-md-block">
-            <span class="badge bg-gold-liquid text-black px-3 py-2 rounded-pill fw-bold">VERSION 2026.4.1-PRO</span>
+            <span class="badge-vip-version">VERSION 2.0</span>
         </div>
     </div>
 
     <div class="row g-4">
         <!-- KOLOM 1: SYSTEEM STATUS -->
         <div class="col-xl-4 col-lg-5">
-            <div class="vip-panel h-100">
-                <div class="panel-glow"></div>
+            <div class="vip-panel h-100 shadow-lg">
                 <div class="p-4">
                     <div class="d-flex align-items-center mb-4">
                         <div class="status-pulse me-3"></div>
-                        <h4 class="text-white fw-bold mb-0">SYSTEEM STATUS</h4>
+                        <h4 class="text-gold-gradient fw-bold mb-0">SYSTEEM LIVE STATUS</h4>
                     </div>
                     
                     <div class="status-grid">
                         <div class="status-item">
-                            <span class="label">DATABASE</span>
+                            <span class="label text-gold-muted">DATABASE</span>
                             <span class="value text-success">CORE-ONLINE</span>
                         </div>
                         <div class="status-item">
-                            <span class="label">ENCRYPTION</span>
+                            <span class="label text-gold-muted">UREN APP STATUS</span>
+                            <span id="app-status-container" class="value @(activeCount > 0 ? "text-success" : "text-danger")">
+                                <i class="bi @(activeCount > 0 ? "bi-person-check-fill" : "bi-person-x-fill") me-1"></i>
+                                <span id="app-status-text">@(activeCount > 0 ? activeCount + " WERKNEMER(S) ONLINE" : "GEEN WERKNEMERS ACTIEF")</span>
+                            </span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label text-gold-muted">ENCRYPTION</span>
                             <span class="value text-info">AES-256 ACTIVE</span>
                         </div>
                         <div class="status-item">
-                            <span class="label">CLOUD ENGINE</span>
+                            <span class="label text-gold-muted">CLOUD ENGINE</span>
                             <span class="value text-success">STABLE</span>
                         </div>
                         <div class="status-item">
-                            <span class="label">SERVER UPTIME</span>
-                            <span class="value">99.98%</span>
+                            <span class="label text-gold-muted">FIREWALL</span>
+                            <span class="value text-success">ACTIVE-SHIELD</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label text-gold-muted">LATENCY</span>
+                            <span class="value text-white">14ms</span>
+                        </div>
+                        <div class="status-item">
+                            <span class="label text-gold-muted">SERVER UPTIME</span>
+                            <span class="value text-white">99.98%</span>
                         </div>
                     </div>
 
-                    <div class="info-box mt-4 p-3 rounded-3 bg-black-depth border-gold-subtle">
+                    <div class="info-box mt-4 p-3 rounded-3 bg-black border-gold-subtle">
                         <div class="d-flex justify-content-between mb-2">
-                            <small class="text-white-50">SYNC TIME</small>
-                            <small class="text-gold">@syncTime</small>
+                            <small class="text-gold-muted fw-bold">SYNC TIJD</small>
+                            <small class="text-gold-var">@syncTime</small>
                         </div>
                         <div class="d-flex justify-content-between">
-                            <small class="text-white-50">SYNC DATE</small>
-                            <small class="text-gold">@syncDate</small>
+                            <small class="text-gold-muted fw-bold">SYNC DATUM</small>
+                            <small class="text-gold-var">@syncDate</small>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- KOLOM 2: BEVEILIGING & ACCOUNT -->
+        <!-- KOLOM 2: BEVEILIGING -->
         <div class="col-xl-4 col-lg-7">
-            <div class="vip-panel h-100 border-gold-bright">
+            <div class="vip-panel h-100 border-gold-glow">
                 <div class="p-4">
-                    <h4 class="text-gold fw-bold mb-4"><i class="bi bi-shield-lock-fill me-2"></i>BEVEILIGING & TOEGANG</h4>
+                    <h4 class="text-gold-gradient fw-bold mb-4"><i class="bi bi-shield-lock-fill me-2"></i>BEVEILIGING</h4>
                     
-                    <!-- ADMIN PINCODES -->
                     <div class="mb-4">
-                        <label class="vip-label">MASTER ADMIN PIN (SYSTEM)</label>
-                        <div class="input-group vip-input-group mb-2">
+                        <label class="vip-label text-gold-gradient">MASTER ADMIN PIN</label>
+                        <div class="input-group mb-2">
                             <input type="password" class="form-control vip-input" value="3991" id="pinAdmin">
-                            <button class="btn btn-gold-outline" onclick="toggleView('pinAdmin')"><i class="bi bi-eye"></i></button>
-                            <button class="btn btn-gold-solid">UPDATE</button>
+                            <button class="btn btn-vip-outline-small" onclick="toggleView('pinAdmin')"><i class="bi bi-eye"></i></button>
+                            <button class="btn btn-vip-solid-small" onclick="alert('PIN bijgewerkt')">UPDATE</button>
                         </div>
                     </div>
 
                     <hr class="border-gold-subtle my-4">
 
-                    <!-- ACCOUNT WACHTWOORD WIJZIGEN -->
                     <div class="account-security-box">
-                        <h5 class="text-white small fw-bold mb-3 text-uppercase tracking-widest">Werkgever Account</h5>
-                        
+                        <h5 class="text-gold-gradient small fw-bold mb-3 text-uppercase tracking-widest">Werkgever Account</h5>
                         <div class="mb-3">
-                            <label class="vip-label">HUIDIG WACHTWOORD</label>
+                            <label class="vip-label text-gold-muted">HUIDIG WACHTWOORD</label>
                             <input type="password" class="form-control vip-input" placeholder="••••••••">
                         </div>
-
                         <div class="mb-3">
-                            <label class="vip-label">NIEUW WACHTWOORD ELITE</label>
-                            <input type="password" class="form-control vip-input" placeholder="Min. 12 tekens">
+                            <label class="vip-label text-gold-muted">NIEUW WACHTWOORD</label>
+                            <input type="password" class="form-control vip-input" placeholder="Wachtwoord">
                         </div>
-
-                        <div class="mb-3">
-                            <label class="vip-label">BEVESTIG NIEUW WACHTWOORD</label>
-                            <input type="password" class="form-control vip-input" placeholder="Herhaal wachtwoord">
-                        </div>
-
-                        <button class="btn btn-gold-glow w-100 mt-2">
+                        <button class="btn-vip-gold-action w-100 mt-2" onclick="alert('Wachtwoord vernieuwd')">
                             <i class="bi bi-key-fill me-2"></i>WACHTWOORD VERNIEUWEN
                         </button>
                     </div>
@@ -105,46 +117,56 @@
             </div>
         </div>
 
-        <!-- KOLOM 3: INTERFACE & PERSONALISATIE -->
+        <!-- KOLOM 3: INTERFACE (MET KLEURKIEZER) -->
         <div class="col-xl-4">
             <div class="vip-panel h-100">
                 <div class="p-4">
-                    <h4 class="text-white fw-bold mb-4"><i class="bi bi-palette2 me-2"></i>INTERFACE</h4>
+                    <h4 class="text-gold-gradient fw-bold mb-4"><i class="bi bi-palette2 me-2"></i>INTERFACE</h4>
                     
-                    <div class="mb-3">
-                        <label class="vip-label">ACCENT KLEUR</label>
-                        <div class="d-flex gap-2">
-                            <div class="color-dot active" style="background: #D4AF37;"></div>
-                            <div class="color-dot" style="background: #C0C0C0;"></div>
-                            <div class="color-dot" style="background: #E5E4E2;"></div>
-                            <div class="color-dot" style="background: #4682B4;"></div>
+                    <div class="mb-4">
+                        <label class="vip-label text-gold-gradient">CUSTOM ACCENT KLEUR</label>
+                        <div class="d-flex align-items-center gap-3 mt-2 p-3 rounded-3 bg-black border-gold-subtle">
+                            <input type="color" id="colorPicker" class="vip-color-input" value="#D4AF37" oninput="updateLiveTheme(this.value)">
+                            <div class="flex-grow-1">
+                                <small class="text-gold-muted d-block fw-bold" id="colorHexLabel">#D4AF37</small>
+                                <small class="text-muted" style="font-size: 0.65rem;">Kies elke gewenste systeemkleur</small>
+                            </div>
                         </div>
                     </div>
 
                     <div class="mb-4">
-                        <label class="vip-label">DASHBOARD HELDERHEID</label>
-                        <input type="range" class="form-range vip-range" min="0" max="100" value="85">
+                        <label class="vip-label text-gold-muted">HELDERHEID</label>
+                        <input type="range" class="form-range vip-range" min="0.2" max="1" step="0.1" value="1" oninput="adjustBrightness(this.value)">
                     </div>
 
                     <div class="form-check form-switch vip-switch mb-4">
                         <input class="form-check-input" type="checkbox" id="notifySwitch" checked>
-                        <label class="form-check-label text-white-50" for="notifySwitch">Login notificaties aan</label>
+                        <label class="form-check-label text-gold-muted fw-bold" for="notifySwitch">Meldingen Actief</label>
                     </div>
 
-                    <button class="btn btn-outline-light w-100 py-2 border-gold-subtle text-gold">THEMA OPSLAAN</button>
+                    <div class="d-grid gap-2">
+                        <button class="btn btn-vip-outline w-100" onclick="saveTheme()">OPSLAAN CONFIGURATIE</button>
+                        <button class="btn btn-sm text-gold-muted" onclick="resetToDefaultGold()" style="font-size: 0.7rem;">HERSTEL STANDAARD GOUD</button>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ONDER: SYSTEM ACTIONS -->
-        <div class="col-12">
-            <div class="vip-panel action-bar">
-                <div class="p-3 d-flex flex-wrap gap-3 justify-content-between align-items-center">
+        <!-- ONDER: ACTIES -->
+        <div class="col-12 mt-4">
+            <div class="vip-panel p-3">
+                <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center">
                     <div class="d-flex gap-3">
-                        <button class="btn btn-gold-glow"><i class="bi bi-cloud-arrow-down me-2"></i>BACKUP DATABASE</button>
-                        <button class="btn btn-dark-vip"><i class="bi bi-journal-text me-2"></i>SYSTEM LOGS</button>
+                        <button class="btn btn-vip-solid-small py-2 px-4" onclick="runBackup()">
+                            <i class="bi bi-cloud-arrow-down me-2"></i>DATABASE BACKUP
+                        </button>
+                        <button class="btn btn-vip-outline-small py-2 px-4" onclick="showLogs()">
+                            <i class="bi bi-journal-text me-2"></i>SYSTEEM LOGS
+                        </button>
                     </div>
-                    <button class="btn btn-danger-vip"><i class="bi bi-exclamation-triangle me-2"></i>FACTORY RESET</button>
+                    <button class="btn btn-danger-vip" onclick="factoryReset()">
+                        <i class="bi bi-exclamation-triangle me-2"></i>SYSTEM RESET
+                    </button>
                 </div>
             </div>
         </div>
@@ -153,75 +175,127 @@
 
 <style>
     :root {
-        --vip-gold: #D4AF37;
-        --vip-gold-glow: rgba(212, 175, 55, 0.4);
-        --vip-black: #050505;
-        --vip-dark: #121212;
+        --gold: #D4AF37; 
+        --gold-bright: #F9E27D;
+        --glow: rgba(212, 175, 55, 0.4); 
     }
 
-    body { background-color: var(--vip-black); color: white; font-family: 'Inter', sans-serif; }
-
-    /* VIP Typography */
-    .vip-title-gold { font-weight: 900; letter-spacing: -1px; color: var(--vip-gold); text-shadow: 0 0 15px var(--vip-gold-glow); }
-    .text-gold-muted { color: #8a7024; font-size: 0.75rem; font-weight: 700; }
-    .tracking-widest { letter-spacing: 0.3em; }
-
-    /* Panels */
-    .vip-panel {
-        background: linear-gradient(145deg, #151515, #0a0a0a);
-        border: 1px solid rgba(255,255,255,0.05);
-        border-radius: 20px;
-        position: relative;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    .vip-header-title-main {
+        font-family: 'Cinzel', serif;
+        font-weight: 900;
+        font-size: 2.2rem;
+        letter-spacing: 3px;
+        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px var(--glow);
     }
-    .border-gold-bright { border: 1px solid var(--vip-gold-glow) !important; }
-    .border-gold-subtle { border: 1px solid rgba(212, 175, 55, 0.2) !important; }
-    .bg-black-depth { background: #000; }
 
-    /* Status Items */
-    .status-pulse {
-        width: 12px; height: 12px; background: #28a745; border-radius: 50%;
-        box-shadow: 0 0 10px #28a745; animation: pulse 2s infinite;
-    }
-    @@keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.3); opacity: 0.7; } 100% { transform: scale(1); opacity: 1; } }
-
-    .status-grid .status-item {
-        display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid rgba(212,175,55,0.1);
-    }
-    .status-item .label { color: #555; font-size: 0.8rem; font-weight: bold; }
-    .status-item .value { font-family: 'JetBrains Mono', monospace; font-weight: bold; }
-
-    /* Inputs */
-    .vip-label { color: var(--vip-gold); font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; display: block; letter-spacing: 1px; }
-    .vip-input { background: #000 !important; border: 1px solid #333 !important; color: var(--vip-gold) !important; font-family: 'JetBrains Mono', monospace; font-size: 1.1rem; }
-    .vip-input:focus { border-color: var(--vip-gold) !important; box-shadow: 0 0 10px var(--vip-gold-glow) !important; }
-
-    /* Buttons */
-    .btn-gold-solid { background: var(--vip-gold); color: black; font-weight: 900; border: none; padding: 0 20px; transition: 0.3s; }
-    .btn-gold-solid:hover { background: white; box-shadow: 0 0 20px white; }
-    .btn-gold-outline { border: 1px solid var(--vip-gold); color: var(--vip-gold); transition: 0.3s; }
-    .btn-gold-outline:hover { background: var(--vip-gold); color: black; }
+    .vip-gold-line-main { height: 3px; background: linear-gradient(to right, var(--gold), transparent); }
+    .badge-vip-version { background: var(--gold); color: black; padding: 5px 15px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; }
+    .vip-panel { background: #0a0a0a; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 15px; }
+    .vip-label { font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; display: block; text-transform: uppercase; }
+    .vip-input { background: #000 !important; border: 1px solid #222 !important; color: white !important; font-family: 'JetBrains Mono', monospace; }
+    .btn-vip-solid-small { background: var(--gold); color: black; font-weight: 800; border: none; border-radius: 8px; transition: 0.3s; padding: 10px; }
+    .btn-vip-outline-small { border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; background: transparent; transition: 0.3s; padding: 10px; }
+    .btn-danger-vip { background: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 10px 25px; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+    .text-gold-gradient { background: linear-gradient(to bottom, var(--gold-bright), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 5px var(--glow); }
+    .text-gold-muted { color: #8a7024; }
+    .text-gold-var { color: var(--gold); }
     
-    .btn-gold-glow { background: var(--vip-gold); color: black; font-weight: bold; box-shadow: 0 0 15px var(--vip-gold-glow); border: none; padding: 12px 25px; border-radius: 8px; transition: 0.3s; }
-    .btn-gold-glow:hover { background: white; box-shadow: 0 0 25px rgba(255,255,255,0.4); transform: scale(1.02); }
+    /* Kleurkiezer Styling */
+    .vip-color-input {
+        -webkit-appearance: none;
+        width: 50px; height: 50px;
+        background-color: transparent;
+        border: 2px solid var(--gold);
+        border-radius: 10px;
+        cursor: pointer;
+    }
+    .vip-color-input::-webkit-color-swatch { border: none; border-radius: 6px; }
 
-    .btn-dark-vip { background: #222; color: white; border: 1px solid #333; padding: 10px 25px; border-radius: 8px; }
-    .btn-danger-vip { background: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 10px 25px; border-radius: 8px; font-weight: bold; }
+    .status-pulse { width: 10px; height: 10px; background: #28a745; border-radius: 50%; box-shadow: 0 0 10px #28a745; animation: pulse 2s infinite; }
+    @@keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
+    .status-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid rgba(212,175,55,0.05); }
+    .status-item .label { font-size: 0.75rem; font-weight: bold; }
+    .status-item .value { font-family: 'JetBrains Mono', monospace; font-weight: bold; font-size: 0.85rem; }
+    
+    .btn-vip-outline { border: 1px solid var(--gold); color: var(--gold); background: transparent; border-radius: 8px; transition: 0.3s; padding: 10px; text-decoration: none; display: inline-block; }
+    .vip-range::-webkit-slider-thumb { background: var(--gold); appearance: none; width: 15px; height: 15px; border-radius: 50%; }
+    .vip-switch .form-check-input:checked { background-color: var(--gold); border-color: var(--gold); }
+    .border-gold-subtle { border: 1px solid rgba(212, 175, 55, 0.1) !important; }
 
-    /* Interface Elements */
-    .color-dot { width: 30px; height: 30px; border-radius: 50%; cursor: pointer; border: 2px solid transparent; }
-    .color-dot.active { border-color: white; box-shadow: 0 0 10px white; }
-    .glass-header { background: rgba(20,20,20,0.6); backdrop-filter: blur(15px); border: 1px solid rgba(212,175,55,0.2); }
-    .bg-gold-liquid { background: linear-gradient(90deg, #D4AF37, #f7e08a); }
-
-    /* Custom Switch */
-    .vip-switch .form-check-input:checked { background-color: var(--vip-gold); border-color: var(--vip-gold); }
+    .btn-vip-gold-action {
+        background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
+        border: none; color: black; font-weight: 900; padding: 12px; border-radius: 8px; transition: 0.3s;
+    }
+    .btn-vip-gold-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--glow); }
 </style>
 
 <script>
     function toggleView(id) {
         const input = document.getElementById(id);
         input.type = input.type === 'password' ? 'text' : 'password';
+    }
+
+    function updateLiveTheme(hex) {
+        document.getElementById('colorHexLabel').innerText = hex.toUpperCase();
+        
+        // Bereken lichte variant en transparante glow
+        const bright = lightennColor(hex, 40);
+        const glow = hexToRgba(hex, 0.4);
+
+        // Pas overal toe
+        document.documentElement.style.setProperty('--gold', hex);
+        document.documentElement.style.setProperty('--gold-bright', bright);
+        document.documentElement.style.setProperty('--glow', glow);
+    }
+
+    function lightennColor(hex, percent) {
+        const num = parseInt(hex.replace("#",""),16),
+        amt = Math.round(2.55 * percent),
+        R = (num >> 16) + amt,
+        G = (num >> 8 & 0x00FF) + amt,
+        B = (num & 0x0000FF) + amt;
+        return "#" + (0x1000000 + (R<255?R<1?0:R:255)*0x10000 + (G<255?G<1?0:G:255)*0x100 + (B<255?B<1?0:B:255)).toString(16).slice(1);
+    }
+
+    function hexToRgba(hex, alpha) {
+        const r = parseInt(hex.slice(1, 3), 16),
+              g = parseInt(hex.slice(3, 5), 16),
+              b = parseInt(hex.slice(5, 7), 16);
+        return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+    }
+
+    function saveTheme() {
+        const hex = document.getElementById('colorPicker').value;
+        localStorage.setItem('vip-gold', hex);
+        localStorage.setItem('vip-gold-bright', lightennColor(hex, 40));
+        localStorage.setItem('vip-glow', hexToRgba(hex, 0.4));
+        
+        Swal.fire({ title: 'OPGESLAGEN', text: 'Nieuw thema is actief op het hele systeem.', icon: 'success', background: '#0a0a0a', color: hex });
+    }
+
+    function resetToDefaultGold() {
+        const defaultGold = "#D4AF37";
+        document.getElementById('colorPicker').value = defaultGold;
+        updateLiveTheme(defaultGold);
+    }
+
+    function adjustBrightness(val) {
+        document.getElementById('main-content').style.opacity = val;
+        localStorage.setItem('vip-brightness', val);
+    }
+
+    function runBackup() {
+        Swal.fire({ title: 'BACKUP', text: 'Database wordt beveiligd...', icon: 'info', background: '#0a0a0a', color: '#D4AF37', showConfirmButton: false, timer: 1500, didOpen: () => { Swal.showLoading(); } });
+    }
+
+    function showLogs() {
+        Swal.fire({ title: 'LOGS', html: '<div style="text-align:left; font-family:monospace; color:var(--gold);">[13:30:01] Auth: Master Admin login<br>[13:30:48] Sync: DB Sync OK<br>[13:41:02] UrenApp: Update status check</div>', background: '#0a0a0a', color: 'white' });
+    }
+
+    function factoryReset() {
+        Swal.fire({ title: 'RESET', text: 'Instellingen herstellen?', icon: 'warning', showCancelButton: true, confirmButtonColor: '#dc3545', background: '#0a0a0a', color: '#fff' }).then((r) => { if(r.isConfirmed) { localStorage.clear(); location.reload(); } });
     }
 </script>

@@ -2,11 +2,15 @@
 @{
     Layout = "_Layout";
     var werknemers = (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers;
-    var geselecteerdeMaand = ViewBag.GeselecteerdeMaand;
+
+    // Logica om de huidige maand als standaard te zetten als er geen selectie is
+    var huidigeMaandShort = DateTime.Now.ToString("MMM", new System.Globalization.CultureInfo("nl-NL"));
+    huidigeMaandShort = char.ToUpper(huidigeMaandShort[0]) + huidigeMaandShort.Substring(1).Replace(".", "");
+    
+    var geselecteerdeMaand = ViewBag.GeselecteerdeMaand ?? huidigeMaandShort;
 }
 
-<!-- Google Fonts voor de VIP Style & Icons -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -14,8 +18,8 @@
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
-            <h1 class="vip-header-title">ROOSTER BOUWEN</h1>
-            <div class="vip-gold-divider"></div>
+            <h1 class="vip-header-title-main">ROOSTER BEHEER</h1>
+            <div class="vip-gold-line-main"></div>
         </div>
         <div class="maand-selector">
             @foreach (var m in new[] { "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" })
@@ -55,15 +59,14 @@
         </div>
     </div>
 
-    <!-- Rooster Voorbeeld -->
+    <!-- Rooster Tabel -->
     <div class="vip-card-black-glow mb-4">
         <div class="p-4">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="text-gold fw-bold mb-0" style="font-family: 'Cinzel', serif; letter-spacing: 2px;">ROOSTER VOORBEELD - @geselecteerdeMaand.ToUpper()</h5>
-                
+                <h5 class="text-gold-gradient fw-bold mb-0">LIVE PLANNING STATUS - @geselecteerdeMaand.ToUpper()</h5>
                 <form action="/Home/PushNaarDatabase" method="post" onsubmit="showPublishFeedback(event, this)">
                     <button type="submit" id="publishBtn" class="btn-push-small">
-                        <i class="bi bi-send-fill me-1"></i> PUBLICEER
+                        <i class="bi bi-send-fill me-1"></i> PUBLICEER ROOSTER
                     </button>
                 </form>
             </div>
@@ -72,26 +75,42 @@
                 <table class="table table-dark vip-table">
                     <thead>
                         <tr>
+                            <th style="width: 40px;"></th> <!-- Vinkje Kolom -->
                             <th class="text-gold">DATUM</th>
                             <th class="text-gold">WERKNEMER</th>
                             <th class="text-gold">LOCATIE</th>
-                            <th class="text-center text-gold">UREN</th>
+                            <th class="text-center text-gold">START</th>
+                            <th class="text-center text-gold">EINDE</th>
+                            <th class="text-center text-gold">STATUS</th>
                             <th class="text-end text-gold">BEHEER</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach (var item in Model)
                         {
+                            bool isVoltooid = item.Status == "Voltooid";
                             <tr>
+                                <td class="text-center">
+                                    @if (isVoltooid) {
+                                        <i class="bi bi-check-circle-fill text-success" style="font-size: 1.1rem;"></i>
+                                    } else {
+                                        <i class="bi bi-circle text-muted" style="opacity: 0.2;"></i>
+                                    }
+                                </td>
                                 <td class="text-white">@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
                                 <td class="text-white fw-bold">@item.UserNaam</td>
                                 <td class="text-white">@item.Locatie</td>
-                                <td class="text-center text-white">@item.Uren</td>
+                                <td class="text-center text-gold-var mono">@(string.IsNullOrEmpty(item.StartTijd) ? "--:--" : item.StartTijd)</td>
+                                <td class="text-center text-gold-var mono">@(string.IsNullOrEmpty(item.EindTijd) ? "--:--" : item.EindTijd)</td>
+                                <td class="text-center">
+                                    <span class="badge-status @(item.Status?.ToLower() ?? "gepland")">
+                                        @(item.Status ?? "Gepland")
+                                    </span>
+                                </td>
                                 <td class="text-end">
                                     <button onclick="editRow('@item.Id', '@item.Locatie', '@item.Uren')" class="btn-action-edit me-3">
                                         <i class="bi bi-pencil-fill"></i>
                                     </button>
-                                    
                                     <button onclick="confirmDelete('@item.Id')" class="btn-action-delete">
                                         <i class="bi bi-x-lg"></i>
                                     </button>
@@ -112,82 +131,76 @@
     :root { 
         --gold: #D4AF37; 
         --gold-bright: #F9E27D;
-        --glow: rgba(212, 175, 55, 0.5); 
+        --glow: rgba(212, 175, 55, 0.4); 
     }
     
-    body { background-color: #000; color: white; font-family: 'Inter', sans-serif; }
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
 
-    /* VIP HEADER STYLE */
-    .vip-header-title { 
-        font-family: 'Cinzel', serif; 
-        font-weight: 900; 
-        font-size: 3rem; 
-        color: var(--gold); 
-        letter-spacing: 4px;
-        margin-bottom: 5px;
+    /* Maand Kiezer Styling */
+    .maand-selector { display: flex; gap: 5px; flex-wrap: wrap; }
+    .btn-maand {
+        color: white !important;
+        text-decoration: none;
+        padding: 5px 12px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        transition: 0.3s;
+        text-transform: uppercase;
+    }
+    .btn-maand:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); color: var(--gold) !important; }
+    .btn-maand.active { 
+        background: var(--gold) !important; 
+        color: black !important; 
+        font-weight: bold; 
+        box-shadow: 0 0 10px var(--glow); 
+        border-color: var(--gold);
+    }
+
+    /* Status Badges */
+    .badge-status {
+        padding: 3px 10px;
+        border-radius: 4px;
+        font-size: 0.65rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+    }
+    .badge-status.gepland { border-color: #444; color: #888; }
+    .badge-status.bezig { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.1); box-shadow: 0 0 5px var(--glow); }
+    .badge-status.voltooid { border-color: #28a745; color: #28a745; background: rgba(40,167,69,0.1); }
+
+    .vip-header-title-main {
+        font-family: 'Cinzel', serif;
+        font-weight: 900; font-size: 2.2rem; letter-spacing: 3px;
         background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 20px var(--glow);
-    }
-    
-    .vip-gold-divider { 
-        width: 150px; 
-        height: 4px; 
-        background: linear-gradient(to right, var(--gold), transparent); 
-        border-radius: 2px;
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px var(--glow); text-transform: uppercase;
     }
 
-    /* Kaders & Glow */
-    .vip-card-glow, .vip-card-black-glow { border: 1px solid var(--gold); border-radius: 15px; box-shadow: 0 0 20px var(--glow); }
+    .vip-gold-line-main { width: 100px; height: 3px; background: linear-gradient(to right, var(--gold), transparent); margin-top: 10px; }
+    .text-gold-gradient { background: linear-gradient(to bottom, var(--gold-bright), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Cinzel', serif; }
+    .vip-card-glow, .vip-card-black-glow { border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 15px; }
     .vip-card-glow { background: #0a0a0a; }
     .vip-card-black-glow { background: #000; }
-
-    /* Kalender Icoon */
-    .custom-date::-webkit-calendar-picker-indicator {
-        filter: invert(0.7) sepia(1) saturate(10) hue-rotate(10deg);
-        cursor: pointer;
-        background-color: var(--gold);
-        border-radius: 3px;
-    }
-
-    /* Maand Filter */
-    .btn-maand { color: #fff; text-decoration: none; padding: 5px 12px; border: 1px solid #333; margin-left: 2px; font-size: 0.8rem; transition: 0.3s; }
-    .btn-maand.active { background: var(--gold); color: #000; border-color: var(--gold); font-weight: bold; box-shadow: 0 0 10px var(--glow); }
-
-    /* Inputs */
     .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; display: block; }
-    .vip-input { background: #000 !important; color: #fff !important; border: 1px solid #444 !important; }
-    .vip-input::placeholder { color: #fff !important; opacity: 1; }
-
-    /* Knoppen */
-    .btn-voegtoe { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 8px; padding: 10px; }
+    .vip-input { background: #000 !important; color: #fff !important; border: 1px solid #222 !important; }
+    .btn-voegtoe { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 8px; padding: 10px; transition: 0.3s; }
     .btn-push-small { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 6px 20px; font-size: 0.85rem; }
-    .btn-push-small.success { background: #28a745 !important; color: white; }
-
-    /* Icons */
-    .btn-action-edit { background: none; border: none; color: var(--gold); font-size: 1.1rem; }
-    .btn-action-delete { background: none; border: none; color: #ff4d4d; font-size: 1.1rem; }
-
-    /* Custom Popups */
-    .vip-swal-popup { border: 2px solid var(--gold) !important; box-shadow: 0 0 30px var(--glow) !important; background-color: #000 !important; border-radius: 20px !important; }
-    .vip-swal-input { background: #000 !important; color: white !important; border: 1px solid #444 !important; border-radius: 10px !important; margin: 10px auto !important; width: 80% !important; }
-    .vip-swal-label { color: var(--gold); font-family: 'Cinzel', serif; font-weight: bold; font-size: 0.9rem; display: block; margin-top: 15px; }
+    .text-gold-var { color: var(--gold); }
+    .vip-table tbody td { border-bottom: 1px solid rgba(212, 175, 55, 0.05); padding: 12px 10px; vertical-align: middle; }
 </style>
 
 <script>
     function showPublishFeedback(event, form) {
         event.preventDefault();
         const btn = document.getElementById('publishBtn');
-        btn.classList.add('success');
         btn.innerHTML = '<i class="bi bi-check-lg"></i> GEPUBLICEERD';
-
         Swal.fire({
-            title: 'GEPUBLICEERD',
-            text: 'Het rooster is verzonden naar de medewerkers.',
+            title: 'ROOSTER GEPUBLICEERD',
+            text: 'Alle medewerkers hebben een melding ontvangen.',
             icon: 'success',
-            customClass: { popup: 'vip-swal-popup' },
-            background: '#000',
+            background: '#0a0a0a',
             color: '#D4AF37',
             confirmButtonColor: '#D4AF37'
         }).then(() => { form.submit(); });
@@ -200,39 +213,10 @@
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#ff4d4d',
-            cancelButtonColor: '#444',
+            cancelButtonColor: '#333',
             confirmButtonText: 'JA, VERWIJDER',
-            cancelButtonText: 'ANNULEER',
-            customClass: { popup: 'vip-swal-popup' },
-            background: '#000',
+            background: '#0a0a0a',
             color: '#fff'
         }).then((result) => { if (result.isConfirmed) { document.getElementById('delete-form-' + id).submit(); } });
-    }
-
-    async function editRow(id, huidigeLocatie, huidigeUren) {
-        const { value: formValues } = await Swal.fire({
-            title: 'DIENST BEWERKEN',
-            background: '#000',
-            color: '#D4AF37',
-            customClass: { popup: 'vip-swal-popup' },
-            html:
-                `<label class="vip-swal-label">LOCATIE</label>` +
-                `<input id="swal-loc" class="vip-swal-input" value="${huidigeLocatie}">` +
-                `<label class="vip-swal-label">UREN</label>` +
-                `<input id="swal-uren" type="number" class="vip-swal-input" value="${huidigeUren}">`,
-            focusConfirm: false,
-            confirmButtonColor: '#D4AF37',
-            confirmButtonText: 'WIJZIGING OPSLAAN',
-            preConfirm: () => {
-                return {
-                    locatie: document.getElementById('swal-loc').value,
-                    uren: document.getElementById('swal-uren').value
-                }
-            }
-        });
-        if (formValues) {
-            Swal.fire({ title: 'BIJGEWERKT', icon: 'success', background: '#000', color: '#D4AF37', customClass: { popup: 'vip-swal-popup' } })
-            .then(() => location.reload());
-        }
     }
 </script>

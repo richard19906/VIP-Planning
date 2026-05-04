@@ -97,6 +97,10 @@ namespace VIP_Planning.Models
 
         [Column("is_gepusht")]
         public bool IsGepusht { get; set; } = false;
+
+        // TOEGEVOEGD: Nodig voor status-badges en voltooid-vinkjes
+        [Column("status")]
+        public string Status { get; set; } = "Gepland";
     }
 
     [Table("profielen")]

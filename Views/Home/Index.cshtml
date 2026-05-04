@@ -2,145 +2,138 @@
     Layout = "_Layout";
 }
 
-<!-- Google Fonts voor de VIP Style -->
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-
-<div class="container-fluid py-5 px-4">
+<div class="container-fluid py-4 px-4">
     <!-- Header Sectie -->
-    <div class="mb-5 text-center text-md-start">
-        <h1 class="vip-header-title">V.I.P. PLANNING</h1>
-        <div class="vip-gold-divider mb-3"></div>
-        <p class="vip-sub-text">Beheer het systeem, de planning en de personeelsuren.</p>
+    <div class="mb-5 text-start">
+        <!-- V.I.P. PLANNING: Koppeling met --gold-bright en --gold variabelen -->
+        <h1 class="vip-main-title">V.I.P. PLANNING</h1>
+        
+        <!-- De Lijn: Koppeling met --gold variabele -->
+        <div class="vip-main-line"></div>
+        
+        <!-- Ondertitel: Geforceerd op de gekozen goudkleur en exact 0.8rem -->
+        <p class="vip-main-subtitle">Beheer het systeem, de planning en de personeelsuren.</p>
     </div>
 
     <!-- Dashboard Kaarten -->
     <div class="row g-4">
-        <!-- PLANNING -->
         <div class="col-md-4">
-            <div class="vip-card-glow-index">
-                <div class="card-body p-5 text-center">
-                    <div class="vip-icon-style mb-4">📅</div>
-                    <h3 class="vip-card-title">Planning</h3>
-                    <p class="text-white mb-4" style="opacity: 0.8;">Beheer het rooster en voeg nieuwe diensten toe aan de live database.</p>
-                    <a href="/Home/Planning" class="btn-vip-gold">OPEN PLANNING</a>
+            <a href="/Home/Planning" class="vip-card-link">
+                <div class="vip-dashboard-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="vip-card-icon">📅</div>
+                        <h3 class="vip-card-title">Planning</h3>
+                        <p class="vip-card-text">Beheer roosters en diensten.</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
-        <!-- WERKNEMERS -->
         <div class="col-md-4">
-            <div class="vip-card-glow-index">
-                <div class="card-body p-5 text-center">
-                    <div class="vip-icon-style mb-4">👥</div>
-                    <h3 class="vip-card-title">Werknemers</h3>
-                    <p class="text-white mb-4" style="opacity: 0.8;">Bekijk urenoverzichten (21-20 regel) en personeelsprofielen.</p>
-                    <a href="/Home/Werknemers" class="btn-vip-gold">BEHEER TEAM</a>
+            <a href="/Home/Werknemers" class="vip-card-link">
+                <div class="vip-dashboard-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="vip-card-icon">👥</div>
+                        <h3 class="vip-card-title">Werknemers</h3>
+                        <p class="vip-card-text">Bekijk uren en profielen.</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
 
-        <!-- INSTELLINGEN -->
         <div class="col-md-4">
-            <div class="vip-card-glow-index">
-                <div class="card-body p-5 text-center">
-                    <div class="vip-icon-style mb-4">⚙️</div>
-                    <h3 class="vip-card-title">Instellingen</h3>
-                    <p class="text-white mb-4" style="opacity: 0.8;">Bekijk de actuele systeemstatus en configureer de portal.</p>
-                    <a href="/Home/Instellingen" class="btn-vip-gold">CONFIGURATIE</a>
+            <a href="/Home/Instellingen" class="vip-card-link">
+                <div class="vip-dashboard-card">
+                    <div class="card-body p-4 text-center">
+                        <div class="vip-card-icon">⚙️</div>
+                        <h3 class="vip-card-title">Instellingen</h3>
+                        <p class="vip-card-text">Systeemstatus en portal beheer.</p>
+                    </div>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </div>
 
 <style>
-    :root {
-        --gold: #D4AF37;
-        --gold-bright: #F9E27D;
-        --glow: rgba(212, 175, 55, 0.4);
+    /* TITEL STYLING: Gebruikt de variabelen uit de Layout */
+    .vip-main-title {
+        font-family: 'Cinzel', serif !important;
+        font-weight: 900 !important;
+        font-size: 2.5rem !important;
+        letter-spacing: 5px !important;
+        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%) !important;
+        -webkit-background-clip: text !important;
+        -webkit-text-fill-color: transparent !important;
+        margin: 0 !important;
+        text-transform: uppercase !important;
+        display: inline-block !important;
+        text-shadow: 0 0 15px var(--glow) !important;
+        transition: 0.5s ease;
     }
 
-    body {
-        background-color: #050505;
-        color: white;
-        font-family: 'Inter', sans-serif;
-    }
-
-    /* VIP HEADER STYLE */
-    .vip-header-title {
-        font-family: 'Cinzel', serif;
-        font-weight: 900;
-        font-size: clamp(2.5rem, 5vw, 4rem);
-        letter-spacing: 4px;
-        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 20px var(--glow);
-    }
-    
-    .vip-gold-divider {
+    /* GOUDEN LIJN: Gebruikt de Layout variabele */
+    .vip-main-line {
         width: 150px;
-        height: 4px;
+        height: 3px;
         background: linear-gradient(to right, var(--gold), transparent);
-        border-radius: 2px;
+        margin: 15px 0 15px 0;
+        box-shadow: 0 0 10px var(--glow);
+        transition: 0.5s ease;
     }
 
-    .vip-sub-text {
-        font-size: 1rem;
-        letter-spacing: 1px;
-        color: #ffffff;
-        opacity: 0.9;
+    /* ONDERTITEL: Exact 0.8rem en Goud */
+    .vip-main-subtitle {
+        color: var(--gold) !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 0.8rem !important;
+        font-weight: 700 !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+        margin: 0 !important;
+        opacity: 1 !important;
+        text-shadow: 0 0 5px var(--glow) !important;
+        transition: 0.5s ease;
     }
 
-    /* VIP Card Styling */
-    .vip-card-glow-index {
+    /* KAART STYLING */
+    .vip-card-link {
+        text-decoration: none !important;
+    }
+
+    .vip-dashboard-card {
         background: linear-gradient(145deg, #111, #050505);
         border: 1px solid var(--gold);
-        border-radius: 20px;
-        position: relative;
-        overflow: hidden;
-        transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        border-radius: 15px;
+        transition: all 0.4s ease;
         height: 100%;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
     }
 
-        .vip-card-glow-index:hover {
-            transform: translateY(-12px);
-            box-shadow: 0 15px 40px var(--glow);
+        .vip-dashboard-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 10px 25px var(--glow);
             border-color: var(--gold-bright);
         }
+
+    .vip-card-icon {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
 
     .vip-card-title {
         font-family: 'Cinzel', serif;
         color: var(--gold);
         font-weight: 700;
+        font-size: 1.2rem;
         letter-spacing: 2px;
         text-transform: uppercase;
+        transition: 0.5s ease;
     }
 
-    .vip-icon-style {
-        font-size: 4rem;
-        filter: drop-shadow(0 0 10px var(--glow));
+    .vip-card-text {
+        color: var(--gold);
+        font-size: 0.75rem;
+        opacity: 0.8;
+        transition: 0.5s ease;
     }
-
-    /* VIP Button */
-    .btn-vip-gold {
-        display: block;
-        background: linear-gradient(to bottom, var(--gold-bright), var(--gold));
-        color: #000;
-        text-decoration: none;
-        font-weight: 900;
-        padding: 14px;
-        border-radius: 10px;
-        transition: 0.3s;
-        letter-spacing: 1px;
-        border: none;
-    }
-
-        .btn-vip-gold:hover {
-            background: #ffffff;
-            color: #000;
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(255,255,255,0.4);
-        }
 </style>
