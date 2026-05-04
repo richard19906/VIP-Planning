@@ -136,6 +136,13 @@
     
     .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
 
+    /* Kalender Icoon Kleur (Meekleurend met interface) */
+    .custom-date::-webkit-calendar-picker-indicator {
+        filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(5deg) brightness(95%) contrast(80%);
+        cursor: pointer;
+        opacity: 1;
+    }
+
     /* Maand Kiezer Styling */
     .maand-selector { display: flex; gap: 5px; flex-wrap: wrap; }
     .btn-maand {
