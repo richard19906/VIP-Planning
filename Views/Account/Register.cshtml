@@ -2,32 +2,94 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: url('/images/glitter_bg.png') no-repeat center center fixed; background-size: cover; color: #D4AF37; }
-        .card { background: rgba(10,10,10,0.95); border: 2px solid #D4AF37; border-radius: 20px; padding: 40px; width: 400px; box-shadow: 0 0 30px #D4AF37; }
-        .form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid #D4AF37 !important; color: #fff !important; }
-        .feedback { font-size: 0.8rem; margin-top: -10px; margin-bottom: 15px; font-weight: bold; display: block; }
+        :root { --gold: #D4AF37; --gold-bright: #F9E27D; --glow: rgba(212, 175, 55, 0.4); }
+        body { background: url('/images/glitter_bg.png') no-repeat center center fixed; background-size: cover; margin:0; }
+        .overlay { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index: -1; }
+        .login-card { background: rgba(10, 10, 10, 0.95); border: 2px solid var(--gold); border-radius: 30px; padding: 35px; width: 100%; max-width: 400px; box-shadow: 0 0 40px var(--glow); color: var(--gold); }
+        h1 { font-family: 'Cinzel', serif; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-size: 1.6rem; }
+        .form-control { background: rgba(255,255,255,0.05) !important; border: 1px solid var(--gold) !important; color: #ffffff !important; font-family: 'JetBrains Mono', monospace; font-size: 0.9rem; }
+        .form-control::placeholder { color: #ffffff !important; opacity: 0.6 !important; }
+        .feedback { font-size: 0.7rem; margin-top: -8px; margin-bottom: 12px; font-weight: bold; font-family: 'JetBrains Mono', monospace; }
         .text-ok { color: #28a745 !important; } .text-fail { color: #dc3545 !important; }
+        .btn-gold { background: linear-gradient(to bottom, var(--gold-bright), var(--gold)); color: #000; font-weight: 900; border: none; border-radius: 12px; padding: 10px; font-family: 'Cinzel', serif; }
     </style>
 </head>
 <body class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
-    <div class="card">
-        <h2 class="text-center mb-4" style="font-weight:900;">VIP REGISTRATIE</h2>
+    <div class="overlay"></div>
+    <div class="login-card text-center">
+        <h1 class="mb-4">VIP REGISTRATIE</h1>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="alert alert-danger bg-transparent border-danger text-danger small mb-4" style="font-family: 'JetBrains Mono', monospace;">
+                <i class="bi bi-exclamation-triangle-fill me-2"></i> @ViewBag.Error
+            </div>
+        }
+
         <form action="/Account/Register" method="post">
-            <input type="text" name="naam" class="form-control mb-3" placeholder="Volledige Naam" required />
-            <input type="email" name="email" class="form-control mb-3" placeholder="E-mailadres" required />
-            <input type="password" id="pw" name="password" class="form-control mb-3" placeholder="Wachtwoord" required />
-            <div id="pwF" class="feedback text-fail">Te kort (min. 8)</div>
-            <input type="password" id="pwc" name="confirmPassword" class="form-control mb-3" placeholder="Bevestig Wachtwoord" required />
-            <div id="matchF" class="feedback text-fail">Matcht niet</div>
-            <button type="submit" class="btn w-100" style="background:#D4AF37; color:#000; font-weight:bold;">ONTVAL VERIFICATIECODE</button>
+            <input type="text" name="naam" class="form-control mb-3" placeholder="VOLLEDIGE NAAM" required />
+            <input type="email" name="email" class="form-control mb-3" placeholder="E-MAILADRES" required />
+            
+            <input type="password" id="pw" name="password" class="form-control mb-3" placeholder="WACHTWOORD" required />
+            <div id="pwF" class="feedback text-fail">TE KORT (MIN. 8)</div>
+            
+            <input type="password" id="pwc" name="confirmPassword" class="form-control mb-3" placeholder="BEVESTIG WACHTWOORD" required />
+            <div id="matchF" class="feedback text-fail">MATCHT NIET</div>
+            
+            <button type="submit" id="submitBtn" class="btn btn-gold w-100">ONTVANG VERIFICATIECODE</button>
         </form>
+
+        <div class="mt-4">
+            <a href="/Account/Login" style="color: var(--gold); text-decoration:none; font-family: 'Cinzel', serif; font-size: 0.8rem;">TERUG NAAR LOGIN</a>
+        </div>
     </div>
+
     <script>
-        const pw = document.getElementById('pw'), pwc = document.getElementById('pwc'), pwF = document.getElementById('pwF'), matchF = document.getElementById('matchF');
-        pw.addEventListener('input', () => { if(pw.value.length>=8){pwF.innerText='OK';pwF.className='feedback text-ok';}else{pwF.innerText='Te kort';pwF.className='feedback text-fail';} });
-        pwc.addEventListener('input', () => { if(pwc.value===pw.value){matchF.innerText='Wachtwoorden matchen';matchF.className='feedback text-ok';}else{matchF.innerText='Matcht niet';matchF.className='feedback text-fail';} });
+        const pw = document.getElementById('pw'), 
+              pwc = document.getElementById('pwc'), 
+              pwF = document.getElementById('pwF'), 
+              matchF = document.getElementById('matchF'),
+              btn = document.getElementById('submitBtn');
+
+        function validate() {
+            const isLongEnough = pw.value.length >= 8;
+            const isMatch = pw.value === pwc.value && pw.value !== "";
+
+            if(isLongEnough) {
+                pwF.innerText = 'STATUS: VEILIG';
+                pwF.className = 'feedback text-ok';
+            } else {
+                pwF.innerText = 'STATUS: TE KORT';
+                pwF.className = 'feedback text-fail';
+            }
+
+            if(isMatch) {
+                matchF.innerText = 'STATUS: MATCH';
+                matchF.className = 'feedback text-ok';
+            } else {
+                matchF.innerText = 'STATUS: GEEN MATCH';
+                matchF.className = 'feedback text-fail';
+            }
+
+            btn.disabled = !(isLongEnough && isMatch);
+        }
+
+        pw.addEventListener('input', validate);
+        pwc.addEventListener('input', validate);
+
+        // Laad thema kleuren uit de interface instellingen
+        const savedGold = localStorage.getItem('vip-gold');
+        const savedBright = localStorage.getItem('vip-gold-bright');
+        const savedGlow = localStorage.getItem('vip-glow');
+
+        if (savedGold) document.documentElement.style.setProperty('--gold', savedGold);
+        if (savedBright) document.documentElement.style.setProperty('--gold-bright', savedBright);
+        if (savedGlow) document.documentElement.style.setProperty('--glow', savedGlow);
     </script>
 </body>
 </html>

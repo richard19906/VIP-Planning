@@ -1,77 +1,229 @@
 @model List<VIP_Planning.Models.UrenModel>
-@{ Layout = "_Layout"; }
+@{
+    Layout = "_Layout";
+}
 
 <style>
-    .vip-card { background: #0f0f0f; border: 1px solid #D4AF37; border-radius: 20px; padding: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .badge-vrij { background: #D4AF37; color: black; padding: 8px 15px; font-weight: 900; border-radius: 8px; border: 1px solid white; display: inline-block; }
-    .badge-ziek { background: #ff4b2b; color: white; padding: 8px 15px; font-weight: 900; border-radius: 8px; border: 1px solid white; display: inline-block; }
-    .total-badge { background: linear-gradient(135deg, #D4AF37 0%, #F4CF67 100%); color: #000; padding: 15px 30px; border-radius: 15px; font-weight: 900; font-size: 1.5rem; }
+    :root {
+        --gold: #D4AF37;
+        --gold-bright: #F9E27D;
+        --glow: rgba(212, 175, 55, 0.4);
+    }
+
+    /* VIP Card styling met variabelen */
+    .vip-card-uren {
+        background: rgba(10, 10, 10, 0.95);
+        border: 1px solid var(--gold);
+        border-radius: 20px;
+        padding: 25px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 20px var(--glow);
+    }
+
+    /* Badges */
+    .badge-vrij {
+        background: var(--gold);
+        color: black;
+        padding: 6px 12px;
+        font-weight: 900;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+    }
+
+    .badge-ziek {
+        background: #ff4b2b;
+        color: white;
+        padding: 6px 12px;
+        font-weight: 900;
+        border-radius: 8px;
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 0.75rem;
+        box-shadow: 0 0 10px rgba(255, 75, 43, 0.3);
+    }
+
+    /* Totaal Badge bovenin */
+    .total-badge-vip {
+        background: linear-gradient(135deg, var(--gold-bright) 0%, var(--gold) 100%);
+        color: #000;
+        padding: 15px 30px;
+        border-radius: 15px;
+        font-weight: 900;
+        font-family: 'Cinzel', serif;
+        font-size: 1.4rem;
+        box-shadow: 0 0 20px var(--glow);
+        border: none;
+    }
+
+    /* Tabel styling */
+    .vip-table-uren thead th {
+        color: var(--gold);
+        font-family: 'Cinzel', serif;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border-bottom: 2px solid var(--gold);
+        font-size: 0.85rem;
+    }
+
+    .vip-table-uren tbody tr {
+        border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+        transition: 0.3s;
+    }
+
+        .vip-table-uren tbody tr:hover {
+            background: rgba(212, 175, 55, 0.05);
+        }
+
+    .text-gold-uren {
+        color: var(--gold) !important;
+        font-family: 'JetBrains Mono', monospace;
+        font-weight: 900;
+    }
+
+    /* Navigatie knoppen */
+    .btn-vip-outline {
+        border: 1px solid var(--gold) !important;
+        color: var(--gold) !important;
+        background: transparent;
+        font-family: 'Cinzel', serif;
+        font-weight: bold;
+        transition: 0.3s;
+    }
+
+        .btn-vip-outline:hover {
+            background: var(--gold);
+            color: black !important;
+            box-shadow: 0 0 15px var(--glow);
+        }
 </style>
 
-<div class="container-fluid py-4">
-    <div class="d-flex justify-content-between align-items-center mb-5">
-    <div>
-        <h1 style="font-weight:900; color:#D4AF37; text-transform:uppercase; margin:0; font-size:2.5rem;">📂 @ViewBag.WerknemerNaam</h1>
-        <p style="color:white; font-weight:bold; margin:0; font-size:1.1rem;">@ViewBag.PeriodeLabel</p>
+<div class="container-fluid py-4 px-4">
+    <!-- Header met VIP Titels -->
+    <div class="d-flex justify-content-between align-items-end mb-5">
+        <div>
+            <h1 class="vip-header-title-main">📂 @ViewBag.WerknemerNaam.ToUpper()</h1>
+            <div class="vip-gold-line-main"></div>
+            <p class="vip-subtitle-gold mb-0">PERIODE: @ViewBag.PeriodeLabel</p>
+        </div>
+        <div class="total-badge-vip shadow-lg">
+            @ViewBag.TotaalUren.ToString("N1") <small style="font-size: 0.9rem;">UREN OPEN</small>
+        </div>
     </div>
-    <div class="total-badge shadow-lg">@ViewBag.TotaalUren.ToString("N1") UREN OPEN</div>
-</div>
 
-    <div class="vip-card">
-        <table class="table table-dark align-middle">
-            <thead>
-                <tr style="color:#D4AF37; text-transform:uppercase; font-size:0.8rem;">
-                    <th>Datum</th><th>Locatie</th><th>Status</th><th class="text-center">Uren</th><th class="text-end">Acties</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var u in Model) {
-                    <tr style="border-bottom: 1px solid #333;">
-                        <td style="color:white;">@u.DatumString</td>
-                        <td style="color:white;">@u.Locatie</td>
-                        <td>
-                            @if(u.Status == "Ziek" || (u.AantalUren < 0 && u.Locatie.ToLower().Contains("ziek"))) { 
-                                <span class="badge-ziek">🤒 ** ZIEK</span> 
-                            }
-                            else if(u.Status == "Vrij" || u.AantalUren < 0) { 
-                                <span class="badge-vrij">🌴 * VRIJ</span> 
-                            }
-                            else { 
-                                <span class="text-success fw-bold">✅ GEWERKT</span> 
-                            }
-                        </td>
-                        <td class="text-center" style="color:#D4AF37; font-weight:900; font-size:1.3rem;">
-                            @if(u.Status == "Ziek" || (u.AantalUren < 0 && u.Locatie.ToLower().Contains("ziek"))) { <span>**</span> }
-                            else if(u.Status == "Vrij" || u.AantalUren < 0) { <span>*</span> }
-                            else { <span>@u.AantalUren <small style="font-size:0.8rem;">u</small></span> }
-                        </td>
-                        <td class="text-end">
-                            @if(u.IsUitbetaald) { <span style="color: #28a745; font-weight: 900;">💰 BETAALD</span> }
-                            else if(u.AantalUren > 0 && u.Status != "Vrij" && u.Status != "Ziek") { 
-                                <button onclick="markeerBetaald(@u.Id)" class="btn btn-sm btn-warning fw-bold" style="background:#D4AF37; color:black; border:none; border-radius:8px;">BETAAL</button> 
-                            }
-                        </td>
+    <!-- Tabel Kaart -->
+    <div class="vip-card-uren">
+        <div class="table-responsive">
+            <table class="table table-dark align-middle vip-table-uren">
+                <thead>
+                    <tr>
+                        <th>Datum</th>
+                        <th>Locatie</th>
+                        <th>Status</th>
+                        <th class="text-center">Uren</th>
+                        <th class="text-end">Acties</th>
                     </tr>
-                }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td class="text-white">@u.DatumString</td>
+                            <td class="text-white">@u.Locatie</td>
+                            <td>
+                                @if (u.Status == "Ziek" || (u.AantalUren < 0 && u.Locatie.ToLower().Contains("ziek")))
+                                {
+                                    <span class="badge-ziek"><i class="bi bi-thermometer-half"></i> ZIEK</span>
+                                }
+                                else if (u.Status == "Vrij" || u.AantalUren < 0)
+                                {
+                                    <span class="badge-vrij"><i class="bi bi-sun-fill"></i> VRIJ</span>
+                                }
+                                else
+                                {
+                                    <span class="text-success fw-bold" style="font-size: 0.8rem;"><i class="bi bi-patch-check-fill"></i> GEWERKT</span>
+                                }
+                            </td>
+                            <td class="text-center text-gold-uren" style="font-size: 1.2rem;">
+                                @if (u.Status == "Ziek" || (u.AantalUren < 0 && u.Locatie.ToLower().Contains("ziek")))
+                                {
+                                    <span>--</span>
+                                }
+                                else if (u.Status == "Vrij" || u.AantalUren < 0)
+                                {
+
+                                    <span>--</span>
+                                }
+                                else
+                                {
+
+                                    <span>@u.AantalUren <small style="font-size:0.7rem;">u</small></span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                @if (u.IsUitbetaald)
+                                {
+                                    <span style="color: #28a745; font-weight: 900; font-family: 'Cinzel', serif;">💰 BETAALD</span>
+                                }
+                                else if (u.AantalUren > 0 && u.Status != "Vrij" && u.Status != "Ziek")
+                                {
+                                    <button onclick="markeerBetaald(@u.Id)" class="btn btn-sm btn-voegtoe" style="padding: 5px 15px; font-size: 0.75rem;">BETAAL</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
     </div>
 
+    <!-- Onderkant Knoppen -->
     <div class="mt-5 d-flex gap-3 align-items-center">
-        <a href="/Uren/PersoonlijkeUren?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@(ViewBag.MaandOffset - 1)" class="btn btn-outline-warning fw-bold" style="border-color:#D4AF37; color:#D4AF37;">⬅️ VORIGE</a>
-        <a href="/Uren/PersoonlijkeUren?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@(ViewBag.MaandOffset + 1)" class="btn btn-outline-warning fw-bold" style="border-color:#D4AF37; color:#D4AF37;">VOLGENDE ➡️</a>
+        <a href="/Uren/PersoonlijkeUren?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@(ViewBag.MaandOffset - 1)" class="btn btn-vip-outline">
+            <i class="bi bi-arrow-left"></i> VORIGE
+        </a>
+        <a href="/Uren/PersoonlijkeUren?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@(ViewBag.MaandOffset + 1)" class="btn btn-vip-outline">
+            VOLGENDE <i class="bi bi-arrow-right"></i>
+        </a>
         
         <div class="ms-auto d-flex gap-2">
-            <a href="/Uren/ExportPdf?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@ViewBag.MaandOffset" class="btn btn-success fw-bold" style="background:#28a745; border:none; border-radius:10px; padding:10px 20px;">📄 PDF EXPORT</a>
-            <a href="/Home/Werknemers" class="btn btn-secondary fw-bold" style="background:#333; border:none; border-radius:10px; padding:10px 20px;">TERUG</a>
+            <a href="/Uren/ExportPdf?email=@ViewBag.WerknemerEmail&naam=@ViewBag.WerknemerNaam&maandOffset=@ViewBag.MaandOffset" class="btn btn-success fw-bold" style="background:#28a745; border:none; border-radius:10px; padding:10px 20px;">
+                <i class="bi bi-file-pdf"></i> PDF EXPORT
+            </a>
+            <a href="/Home/Werknemers" class="btn btn-secondary fw-bold" style="background:#333; border:none; border-radius:10px; padding:10px 20px;">
+                TERUG
+            </a>
         </div>
     </div>
 </div>
 
 <script>
-function markeerBetaald(id) {
-    if(confirm('Dienst op betaald zetten?')) {
-        fetch('/Uren/MarkeerAlsBetaald?id=' + id, { method: 'POST' }).then(() => location.reload());
+    function markeerBetaald(id) {
+        Swal.fire({
+            title: 'BEVESTIGING',
+            text: "Deze dienst markeren als uitbetaald?",
+            icon: 'question',
+            background: '#0a0a0a',
+            color: '#fff',
+            showCancelButton: true,
+            confirmButtonColor: 'var(--gold)',
+            cancelButtonColor: '#333',
+            confirmButtonText: 'JA, BETAALD',
+            cancelButtonText: 'ANNULEREN'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/Uren/MarkeerAlsBetaald?id=' + id, { method: 'POST' }).then(() => location.reload());
+            }
+        });
     }
-}
+
+    // Thema inladen voor de kleuren
+    function applySavedTheme() {
+        const savedGold = localStorage.getItem('vip-gold');
+        const savedBright = localStorage.getItem('vip-gold-bright');
+        const savedGlow = localStorage.getItem('vip-glow');
+
+        if (savedGold) document.documentElement.style.setProperty('--gold', savedGold);
+        if (savedBright) document.documentElement.style.setProperty('--gold-bright', savedBright);
+        if (savedGlow) document.documentElement.style.setProperty('--glow', savedGlow);
+    }
+    applySavedTheme();
 </script>

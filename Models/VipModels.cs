@@ -8,8 +8,9 @@ namespace VIP_Planning.Models
     [Table("uren")]
     public class UrenModel : BaseModel
     {
+        // Deze Id moet op 'long' staan voor de database koppeling
         [PrimaryKey("id", false)]
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         [Column("user_email")]
         public string UserEmail { get; set; } = "";
@@ -35,6 +36,7 @@ namespace VIP_Planning.Models
         [Column("status")]
         public string Status { get; set; } = "Concept";
 
+        // Helpers voor de interface
         [JsonIgnore]
         public double AantalUren => Uren;
 
@@ -98,7 +100,6 @@ namespace VIP_Planning.Models
         [Column("is_gepusht")]
         public bool IsGepusht { get; set; } = false;
 
-        // TOEGEVOEGD: Nodig voor status-badges en voltooid-vinkjes
         [Column("status")]
         public string Status { get; set; } = "Gepland";
     }
@@ -111,5 +112,11 @@ namespace VIP_Planning.Models
 
         [Column("naam")]
         public string Naam { get; set; } = "";
+
+        [Column("rol")]
+        public string Rol { get; set; } = "Werkgever";
+
+        [Column("aanmaak_datum")]
+        public string AanmaakDatum { get; set; } = DateTime.Now.ToString("dd-MM-yyyy");
     }
 }

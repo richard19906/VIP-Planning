@@ -117,7 +117,7 @@
             </div>
         </div>
 
-        <!-- KOLOM 3: INTERFACE (MET KLEURKIEZER) -->
+        <!-- KOLOM 3: INTERFACE -->
         <div class="col-xl-4">
             <div class="vip-panel h-100">
                 <div class="p-4">
@@ -195,7 +195,20 @@
     .badge-vip-version { background: var(--gold); color: black; padding: 5px 15px; border-radius: 50px; font-weight: 900; font-size: 0.8rem; }
     .vip-panel { background: #0a0a0a; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 15px; }
     .vip-label { font-size: 0.75rem; font-weight: 800; margin-bottom: 8px; display: block; text-transform: uppercase; }
-    .vip-input { background: #000 !important; border: 1px solid #222 !important; color: white !important; font-family: 'JetBrains Mono', monospace; }
+    
+    /* INVOER VELDEN WITTE TEKST */
+    .vip-input { 
+        background: #000 !important; 
+        border: 1px solid #222 !important; 
+        color: #ffffff !important; /* Forceer witte tekst */
+        font-family: 'JetBrains Mono', monospace; 
+    }
+
+    /* PLACEHOLDER WIT MAKEN */
+    .vip-input::placeholder {
+        color: rgba(255, 255, 255, 0.5) !important;
+    }
+
     .btn-vip-solid-small { background: var(--gold); color: black; font-weight: 800; border: none; border-radius: 8px; transition: 0.3s; padding: 10px; }
     .btn-vip-outline-small { border: 1px solid var(--gold); color: var(--gold); border-radius: 8px; background: transparent; transition: 0.3s; padding: 10px; }
     .btn-danger-vip { background: transparent; border: 1px solid #dc3545; color: #dc3545; padding: 10px 25px; border-radius: 8px; font-weight: bold; transition: 0.3s; }
@@ -203,7 +216,6 @@
     .text-gold-muted { color: #8a7024; }
     .text-gold-var { color: var(--gold); }
     
-    /* Kleurkiezer Styling */
     .vip-color-input {
         -webkit-appearance: none;
         width: 50px; height: 50px;
@@ -240,12 +252,8 @@
 
     function updateLiveTheme(hex) {
         document.getElementById('colorHexLabel').innerText = hex.toUpperCase();
-        
-        // Bereken lichte variant en transparante glow
         const bright = lightennColor(hex, 40);
         const glow = hexToRgba(hex, 0.4);
-
-        // Pas overal toe
         document.documentElement.style.setProperty('--gold', hex);
         document.documentElement.style.setProperty('--gold-bright', bright);
         document.documentElement.style.setProperty('--glow', glow);
@@ -272,7 +280,6 @@
         localStorage.setItem('vip-gold', hex);
         localStorage.setItem('vip-gold-bright', lightennColor(hex, 40));
         localStorage.setItem('vip-glow', hexToRgba(hex, 0.4));
-        
         Swal.fire({ title: 'OPGESLAGEN', text: 'Nieuw thema is actief op het hele systeem.', icon: 'success', background: '#0a0a0a', color: hex });
     }
 

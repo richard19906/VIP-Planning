@@ -1,35 +1,134 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using Supabase;
+using System;
+using System.Threading.Tasks;
+using VIP_Planning.Models;
 
-namespace VIP_Planning.Controllers {
-    public class AccountController : Controller {
-        [HttpGet] public IActionResult Login() => View();
-        
+namespace VIP_Planning.Controllers
+{
+    public class AccountController : Controller
+    {
+        private readonly Supabase.Client _supabase;
+
+        public AccountController(Supabase.Client supabase)
+        {
+            _supabase = supabase;
+        }
+
+        [HttpGet]
+        public IActionResult Login() => View();
+
+        [HttpGet]
+        public IActionResult Register() => View();
+
+        // --- WACHTWOORD VERGETEN ---
+        [HttpGet]
+        public IActionResult ForgotPassword() => View();
+
         [HttpPost]
-        public IActionResult Login(string username) {
-            if (!string.IsNullOrEmpty(username)) {
-                TempData["Username"] = username;
+        public async Task<IActionResult> ForgotPassword(string email)
+        {
+            try
+            {
+                await _supabase.Auth.ResetPasswordForEmail(email);
+                ViewBag.Message = "Als dit e-mailadres bekend is, ontvangt u een herstelmail.";
+                return View();
+            }
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Er is een fout opgetreden: " + ex.Message;
+                return View();
+            }
+        }
+
+        // --- REGISTRATIE ---
+        [HttpPost]
+        public async Task<IActionResult> Register(string naam, string email, string password)
+        {
+            try
+            {
+                await _supabase.Auth.SignUp(email, password);
+
+                var nieuwProfiel = new ProfielModel
+                {
+                    Email = email,
+                    Naam = naam,
+                    Rol = "Werkgever",
+                    AanmaakDatum = DateTime.Now.ToString("dd-MM-yyyy")
+                };
+                await _supabase.From<ProfielModel>().Insert(nieuwProfiel);
+
+                TempData["Email"] = email;
                 return RedirectToAction("VerifyCode");
             }
-            return View();
+            catch (Exception ex)
+            {
+                ViewBag.Error = "Fout bij registreren: " + ex.Message;
+                return View();
+            }
         }
 
-        [HttpGet] public IActionResult VerifyCode() {
-            ViewBag.Username = TempData["Username"];
+        [HttpGet]
+        public IActionResult VerifyCode()
+        {
+            ViewBag.Email = TempData["Email"];
             return View();
         }
 
         [HttpPost]
-        public IActionResult Verify(string pincode) {
-            // De vertrouwde bypass codes
-            if (pincode == "3991" || pincode == "0000") {
-                HttpContext.Session.SetString("IsLoggedIn", "true");
-                return RedirectToAction("Index", "Home");
+        public async Task<IActionResult> VerifyCode(string email, string code)
+        {
+            try
+            {
+                var session = await _supabase.Auth.VerifyOTP(email, code, Supabase.Gotrue.Constants.EmailOtpType.Signup);
+
+                if (session != null)
+                {
+                    return RedirectToAction("Login", new { success = "geactiveerd" });
+                }
+                ViewBag.Error = "Code onjuist.";
+                return View();
             }
-            return RedirectToAction("Login");
+            catch (Exception)
+            {
+                ViewBag.Error = "Verificatie mislukt.";
+                return View();
+            }
         }
 
-        public IActionResult Logout() {
+        // --- INLOGGEN VERIFICATIE (Dashboard Fix) ---
+        [HttpPost]
+        public async Task<IActionResult> Verify(string username, string pincode)
+        {
+            // Admin Bypass
+            if (username == "ADMIN_BYPASS" && (pincode == "3991" || pincode == "0000"))
+            {
+                HttpContext.Session.SetString("UserRole", "Admin");
+                // Stuurt Admin naar Dashboard
+                return RedirectToAction("Index", "Home");
+            }
+
+            try
+            {
+                var session = await _supabase.Auth.SignIn(username, pincode);
+                if (session != null)
+                {
+                    HttpContext.Session.SetString("UserEmail", username);
+
+                    // Stuurt Gebruiker naar Dashboard (Index)
+                    return RedirectToAction("Index", "Home");
+                }
+                return RedirectToAction("Login");
+            }
+            catch
+            {
+                return RedirectToAction("Login");
+            }
+        }
+
+        public IActionResult Logout()
+        {
             HttpContext.Session.Clear();
             return RedirectToAction("Login");
         }

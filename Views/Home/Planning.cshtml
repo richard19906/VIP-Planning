@@ -2,11 +2,9 @@
 @{
     Layout = "_Layout";
     var werknemers = (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers;
-
-    // Logica om de huidige maand als standaard te zetten als er geen selectie is
-    var huidigeMaandShort = DateTime.Now.ToString("MMM", new System.Globalization.CultureInfo("nl-NL"));
+    var culture = new System.Globalization.CultureInfo("nl-NL");
+    var huidigeMaandShort = DateTime.Now.ToString("MMM", culture);
     huidigeMaandShort = char.ToUpper(huidigeMaandShort[0]) + huidigeMaandShort.Substring(1).Replace(".", "");
-    
     var geselecteerdeMaand = ViewBag.GeselecteerdeMaand ?? huidigeMaandShort;
 }
 
@@ -14,12 +12,111 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+    :root {
+        --gold: #D4AF37;
+        --gold-bright: #F9E27D;
+        --glow: rgba(212, 175, 55, 0.4);
+    }
+
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+    
+    .vip-header-title-main {
+        font-family: 'Cinzel', serif;
+        font-weight: 900; font-size: 2.2rem; letter-spacing: 3px;
+        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
+        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px var(--glow); text-transform: uppercase;
+    }
+
+    /* MAAND SELECTOR */
+    .maand-selector { display: flex; gap: 5px; flex-wrap: wrap; }
+    .btn-maand {
+        color: white !important;
+        text-decoration: none;
+        padding: 5px 12px;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        border-radius: 4px;
+        font-size: 0.8rem;
+        transition: 0.3s;
+        text-transform: uppercase;
+    }
+    .btn-maand.active {
+        background: var(--gold) !important;
+        color: black !important;
+        font-weight: bold;
+        box-shadow: 0 0 10px var(--glow);
+    }
+
+    /* INVOER BALK */
+    .vip-card-glow {
+        background: #0a0a0a;
+        border: 1px solid rgba(212, 175, 55, 0.2);
+        border-radius: 15px;
+    }
+
+    .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; display: block; }
+    
+    .vip-input {
+        background: #000 !important;
+        color: #ffffff !important;
+        -webkit-text-fill-color: #ffffff !important;
+        border: 1px solid #333 !important;
+        border-radius: 8px;
+    }
+
+    .vip-input:focus {
+        border-color: var(--gold) !important;
+        box-shadow: 0 0 8px var(--glow);
+    }
+
+    .btn-voegtoe {
+        background: var(--gold);
+        color: #000;
+        font-weight: bold;
+        border: none;
+        border-radius: 8px;
+        padding: 10px;
+        transition: 0.3s;
+    }
+    .btn-voegtoe:hover { background: var(--gold-bright); transform: translateY(-2px); }
+
+    /* BEHEER KNOPPEN */
+    .btn-action-edit, .btn-action-delete {
+        background: none;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        color: var(--gold);
+        width: 32px;
+        height: 32px;
+        border-radius: 6px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.3s;
+    }
+    .btn-action-edit:hover { background: var(--gold); color: black; }
+    .btn-action-delete:hover { background: #ff4444; color: white; border-color: #ff4444; }
+
+    /* TABEL STYLING */
+    .vip-card-black-glow { background: #000; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 15px; }
+    .vip-table tbody td { border-bottom: 1px solid rgba(212, 175, 55, 0.05); padding: 12px 10px; color: white; }
+    
+    .badge-status.gepland {
+        background: rgba(212, 175, 55, 0.1);
+        color: var(--gold);
+        border: 1px solid var(--gold);
+        padding: 2.5px 8px;
+        border-radius: 4px;
+        font-size: 0.65rem;
+    }
+</style>
+
 <div class="container-fluid py-4 px-4">
     <!-- Header -->
     <div class="d-flex justify-content-between align-items-center mb-5">
         <div>
             <h1 class="vip-header-title-main">ROOSTER BEHEER</h1>
-            <div class="vip-gold-line-main"></div>
+            <div style="width: 100px; height: 3px; background: linear-gradient(to right, var(--gold), transparent); margin-top: 10px;"></div>
         </div>
         <div class="maand-selector">
             @foreach (var m in new[] { "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" })
@@ -32,28 +129,38 @@
     <!-- Invoer Balk -->
     <div class="vip-card-glow mb-4">
         <div class="p-4">
-            <form action="/Home/OpslaanLokaal" method="post" class="row g-3 align-items-end">
-                <div class="col-md-3">
+            <form action="/Home/OpslaanLokaal" method="post" id="planningForm" class="row g-2 align-items-end">
+                <div class="col-md-2">
                     <label class="vip-label">WERKNEMER</label>
-                    <select name="UserEmail" class="form-select vip-input" required>
+                    <select name="UserEmail" id="inputEmail" class="form-select vip-input" required>
                         <option value="">-- SELECTEER --</option>
-                        @foreach (var w in werknemers) { <option value="@w.Email">@w.Naam.ToUpper()</option> }
+                        @foreach (var w in werknemers) { 
+                            <option value="@w.Email">@w.Naam.ToUpper()</option> 
+                        }
                     </select>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-2">
                     <label class="vip-label">DATUM</label>
-                    <input name="DatumString" class="form-control vip-input custom-date" type="date" required />
+                    <input name="DatumString" id="inputDatum" class="form-control vip-input" type="date" required />
                 </div>
                 <div class="col-md-3">
                     <label class="vip-label">LOCATIE</label>
-                    <input name="Locatie" class="form-control vip-input" placeholder="Voer locatie in..." required />
+                    <input name="Locatie" id="inputLocatie" class="form-control vip-input" placeholder="Voer locatie in..." required />
+                </div>
+                <div class="col-md-1">
+                    <label class="vip-label">START</label>
+                    <input name="StartTijd" id="invoerStart" type="text" class="form-control vip-input px-2 text-center" placeholder="08:00" maxlength="5" required />
+                </div>
+                <div class="col-md-1">
+                    <label class="vip-label">EINDE</label>
+                    <input name="EindTijd" id="invoerEind" type="text" class="form-control vip-input px-2 text-center" placeholder="17:00" maxlength="5" required />
                 </div>
                 <div class="col-md-1">
                     <label class="vip-label">UREN</label>
-                    <input name="Uren" type="number" step="0.5" class="form-control vip-input" value="0" required />
+                    <input name="Uren" id="invoerUren" type="number" step="0.1" class="form-control vip-input px-2 text-center" value="8.0" required />
                 </div>
                 <div class="col-md-2">
-                    <button type="submit" class="btn-voegtoe w-100">TOEVOEGEN</button>
+                    <button type="submit" id="submitBtn" class="btn-voegtoe w-100">VOEG TOE</button>
                 </div>
             </form>
         </div>
@@ -62,25 +169,17 @@
     <!-- Rooster Tabel -->
     <div class="vip-card-black-glow mb-4">
         <div class="p-4">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h5 class="text-gold-gradient fw-bold mb-0">LIVE PLANNING STATUS - @geselecteerdeMaand.ToUpper()</h5>
-                <form action="/Home/PushNaarDatabase" method="post" onsubmit="showPublishFeedback(event, this)">
-                    <button type="submit" id="publishBtn" class="btn-push-small">
-                        <i class="bi bi-send-fill me-1"></i> PUBLICEER ROOSTER
-                    </button>
-                </form>
-            </div>
-            
             <div class="table-responsive">
                 <table class="table table-dark vip-table">
                     <thead>
                         <tr>
-                            <th style="width: 40px;"></th> <!-- Vinkje Kolom -->
+                            <th style="width: 40px;"></th>
                             <th class="text-gold">DATUM</th>
                             <th class="text-gold">WERKNEMER</th>
                             <th class="text-gold">LOCATIE</th>
                             <th class="text-center text-gold">START</th>
                             <th class="text-center text-gold">EINDE</th>
+                            <th class="text-center text-gold">UREN</th>
                             <th class="text-center text-gold">STATUS</th>
                             <th class="text-end text-gold">BEHEER</th>
                         </tr>
@@ -88,35 +187,26 @@
                     <tbody>
                         @foreach (var item in Model)
                         {
-                            bool isVoltooid = item.Status == "Voltooid";
                             <tr>
+                                <td class="text-center"><i class="bi bi-circle text-muted" style="opacity: 0.2;"></i></td>
+                                <td>@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
+                                <td class="fw-bold">@item.UserNaam</td>
+                                <td>@item.Locatie</td>
+                                <td class="text-center mono" style="color:var(--gold);">@(item.StartTijd ?? "00:00")</td>
+                                <td class="text-center mono" style="color:var(--gold);">@(item.EindTijd ?? "00:00")</td>
+                                <td class="text-center text-white fw-bold mono">@item.Uren.ToString("N1")</td>
                                 <td class="text-center">
-                                    @if (isVoltooid) {
-                                        <i class="bi bi-check-circle-fill text-success" style="font-size: 1.1rem;"></i>
-                                    } else {
-                                        <i class="bi bi-circle text-muted" style="opacity: 0.2;"></i>
-                                    }
-                                </td>
-                                <td class="text-white">@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
-                                <td class="text-white fw-bold">@item.UserNaam</td>
-                                <td class="text-white">@item.Locatie</td>
-                                <td class="text-center text-gold-var mono">@(string.IsNullOrEmpty(item.StartTijd) ? "--:--" : item.StartTijd)</td>
-                                <td class="text-center text-gold-var mono">@(string.IsNullOrEmpty(item.EindTijd) ? "--:--" : item.EindTijd)</td>
-                                <td class="text-center">
-                                    <span class="badge-status @(item.Status?.ToLower() ?? "gepland")">
-                                        @(item.Status ?? "Gepland")
-                                    </span>
+                                    <span class="badge-status gepland">@(item.Status ?? "Gepland")</span>
                                 </td>
                                 <td class="text-end">
-                                    <button onclick="editRow('@item.Id', '@item.Locatie', '@item.Uren')" class="btn-action-edit me-3">
-                                        <i class="bi bi-pencil-fill"></i>
-                                    </button>
-                                    <button onclick="confirmDelete('@item.Id')" class="btn-action-delete">
-                                        <i class="bi bi-x-lg"></i>
-                                    </button>
-                                    <form id="delete-form-@item.Id" action="/Home/VerwijderPlanning" method="post" style="display:none;">
-                                        <input type="hidden" name="id" value="@item.Id" />
-                                    </form>
+                                    <div class="d-flex justify-content-end align-items-center gap-2">
+                                        <button class="btn-action-edit" onclick="editPlanning('@item.Id', '@item.UserEmail', '@item.Datum', '@item.Locatie', '@item.StartTijd', '@item.EindTijd', '@item.Uren')">
+                                            <i class="bi bi-pencil-fill"></i>
+                                        </button>
+                                        <button class="btn-action-delete" onclick="confirmDelete('@item.Id')">
+                                            <i class="bi bi-x-lg"></i>
+                                        </button>
+                                    </div>
                                 </td>
                             </tr>
                         }
@@ -127,103 +217,81 @@
     </div>
 </div>
 
-<style>
-    :root { 
-        --gold: #D4AF37; 
-        --gold-bright: #F9E27D;
-        --glow: rgba(212, 175, 55, 0.4); 
-    }
-    
-    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
-
-    /* Kalender Icoon Kleur (Meekleurend met interface) */
-    .custom-date::-webkit-calendar-picker-indicator {
-        filter: invert(48%) sepia(13%) saturate(3207%) hue-rotate(5deg) brightness(95%) contrast(80%);
-        cursor: pointer;
-        opacity: 1;
-    }
-
-    /* Maand Kiezer Styling */
-    .maand-selector { display: flex; gap: 5px; flex-wrap: wrap; }
-    .btn-maand {
-        color: white !important;
-        text-decoration: none;
-        padding: 5px 12px;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 4px;
-        font-size: 0.8rem;
-        transition: 0.3s;
-        text-transform: uppercase;
-    }
-    .btn-maand:hover { border-color: var(--gold); background: rgba(212, 175, 55, 0.1); color: var(--gold) !important; }
-    .btn-maand.active { 
-        background: var(--gold) !important; 
-        color: black !important; 
-        font-weight: bold; 
-        box-shadow: 0 0 10px var(--glow); 
-        border-color: var(--gold);
-    }
-
-    /* Status Badges */
-    .badge-status {
-        padding: 3px 10px;
-        border-radius: 4px;
-        font-size: 0.65rem;
-        font-weight: 800;
-        text-transform: uppercase;
-        border: 1px solid transparent;
-    }
-    .badge-status.gepland { border-color: #444; color: #888; }
-    .badge-status.bezig { border-color: var(--gold); color: var(--gold); background: rgba(212,175,55,0.1); box-shadow: 0 0 5px var(--glow); }
-    .badge-status.voltooid { border-color: #28a745; color: #28a745; background: rgba(40,167,69,0.1); }
-
-    .vip-header-title-main {
-        font-family: 'Cinzel', serif;
-        font-weight: 900; font-size: 2.2rem; letter-spacing: 3px;
-        background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 15px var(--glow); text-transform: uppercase;
-    }
-
-    .vip-gold-line-main { width: 100px; height: 3px; background: linear-gradient(to right, var(--gold), transparent); margin-top: 10px; }
-    .text-gold-gradient { background: linear-gradient(to bottom, var(--gold-bright), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-family: 'Cinzel', serif; }
-    .vip-card-glow, .vip-card-black-glow { border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 15px; }
-    .vip-card-glow { background: #0a0a0a; }
-    .vip-card-black-glow { background: #000; }
-    .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; display: block; }
-    .vip-input { background: #000 !important; color: #fff !important; border: 1px solid #222 !important; }
-    .btn-voegtoe { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 8px; padding: 10px; transition: 0.3s; }
-    .btn-push-small { background: var(--gold); color: #000; font-weight: bold; border: none; border-radius: 6px; padding: 6px 20px; font-size: 0.85rem; }
-    .text-gold-var { color: var(--gold); }
-    .vip-table tbody td { border-bottom: 1px solid rgba(212, 175, 55, 0.05); padding: 12px 10px; vertical-align: middle; }
-</style>
-
 <script>
-    function showPublishFeedback(event, form) {
-        event.preventDefault();
-        const btn = document.getElementById('publishBtn');
-        btn.innerHTML = '<i class="bi bi-check-lg"></i> GEPUBLICEERD';
-        Swal.fire({
-            title: 'ROOSTER GEPUBLICEERD',
-            text: 'Alle medewerkers hebben een melding ontvangen.',
-            icon: 'success',
-            background: '#0a0a0a',
-            color: '#D4AF37',
-            confirmButtonColor: '#D4AF37'
-        }).then(() => { form.submit(); });
+    // 1. Automatische dubbele punt en urenberekening
+    const timeFields = [document.getElementById('invoerStart'), document.getElementById('invoerEind')];
+    timeFields.forEach(field => {
+        field.addEventListener('input', (e) => {
+            let val = e.target.value.replace(/\D/g, '');
+            if (val.length >= 3) {
+                e.target.value = val.slice(0, 2) + ':' + val.slice(2, 4);
+            }
+            berekenUren();
+        });
+    });
+
+    function berekenUren() {
+        const start = document.getElementById('invoerStart').value;
+        const eind = document.getElementById('invoerEind').value;
+        const urenVeld = document.getElementById('invoerUren');
+        if (start.length === 5 && eind.length === 5) {
+            const [startH, startM] = start.split(':').map(Number);
+            const [eindH, eindM] = eind.split(':').map(Number);
+            let diff = (eindH * 60 + eindM) - (startH * 60 + startM);
+            if (diff < 0) diff += 1440;
+            urenVeld.value = (diff / 60).toFixed(1);
+        }
     }
 
+    // 2. Edit Functie
+    function editPlanning(id, email, datum, locatie, start, eind, uren) {
+        document.getElementById('inputEmail').value = email;
+        document.getElementById('inputLocatie').value = locatie;
+        document.getElementById('invoerStart').value = start;
+        document.getElementById('invoerEind').value = eind;
+        document.getElementById('invoerUren').value = uren;
+
+        // Datum fix (ISO string naar yyyy-mm-dd)
+        if(datum) {
+            const d = new Date(datum);
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            document.getElementById('inputDatum').value = `${year}-${month}-${day}`;
+        }
+
+        // Formulier omzetten naar bewerk-modus
+        document.getElementById('submitBtn').innerText = "BIJWERKEN";
+        document.getElementById('submitBtn').style.background = "#ffffff";
+        
+        // Hidden ID input toevoegen of bijwerken
+        let idInput = document.getElementById('editId');
+        if(!idInput) {
+            idInput = document.createElement('input');
+            idInput.type = 'hidden'; idInput.name = 'Id'; idInput.id = 'editId';
+            document.getElementById('planningForm').appendChild(idInput);
+        }
+        idInput.value = id;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 3. Delete Functie met SweetAlert
     function confirmDelete(id) {
         Swal.fire({
-            title: 'VERWIJDEREN?',
-            text: "Deze dienst wordt definitief gewist.",
+            title: 'WIERWIJDEREN?',
+            text: "Dienst wordt permanent verwijderd uit het rooster.",
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#ff4d4d',
-            cancelButtonColor: '#333',
-            confirmButtonText: 'JA, VERWIJDER',
+            confirmButtonColor: '#D4AF37',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'JA, VERWIJDEREN',
+            cancelButtonText: 'ANNULEREN',
             background: '#0a0a0a',
-            color: '#fff'
-        }).then((result) => { if (result.isConfirmed) { document.getElementById('delete-form-' + id).submit(); } });
+            color: '#ffffff'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                window.location.href = '/Home/Verwijderen/' + id;
+            }
+        });
     }
 </script>
