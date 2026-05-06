@@ -97,33 +97,37 @@ namespace VIP_Planning.Controllers
             }
         }
 
-        // --- INLOGGEN VERIFICATIE (Dashboard Fix) ---
+        // --- INLOGGEN VERIFICATIE (Gefixt voor Dashboard toegang) ---
         [HttpPost]
         public async Task<IActionResult> Verify(string username, string pincode)
         {
-            // Admin Bypass
+            // Admin Bypass: Code 3991 of 0000
             if (username == "ADMIN_BYPASS" && (pincode == "3991" || pincode == "0000"))
             {
+                // CRUCIAAL: Beide sessies vullen, anders springt Home/Index terug naar Login
+                HttpContext.Session.SetString("UserEmail", "Admin");
                 HttpContext.Session.SetString("UserRole", "Admin");
-                // Stuurt Admin naar Dashboard
+
                 return RedirectToAction("Index", "Home");
             }
 
             try
             {
+                // Normale login via Supabase
                 var session = await _supabase.Auth.SignIn(username, pincode);
                 if (session != null)
                 {
                     HttpContext.Session.SetString("UserEmail", username);
+                    HttpContext.Session.SetString("UserRole", "Gebruiker");
 
-                    // Stuurt Gebruiker naar Dashboard (Index)
                     return RedirectToAction("Index", "Home");
                 }
                 return RedirectToAction("Login");
             }
             catch
             {
-                return RedirectToAction("Login");
+                ViewBag.Error = "Inloggegevens onjuist.";
+                return View("Login");
             }
         }
 

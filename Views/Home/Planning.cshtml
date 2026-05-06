@@ -2,15 +2,11 @@
 @{
     Layout = "_Layout";
     var werknemers = (List<VIP_Planning.Models.ProfielModel>)ViewBag.Werknemers;
-    var culture = new System.Globalization.CultureInfo("nl-NL");
-    var huidigeMaandShort = DateTime.Now.ToString("MMM", culture);
-    huidigeMaandShort = char.ToUpper(huidigeMaandShort[0]) + huidigeMaandShort.Substring(1).Replace(".", "");
-    var geselecteerdeMaand = ViewBag.GeselecteerdeMaand ?? huidigeMaandShort;
+    var totaalUren = Model.Sum(x => (double)x.Uren);
 }
 
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <style>
     :root {
@@ -19,279 +15,187 @@
         --glow: rgba(212, 175, 55, 0.4);
     }
 
-    .mono { font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
-    
-    .vip-header-title-main {
+    body { background-color: #000; color: #fff; font-family: 'Inter', sans-serif; }
+
+    /* TITEL: IETS KLEINER GEMAAKT */
+    .vip-title-container { margin-bottom: 30px; text-align: left; }
+    .vip-title {
         font-family: 'Cinzel', serif;
-        font-weight: 900; font-size: 2.2rem; letter-spacing: 3px;
+        font-weight: 900;
+        font-size: 2.2rem; /* Was 2.8rem */
+        letter-spacing: 4px;
         background: linear-gradient(to bottom, var(--gold-bright) 0%, var(--gold) 100%);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        text-shadow: 0 0 15px var(--glow); text-transform: uppercase;
-    }
-
-    /* MAAND SELECTOR */
-    .maand-selector { display: flex; gap: 5px; flex-wrap: wrap; }
-    .btn-maand {
-        color: white !important;
-        text-decoration: none;
-        padding: 5px 12px;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        border-radius: 4px;
-        font-size: 0.8rem;
-        transition: 0.3s;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 15px var(--glow);
         text-transform: uppercase;
+        margin: 0;
     }
-    .btn-maand.active {
-        background: var(--gold) !important;
-        color: black !important;
-        font-weight: bold;
-        box-shadow: 0 0 10px var(--glow);
-    }
+    .vip-title-line { width: 70px; height: 3px; background: var(--gold); margin-top: 8px; }
 
-    /* INVOER BALK */
-    .vip-card-glow {
-        background: #0a0a0a;
-        border: 1px solid rgba(212, 175, 55, 0.2);
-        border-radius: 15px;
-    }
+    /* TOTAAL UREN */
+    .total-display { text-align: right; border-right: 3px solid var(--gold); padding-right: 15px; }
+    .total-label { color: var(--gold); font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; }
+    .total-val { font-family: 'JetBrains Mono'; font-size: 1.5rem; font-weight: bold; }
 
-    .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; margin-bottom: 8px; display: block; }
+    /* INPUTS */
+    .vip-card { background: #0a0a0a; border: 1px solid #222; border-radius: 10px; padding: 20px; }
+    .vip-label { color: var(--gold); font-size: 0.75rem; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; display: block; }
+    .vip-input { 
+        background: #000 !important; color: #fff !important; border: 1px solid #333 !important; 
+        height: 45px; border-radius: 6px; -webkit-text-fill-color: #fff !important;
+    }
     
-    .vip-input {
-        background: #000 !important;
-        color: #ffffff !important;
-        -webkit-text-fill-color: #ffffff !important;
-        border: 1px solid #333 !important;
-        border-radius: 8px;
+    input[type="date"]::-webkit-calendar-picker-indicator {
+        filter: invert(68%) sepia(51%) saturate(546%) hue-rotate(5deg) brightness(93%) contrast(88%);
     }
 
-    .vip-input:focus {
-        border-color: var(--gold) !important;
-        box-shadow: 0 0 8px var(--glow);
-    }
-
-    .btn-voegtoe {
-        background: var(--gold);
-        color: #000;
-        font-weight: bold;
-        border: none;
-        border-radius: 8px;
-        padding: 10px;
-        transition: 0.3s;
-    }
-    .btn-voegtoe:hover { background: var(--gold-bright); transform: translateY(-2px); }
-
-    /* BEHEER KNOPPEN */
-    .btn-action-edit, .btn-action-delete {
-        background: none;
-        border: 1px solid rgba(212, 175, 55, 0.3);
-        color: var(--gold);
-        width: 32px;
-        height: 32px;
-        border-radius: 6px;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        transition: 0.3s;
-    }
-    .btn-action-edit:hover { background: var(--gold); color: black; }
-    .btn-action-delete:hover { background: #ff4444; color: white; border-color: #ff4444; }
-
-    /* TABEL STYLING */
-    .vip-card-black-glow { background: #000; border: 1px solid rgba(212, 175, 55, 0.1); border-radius: 15px; }
-    .vip-table tbody td { border-bottom: 1px solid rgba(212, 175, 55, 0.05); padding: 12px 10px; color: white; }
+    /* TABEL HEADER: GOUD MET ZWARTE TEKST */
+    .vip-table-container { background: #000; border: 1px solid #222; border-radius: 10px; overflow: hidden; margin-top: 20px; }
+    .table { margin: 0; border: none !important; }
     
-    .badge-status.gepland {
-        background: rgba(212, 175, 55, 0.1);
-        color: var(--gold);
-        border: 1px solid var(--gold);
-        padding: 2.5px 8px;
-        border-radius: 4px;
-        font-size: 0.65rem;
+    .table thead tr { 
+        background: linear-gradient(to bottom, var(--gold-bright), var(--gold)) !important; 
     }
+    .table thead th { 
+        color: #000 !important; /* Zwarte tekst op gouden balk */
+        padding: 15px; 
+        border: none !important; 
+        text-transform: uppercase; 
+        font-size: 0.75rem; 
+        font-weight: 900;
+    }
+    
+    .table tbody td { 
+        padding: 15px; 
+        color: var(--gold-bright) !important; /* Ingevoerde tekst goud */
+        background: transparent !important;
+        border-bottom: 1px solid #111; 
+    }
+
+    .btn-vip { background: var(--gold); color: #000; font-weight: 900; border: none; height: 45px; border-radius: 6px; width: 100%; text-transform: uppercase; }
+    .btn-icon { background: transparent; border: 1px solid #333; padding: 5px 8px; border-radius: 5px; color: var(--gold); }
 </style>
 
 <div class="container-fluid py-4 px-4">
-    <!-- Header -->
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div>
-            <h1 class="vip-header-title-main">ROOSTER BEHEER</h1>
-            <div style="width: 100px; height: 3px; background: linear-gradient(to right, var(--gold), transparent); margin-top: 10px;"></div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="vip-title-container">
+            <h1 class="vip-title">Rooster Beheer</h1>
+            <div class="vip-title-line"></div>
         </div>
-        <div class="maand-selector">
-            @foreach (var m in new[] { "Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec" })
-            {
-                <a href="?maand=@m" class="btn-maand @(geselecteerdeMaand == m ? "active" : "")">@m</a>
-            }
+        <div class="total-display">
+            <span class="total-label">Totaal Uren</span>
+            <div class="total-val">@totaalUren.ToString("N1")</div>
         </div>
     </div>
 
-    <!-- Invoer Balk -->
-    <div class="vip-card-glow mb-4">
-        <div class="p-4">
-            <form action="/Home/OpslaanLokaal" method="post" id="planningForm" class="row g-2 align-items-end">
-                <div class="col-md-2">
-                    <label class="vip-label">WERKNEMER</label>
-                    <select name="UserEmail" id="inputEmail" class="form-select vip-input" required>
-                        <option value="">-- SELECTEER --</option>
-                        @foreach (var w in werknemers) { 
-                            <option value="@w.Email">@w.Naam.ToUpper()</option> 
-                        }
-                    </select>
-                </div>
-                <div class="col-md-2">
-                    <label class="vip-label">DATUM</label>
-                    <input name="DatumString" id="inputDatum" class="form-control vip-input" type="date" required />
-                </div>
-                <div class="col-md-3">
-                    <label class="vip-label">LOCATIE</label>
-                    <input name="Locatie" id="inputLocatie" class="form-control vip-input" placeholder="Voer locatie in..." required />
-                </div>
-                <div class="col-md-1">
-                    <label class="vip-label">START</label>
-                    <input name="StartTijd" id="invoerStart" type="text" class="form-control vip-input px-2 text-center" placeholder="08:00" maxlength="5" required />
-                </div>
-                <div class="col-md-1">
-                    <label class="vip-label">EINDE</label>
-                    <input name="EindTijd" id="invoerEind" type="text" class="form-control vip-input px-2 text-center" placeholder="17:00" maxlength="5" required />
-                </div>
-                <div class="col-md-1">
-                    <label class="vip-label">UREN</label>
-                    <input name="Uren" id="invoerUren" type="number" step="0.1" class="form-control vip-input px-2 text-center" value="8.0" required />
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" id="submitBtn" class="btn-voegtoe w-100">VOEG TOE</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <!-- Rooster Tabel -->
-    <div class="vip-card-black-glow mb-4">
-        <div class="p-4">
-            <div class="table-responsive">
-                <table class="table table-dark vip-table">
-                    <thead>
-                        <tr>
-                            <th style="width: 40px;"></th>
-                            <th class="text-gold">DATUM</th>
-                            <th class="text-gold">WERKNEMER</th>
-                            <th class="text-gold">LOCATIE</th>
-                            <th class="text-center text-gold">START</th>
-                            <th class="text-center text-gold">EINDE</th>
-                            <th class="text-center text-gold">UREN</th>
-                            <th class="text-center text-gold">STATUS</th>
-                            <th class="text-end text-gold">BEHEER</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach (var item in Model)
-                        {
-                            <tr>
-                                <td class="text-center"><i class="bi bi-circle text-muted" style="opacity: 0.2;"></i></td>
-                                <td>@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
-                                <td class="fw-bold">@item.UserNaam</td>
-                                <td>@item.Locatie</td>
-                                <td class="text-center mono" style="color:var(--gold);">@(item.StartTijd ?? "00:00")</td>
-                                <td class="text-center mono" style="color:var(--gold);">@(item.EindTijd ?? "00:00")</td>
-                                <td class="text-center text-white fw-bold mono">@item.Uren.ToString("N1")</td>
-                                <td class="text-center">
-                                    <span class="badge-status gepland">@(item.Status ?? "Gepland")</span>
-                                </td>
-                                <td class="text-end">
-                                    <div class="d-flex justify-content-end align-items-center gap-2">
-                                        <button class="btn-action-edit" onclick="editPlanning('@item.Id', '@item.UserEmail', '@item.Datum', '@item.Locatie', '@item.StartTijd', '@item.EindTijd', '@item.Uren')">
-                                            <i class="bi bi-pencil-fill"></i>
-                                        </button>
-                                        <button class="btn-action-delete" onclick="confirmDelete('@item.Id')">
-                                            <i class="bi bi-x-lg"></i>
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
-                        }
-                    </tbody>
-                </table>
+    <!-- INVOER -->
+    <div class="vip-card mb-4">
+        <form action="/Home/OpslaanLokaal" method="post" id="planningForm" class="row g-2 align-items-end">
+            <input type="hidden" name="Id" id="mainId" value="0" />
+            
+            <div class="col-md-3">
+                <label class="vip-label">Werknemer</label>
+                <select name="UserEmail" id="mainEmail" class="form-select vip-input" required>
+                    <option value="">KIES...</option>
+                    @foreach (var w in werknemers) { <option value="@w.Email">@w.Naam.ToUpper()</option> }
+                </select>
             </div>
-        </div>
+            <div class="col-md-2">
+                <label class="vip-label">Datum</label>
+                <input name="DatumString" id="mainDatum" type="date" class="form-control vip-input" required />
+            </div>
+            <div class="col-md-2">
+                <label class="vip-label">Locatie</label>
+                <input name="Locatie" id="mainLocatie" class="form-control vip-input" placeholder="LOCATIE" required />
+            </div>
+            <div class="col-md-1">
+                <label class="vip-label">Van</label>
+                <input name="StartTijd" id="mainStart" type="text" maxlength="5" placeholder="00:00" class="form-control vip-input time-calc" />
+            </div>
+            <div class="col-md-1">
+                <label class="vip-label">Tot</label>
+                <input name="EindTijd" id="mainEind" type="text" maxlength="5" placeholder="00:00" class="form-control vip-input time-calc" />
+            </div>
+            <div class="col-md-1">
+                <label class="vip-label">Uren</label>
+                <input name="Uren" id="mainUren" type="text" class="form-control vip-input text-center" />
+            </div>
+            <div class="col-md-2">
+                <button type="submit" id="btnSubmit" class="btn-vip">OPSLAAN</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- TABEL -->
+    <div class="vip-table-container">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Datum</th>
+                    <th>Werknemer</th>
+                    <th>Locatie</th>
+                    <th class="text-center">Tijden</th>
+                    <th class="text-center">Uren</th>
+                    <th class="text-end">Acties</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@DateTime.Parse(item.Datum).ToString("dd-MM-yyyy")</td>
+                        <td class="fw-bold">@item.UserNaam</td>
+                        <td>@item.Locatie</td>
+                        <td class="text-center">@item.StartTijd - @item.EindTijd</td>
+                        <td class="text-center fw-bold">@item.Uren.ToString("N1")</td>
+                        <td class="text-end">
+                            <button class="btn-icon me-2" onclick="editDienst('@item.Id', '@item.UserEmail', '@item.Datum', '@item.Locatie', '@item.StartTijd', '@item.EindTijd', '@item.Uren')">
+                                <i class="bi bi-pencil-square"></i>
+                            </button>
+                            @* Fix voor 405: Zorg dat Verwijderen een GET-link is *@
+                            <a href="@Url.Action("Verwijderen", "Home", new { id = item.Id })" class="btn-icon" style="color:#ff4444;" onclick="return confirm('Verwijderen?')">
+                                <i class="bi bi-trash3"></i>
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
     </div>
 </div>
 
 <script>
-    // 1. Automatische dubbele punt en urenberekening
-    const timeFields = [document.getElementById('invoerStart'), document.getElementById('invoerEind')];
-    timeFields.forEach(field => {
-        field.addEventListener('input', (e) => {
+    // TIJD CALCULATIE (VOORKOMT 90 FOUT)
+    document.querySelectorAll('.time-calc').forEach(input => {
+        input.addEventListener('input', function(e) {
             let val = e.target.value.replace(/\D/g, '');
-            if (val.length >= 3) {
-                e.target.value = val.slice(0, 2) + ':' + val.slice(2, 4);
+            if (val.length >= 3) val = val.slice(0, 2) + ':' + val.slice(2, 4);
+            e.target.value = val;
+            
+            const form = e.target.closest('form');
+            const sVal = form.querySelector('[name="StartTijd"]').value;
+            const eVal = form.querySelector('[name="EindTijd"]').value;
+            
+            if (sVal.length === 5 && eVal.length === 5) {
+                const s = sVal.split(':');
+                const e_parts = eVal.split(':');
+                let diff = (parseInt(e_parts[0], 10) * 60 + parseInt(e_parts[1], 10)) - (parseInt(s[0], 10) * 60 + parseInt(s[1], 10));
+                if (diff < 0) diff += 1440;
+                form.querySelector('[name="Uren"]').value = (diff / 60).toFixed(1).replace('.', ',');
             }
-            berekenUren();
         });
     });
 
-    function berekenUren() {
-        const start = document.getElementById('invoerStart').value;
-        const eind = document.getElementById('invoerEind').value;
-        const urenVeld = document.getElementById('invoerUren');
-        if (start.length === 5 && eind.length === 5) {
-            const [startH, startM] = start.split(':').map(Number);
-            const [eindH, eindM] = eind.split(':').map(Number);
-            let diff = (eindH * 60 + eindM) - (startH * 60 + startM);
-            if (diff < 0) diff += 1440;
-            urenVeld.value = (diff / 60).toFixed(1);
-        }
-    }
-
-    // 2. Edit Functie
-    function editPlanning(id, email, datum, locatie, start, eind, uren) {
-        document.getElementById('inputEmail').value = email;
-        document.getElementById('inputLocatie').value = locatie;
-        document.getElementById('invoerStart').value = start;
-        document.getElementById('invoerEind').value = eind;
-        document.getElementById('invoerUren').value = uren;
-
-        // Datum fix (ISO string naar yyyy-mm-dd)
-        if(datum) {
-            const d = new Date(datum);
-            const year = d.getFullYear();
-            const month = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            document.getElementById('inputDatum').value = `${year}-${month}-${day}`;
-        }
-
-        // Formulier omzetten naar bewerk-modus
-        document.getElementById('submitBtn').innerText = "BIJWERKEN";
-        document.getElementById('submitBtn').style.background = "#ffffff";
-        
-        // Hidden ID input toevoegen of bijwerken
-        let idInput = document.getElementById('editId');
-        if(!idInput) {
-            idInput = document.createElement('input');
-            idInput.type = 'hidden'; idInput.name = 'Id'; idInput.id = 'editId';
-            document.getElementById('planningForm').appendChild(idInput);
-        }
-        idInput.value = id;
+    function editDienst(id, email, datum, loc, start, eind, uren) {
+        document.getElementById('mainId').value = id;
+        document.getElementById('mainEmail').value = email;
+        document.getElementById('mainLocatie').value = loc;
+        document.getElementById('mainStart').value = start;
+        document.getElementById('mainEind').value = eind;
+        document.getElementById('mainUren').value = parseFloat(uren.toString().replace(',', '.')).toFixed(1).replace('.', ',');
+        if(datum) document.getElementById('mainDatum').value = new Date(datum).toISOString().split('T')[0];
+        document.getElementById('btnSubmit').innerText = "BIJWERKEN";
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // 3. Delete Functie met SweetAlert
-    function confirmDelete(id) {
-        Swal.fire({
-            title: 'WIERWIJDEREN?',
-            text: "Dienst wordt permanent verwijderd uit het rooster.",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#D4AF37',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'JA, VERWIJDEREN',
-            cancelButtonText: 'ANNULEREN',
-            background: '#0a0a0a',
-            color: '#ffffff'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                window.location.href = '/Home/Verwijderen/' + id;
-            }
-        });
     }
 </script>

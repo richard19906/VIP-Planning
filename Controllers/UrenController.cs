@@ -21,21 +21,16 @@ namespace VIP_Planning.Controllers
             _supabase = supabase;
         }
 
-        // --- DE NIEUWE VERWIJDER METHODE (Die de 404 oplost) ---
         [HttpPost]
         public async Task<IActionResult> VerwijderUren(long id, string email, string naam, string maand)
         {
             try
             {
-                // Verwijder de specifieke regel uit Supabase op basis van ID
                 await _supabase.From<UrenModel>().Where(x => x.Id == id).Delete();
-
-                // Stuur de gebruiker terug naar het overzicht
                 return RedirectToAction("UrenOverzicht", "Home", new { email = email, naam = naam, maand = maand });
             }
             catch (Exception ex)
             {
-                // Bij fouten tonen we de melding
                 return Content("Fout bij verwijderen: " + ex.Message);
             }
         }
@@ -43,7 +38,6 @@ namespace VIP_Planning.Controllers
         [HttpPost]
         public async Task<IActionResult> MarkeerAlsBetaald(long id, string email, string naam, string maand)
         {
-            // Veiligheidscheck voor ID
             if (id <= 0) return RedirectToAction("UrenOverzicht", "Home", new { email = email, naam = naam, maand = maand });
 
             await _supabase.From<UrenModel>().Where(x => x.Id == id).Set(x => x.IsUitbetaald, true).Update();
@@ -54,8 +48,8 @@ namespace VIP_Planning.Controllers
         {
             var culture = new CultureInfo("nl-NL");
             int jaar = 2026;
-            DateTime geselecteerdeMaandDatum = DateTime.ParseExact(maand, "MMM", culture);
 
+            DateTime geselecteerdeMaandDatum = DateTime.ParseExact(maand, "MMM", culture);
             DateTime eindPeriode = new DateTime(jaar, geselecteerdeMaandDatum.Month, 20);
             DateTime startPeriode = eindPeriode.AddMonths(-1).AddDays(1);
 
@@ -87,6 +81,9 @@ namespace VIP_Planning.Controllers
                 var fontBold = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 10);
                 var fontNormal = FontFactory.GetFont(FontFactory.HELVETICA, 10);
 
+                // FIX: Gebruik 'new BaseColor(r, g, b)' in plaats van 'BaseColor.GREEN'
+                var fontGreenV = FontFactory.GetFont(FontFactory.HELVETICA_BOLD, 12, new BaseColor(0, 150, 0));
+
                 doc.Add(new Paragraph(new Phrase("GEWERKTE UREN 2026", fontH1)));
                 doc.Add(new Paragraph(new Phrase($"Naam: {naam}", fontNormal)));
                 doc.Add(new Paragraph(new Phrase("Bedrijf: V.I.P Security Service", fontNormal)));
@@ -109,13 +106,26 @@ namespace VIP_Planning.Controllers
                 foreach (var u in urenVoorPdf)
                 {
                     DateTime d = DateTime.ParseExact(u.DatumString, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+
                     table.AddCell(new PdfPCell(new Phrase(d.ToString("dddd", culture), fontNormal)) { Border = 0, PaddingTop = 5 });
                     table.AddCell(new PdfPCell(new Phrase(u.DatumString, fontNormal)) { Border = 0, PaddingTop = 5 });
-                    table.AddCell(new PdfPCell(new Phrase(u.Locatie ?? "", fontNormal)) { Border = 0, PaddingTop = 5 });
+                    table.AddCell(new PdfPCell(new Phrase(u.Locatie?.ToUpper() ?? "", fontNormal)) { Border = 0, PaddingTop = 5 });
                     table.AddCell(new PdfPCell(new Phrase(u.IsUitbetaald ? "Betaald" : "Open", fontNormal)) { Border = 0, PaddingTop = 5 });
 
-                    string display = u.IsUitbetaald ? "✓" : (u.Locatie?.ToLower().Contains("vrij") == true ? "*" : u.Uren.ToString("N1", culture));
-                    table.AddCell(new PdfPCell(new Phrase(display, fontNormal)) { Border = 0, PaddingTop = 5 });
+                    PdfPCell urenCell;
+                    if (u.IsUitbetaald)
+                    {
+                        urenCell = new PdfPCell(new Phrase("V", fontGreenV));
+                    }
+                    else
+                    {
+                        string display = (u.Locatie?.ToLower().Contains("vrij") == true ? "*" : u.Uren.ToString("N1", culture));
+                        urenCell = new PdfPCell(new Phrase(display, fontNormal));
+                    }
+
+                    urenCell.Border = 0;
+                    urenCell.PaddingTop = 5;
+                    table.AddCell(urenCell);
                 }
 
                 doc.Add(table);
